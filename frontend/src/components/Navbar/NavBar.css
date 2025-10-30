@@ -1,0 +1,41 @@
+.navbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #212124;
+    color: #FFA116;
+    position: fixed;
+    width: 100%;
+    margin-bottom: 1px;
+    z-index: 1000;
+}
+
+.navbar-menu{
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.navbar-right{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:20px;
+}
+
+.navbar-menu li{
+    cursor: pointer;
+}
+
+.navbar .logo{
+    width: 150px;
+}
+
+@media (max-width:750px) {
+    .navbar-menu{
+        display: none;
+    }
+}
