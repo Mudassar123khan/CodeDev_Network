@@ -2,12 +2,67 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+//login controller
+const login = async(req,res)=>{
+    try{
+         const {email,password} = req.body;
 
-const login = async()=>{
-    console.log("Login");
+        //checking if email and password is received or not
+        if(!email || !password){
+            console.log("email and password both required");
+            return res.status(400).json({
+                success:false,
+                message:"Both email and password required",
+            });
+        }
+
+        //fetching the user
+        const user = await User.findOne({email}).select("+password");
+        if(!user){
+            return res.status(401).json({
+                success:true,
+                message:"Invalid email or passwrod"
+            });
+        }
+
+
+        const compare = await bcrypt.compare(password,user.password);
+
+        if(!compare){
+            return res.status(401).json({
+                success:false,
+                message:"Invalid email or password",
+            });
+        }
+
+        //generating jwt
+        const token = jwt.sign(
+            {id:user._id,role:user.role},
+            process.env.JWT_SECRET,
+            {expiresIn:"7d"}
+        );
+        //sending response
+        res.status(200).json({
+            success:true,
+            message:"LoggedIn succesfully",
+            token,
+            user:{
+                id:user._id,
+                username:user.username,
+                email:user.email,
+                role:user.role
+            }
+        });
+    }catch(err){
+        console.log(`An error occured ${err.message}`);
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server error",
+        });
+    }
 };
 
-
+//register controller
 const register = async(req,res)=>{
     try{
         const {username,email, password}= req.body;
@@ -65,7 +120,7 @@ const register = async(req,res)=>{
         console.log(`An error occured ${err.message}`);
         return res.status(500).json({
             success:false,
-            message:"Server Error"
+            message:"Internal Server Error"
         });
     }
 };
@@ -74,8 +129,35 @@ const logout = async()=>{
     console.log("Logout");
 };
 
-const getUser = async()=>{
-    console.log("I am XtremeWinger");
+const getUser = async(req,res)=>{
+   try{
+         const id = req.user.id;
+
+        const user = await User.findById(id);
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"User not found"
+            });
+        }
+
+        res.status(200).json({
+            success:true,
+            message:"User found",
+            user:{
+                id:user._id,
+                username:user.username,
+                email:user.email,
+                role:user.role
+            }
+        });
+   }catch(err){
+    console.log(`An error occured ${err.message}`);
+    return res.status(500).json({
+        success:false,
+        message:"Internal server error",
+    });
+   }
 }
 
 export {login,register,logout,getUser};
