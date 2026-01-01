@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.post('/',authMiddleware,adminOnly,createProblem);
 router.get('/',getProblems);
-router.get('/:id',getOneProblem);
-router.patch('/:id',updateProblem);
-router.delete('/:id',deleteProblem);
+router.get('/:slug',getOneProblem);
+router.patch('/:id',authMiddleware,adminOnly,updateProblem);
+router.delete('/:id',authMiddleware,adminOnly,deleteProblem);
 
 export default router;
