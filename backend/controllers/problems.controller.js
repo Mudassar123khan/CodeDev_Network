@@ -107,11 +107,100 @@ const getOneProblem = async (req,res)=>{
 }
 
 const updateProblem = async (req,res)=>{
-    
+    try{
+        const {id} = req.params;
+        
+        //deciding the allowed fields which can be updated
+        const allowedFields = [
+            "title",
+            "description",
+            "difficulty",
+            "tags",
+            "constraints",
+            "testCases",
+            "slug",
+        ];
+
+        //object storing the updates
+        const updates = {};
+
+        //adding the updates in the updates object
+        allowedFields.forEach((field)=>{
+            if(req.body[field]!=undefined){
+                updates[field]=req.body[field];
+            }
+        });
+
+        //checking if admin has sent any updates or not
+        if(Object.keys(updates).length ===0){
+            return res.status(400).json({
+                success:false,
+                message:"No valid fields to update"
+            });
+        }
+
+        //checking if given slug for update already exists
+        if(updates.slug){
+            const exists = await Problem.findOne({slug:updates.slug});
+
+            if(exists && exists._id.toString()!==id){
+                return res.status(409).json({
+                    success:false,
+                    message:"slug already exists"
+                });
+            }
+        }
+
+        //updating the given fields
+        const updatedProblem = await Problem.findByIdAndUpdate(id,updates,{new:true}).select("-testCases");
+
+        //returning if problem with given id (id) not found
+        if(!updatedProblem){
+            return res.status(404).json({
+                success:false,
+                message:"Problem not found"
+            });
+        }
+
+
+        res.status(200).json({
+            success:true,
+            message:"Updated successfully",
+            data:updatedProblem
+        });
+    }catch(err){
+        console.log(`An error occured ${err.message}`);
+        res.status(500).json({
+            success:false,
+            message:"Internal server error",
+        });
+    }
 }
 
 const deleteProblem = async (req,res)=>{
-    console.log("Delete problem");
+    try{const {id} = req.params;
+
+    const deletedProblem = await Problem.findByIdAndDelete(id);
+
+    if(!deletedProblem){
+        return res.status(404).json({
+            success:false,
+            message:"Problem not found"
+        });
+    }
+
+    res.status(200).json({
+        success:true,
+        message:"Problem deleted",
+        data:{id}
+    });
+    }catch(err){
+        console.log(`An error occured ${err.message}`);
+        res.status(500).json({
+            success:false,
+            message:"Internal server error"
+        });
+    }
 }
 
 export {createProblem,getOneProblem,getProblems,updateProblem,deleteProblem}
