@@ -37,8 +37,35 @@ const UserSchema = new Schema({
         type:Number,
         default:0
     },
-},
- {
+    platformProfiles: {
+        leetcode: {
+            username: String,
+            solvedCount: Number,
+            rating: Number,
+            lastSyncedAt: Date
+        },
+        codeforces: {
+            username: String,
+            solvedCount: Number,
+            rating: Number,
+            lastSyncedAt: Date
+        },
+        gfg: {
+            username: String,
+            solvedCount: Number,
+            lastSyncedAt: Date
+        },
+        codechef: {
+            username: String,
+            solvedCount: Number,
+            rating: Number,
+            lastSyncedAt: Date
+        }
+    }
+
+    },
+
+    {
         timestamps:true
     }
 );
