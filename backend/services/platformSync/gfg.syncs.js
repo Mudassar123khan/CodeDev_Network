@@ -1,0 +1,40 @@
+import puppeteer from "puppeteer";
+
+const fetchGfgStats = async (handle) => {
+  const browser = await puppeteer.launch({
+    headless: "new"
+  });
+
+  try {
+    const page = await browser.newPage();
+
+    await page.goto(
+      `https://www.geeksforgeeks.org/profile/${handle}?tab=activity`,
+      { waitUntil: "networkidle2" }
+    );
+
+    await page.waitForSelector(".ScoreContainer_value__7yy7h");
+
+    const problemsSolved = await page.evaluate(() => {
+      const elements = document.querySelectorAll(
+        ".ScoreContainer_value__7yy7h"
+      );
+      return Array.from(elements).map(el => el.innerText);
+    });
+
+    return {
+        handle,
+        rating:0,
+        solvedCount:problemsSolved[1] || 0,
+        lastSynced:new Date(),
+    }
+
+  } catch (err) {
+    console.error("GFG scrape failed:", err.message);
+    return null;
+
+  } finally {
+    await browser.close();
+  }
+};
+
