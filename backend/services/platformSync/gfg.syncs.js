@@ -38,3 +38,4 @@ const fetchGfgStats = async (handle) => {
   }
 };
 
+export default fetchGfgStats;

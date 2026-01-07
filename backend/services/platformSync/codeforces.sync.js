@@ -37,3 +37,5 @@ const fetchCodeForcesStats = async (handle)=>{
         console.error("Codeforces sync failed",err.message);
     }
 }
+
+export default fetchCodeForcesStats;

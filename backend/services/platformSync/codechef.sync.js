@@ -38,3 +38,5 @@ const fetchCodechefStats = async (handle)=>{
         await browser.close();
     }
 }
+
+export default fetchCodechefStats;
