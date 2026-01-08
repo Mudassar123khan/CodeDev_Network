@@ -65,7 +65,7 @@ const login = async(req,res)=>{
 //register controller
 const register = async(req,res)=>{
     try{
-        const {username,email, password}= req.body;
+        const {username,email, password, platforms}= req.body;
 
         if(!username || !email || !password){
             console.log("All fields are required");
@@ -91,6 +91,9 @@ const register = async(req,res)=>{
             username,
             email,
             password:hashedPassword,
+            platforms:{
+                ...platforms
+            }
         });
 
         //creating jwt token

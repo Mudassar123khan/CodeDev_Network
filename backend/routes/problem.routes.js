@@ -10,6 +10,6 @@ router.get('/',getProblems);
 router.get('/:slug',getOneProblem);
 router.patch('/:id',authMiddleware,adminOnly,updateProblem);
 router.delete('/:id',authMiddleware,adminOnly,deleteProblem);
-router.get('/:slug/submissions',authMiddleware,getAllSubmissionsOfaProblem);
+router.get('/:slug/submissions',authMiddleware,getAllSubmissionsOfaProblem);//route to get submissions of a problem
 
 export default router;

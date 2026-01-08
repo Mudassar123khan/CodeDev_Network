@@ -37,6 +37,13 @@ const UserSchema = new Schema({
         type:Number,
         default:0
     },
+    platforms: {
+    codeforces: { type: String, trim: true, default:"" },
+    leetcode: { type: String, trim: true, default:"" },
+    codechef: { type: String, trim: true, default:"" },
+    gfg: { type: String, trim: true, default:"" }
+    }
+
     },
 
     {
