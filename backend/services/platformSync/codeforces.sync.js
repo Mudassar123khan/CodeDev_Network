@@ -27,8 +27,8 @@ const fetchCodeForcesStats = async (handle)=>{
 
         return {
             handle,
-            rating:user.rating || 0,
-            solvedCount:solvedSet.size,
+            rating:parseInt(user.rating) || 0,
+            solvedCount:parseInt(solvedSet.size),
             lastSynced:new Date(),
         }
 

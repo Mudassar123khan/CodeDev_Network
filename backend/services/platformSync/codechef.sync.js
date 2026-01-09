@@ -29,7 +29,8 @@ const fetchCodechefStats = async (handle)=>{
         return {
             handle,
             lastSynced:new Date(),
-            ...user
+            solvedCount:user.problems,
+            rating:user.rating
         }        
     }catch(err){
         console.log(`An error occured ${err.message}`);

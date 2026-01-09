@@ -25,7 +25,7 @@ const fetchGfgStats = async (handle) => {
     return {
         handle,
         rating:0,
-        solvedCount:problemsSolved[1] || 0,
+        solvedCount:parseInt(problemsSolved[1]) || 0,
         lastSynced:new Date(),
     }
 

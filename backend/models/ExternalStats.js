@@ -28,6 +28,25 @@ const ExternalStatsSchema = new Schema(
       gfg: PlatformStatSchema
     },
 
+    platformScores:{
+      codeforces:{
+        type:Number,
+        default:0,
+      },
+      leetcode:{
+        type:Number,
+        default:0
+      },
+      codechef:{
+        type:Number,
+        default:0,
+      },
+      gfg:{
+        type:Number,
+        default:0
+      }
+    },
+
     // Aggregated leaderboard values
     totalScore: {
       type: Number,
@@ -37,7 +56,8 @@ const ExternalStatsSchema = new Schema(
 
     totalSolved: {
       type: Number,
-      default: 0
+      default: 0,
+      index:true
     },
 
     lastSyncedAt: {

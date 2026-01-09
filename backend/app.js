@@ -3,6 +3,7 @@ import cors from 'cors';
 import authRouter from './routes/auth.routes.js';
 import problemsRouter from './routes/problem.routes.js';
 import submissionRouter from './routes/submission.routes.js';
+import syncRouter from './routes/sync.routes.js';
 const app = express();
 
 app.use(express.json());
@@ -14,4 +15,5 @@ app.use(cors());
 app.use('/api/auth',authRouter);
 app.use('/api/problems',problemsRouter);
 app.use('/api/submissions',submissionRouter);
+app.use('/api/sync',syncRouter);
 export default app;
