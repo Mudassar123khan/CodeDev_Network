@@ -10,10 +10,10 @@ const scoreCalculator = async (user)=>{
         //checking if ExternalStats are fetched or not
         if(!userStats) return null;
 
-        const codeforcesScore = userStats.platforms?.codeforces?.solvedCount*scoreMultiplier*WEIGHTS.codeforces;
-        const codechefScore = userStats.platforms?.codechef?.solvedCount*scoreMultiplier*WEIGHTS.codechef;
+        const codeforcesScore = userStats.platforms?.codeforces?.solvedCount*scoreMultiplier*WEIGHTS.codeforces || 0;
+        const codechefScore = userStats.platforms?.codechef?.solvedCount*scoreMultiplier*WEIGHTS.codechef || 0;
         const leetcodeScore = userStats.platforms?.leetcode?.solvedCount*scoreMultiplier*WEIGHTS.leetcode || 0;
-        const gfgScore = userStats.platforms?.gfg?.solvedCount*scoreMultiplier*WEIGHTS.gfg;
+        const gfgScore = userStats.platforms?.gfg?.solvedCount*scoreMultiplier*WEIGHTS.gfg || 0;
 
         const totalScore = codeforcesScore+codechefScore+gfgScore+leetcodeScore;
 
