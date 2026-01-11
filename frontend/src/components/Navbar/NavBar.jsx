@@ -1,30 +1,29 @@
-import React, { useState } from 'react'
-import './NavBar.css'
-import { Link } from 'react-router-dom';
-import { assets } from '../../assets/assets';
-function NavBar() {
+import {Link} from 'react-router-dom';
+import './NavBar.css';
+import {assets} from '../../assets/assets.js';
+export default function NavBar(){
+  return(
+    <div className="navbar">
+      <div className="navbar-left">
+        <Link>
+        <img src={assets.logo} alt='CodeDev_Network' className='logo'/>
+        </Link>
 
-    const [login,setLogin] = useState("Sign Up");
+        <Link>
+        Contest
+        </Link>
+        <Link>
+        Leaderboard
+        </Link>
+        <Link>
+        Problems
+        </Link>
+      </div>
 
-  return (
-    <nav className='navbar'>
-      <Link to={'/'}> <img src={assets.logo} alt="logo" className='logo' /></Link>
-      
-      <ul className="navbar-menu">
-        <Link to={'/contest'}>Contest</Link>
-        <Link to={'/leaderboard'}>Leaderboard</Link>
-        <Link to={'/discuss'}>Discuss</Link> 
-        <Link to={'/learn'}>Learn</Link>
-      </ul>
 
       <div className="navbar-right">
-        <div className="narbar-profile">
-            <Link to={'/profile'}> <img src="#" alt="profile image" /> </Link>
-        </div>
-        <button>{login}</button>
-      </div>
-    </nav>
-  )
-}
 
-export default NavBar
+      </div>
+    </div>
+  );
+}

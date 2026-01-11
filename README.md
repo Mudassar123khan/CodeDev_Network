@@ -163,7 +163,7 @@ The long-term vision of CodeDevNetwork is to evolve into a **full-fledged coding
 ## Setup Instructions
 
 ```bash
-git clone https://github.com/your-username/CodeDevNetwork.git
+git clone https://github.com/Mudassar123khan/CodeDevNetwork.git
 cd CodeDevNetwork
 npm install
 npm run dev

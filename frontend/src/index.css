@@ -6,13 +6,6 @@
 }
 
 body{
-   background-color: #1A1A1A;
-   color:white;
-   font-family:sans-serif;
-   color:#F2F3F5;
+   background-color: #282828;
+   color: #CFCFCF;
 }
-
-.main-container{
-    min-height: 100vh;
-}
-
