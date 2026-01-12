@@ -1,7 +1,8 @@
 .navbar{
     background-color: #464646;
-    height: 50px;
+    padding: 12px 4px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -9,9 +10,13 @@
     height: 20px;
 }
 
+.navbar-menu{
+    display: flex;
+    list-style: none;
+    gap:20px;
+    font-size: 18px;
+}
+
 .navbar-left{
     display: flex;
-    margin-left: 10px;
-    justify-content: space-between;
-    width: 500px;
 }

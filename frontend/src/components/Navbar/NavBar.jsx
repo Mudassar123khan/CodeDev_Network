@@ -4,11 +4,14 @@ import {assets} from '../../assets/assets.js';
 export default function NavBar(){
   return(
     <div className="navbar">
-      <div className="navbar-left">
+      
         <Link>
         <img src={assets.logo} alt='CodeDev_Network' className='logo'/>
         </Link>
 
+       <div className="navbar-left">
+        
+        <ul className='navbar-menu'>
         <Link>
         Contest
         </Link>
@@ -18,7 +21,9 @@ export default function NavBar(){
         <Link>
         Problems
         </Link>
-      </div>
+        </ul>
+       </div>
+
 
 
       <div className="navbar-right">
