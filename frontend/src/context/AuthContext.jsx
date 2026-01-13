@@ -6,8 +6,12 @@ export const Context = createContext(null);
 export const ContextProvider = ({children})=>{
     const url = 'http://localhost:5000/api';
 
+    const [token, setToken] = useState(null);
+
     const contextValue = {
-        url
+        url,
+        token,
+        setToken
     }
 
     return (

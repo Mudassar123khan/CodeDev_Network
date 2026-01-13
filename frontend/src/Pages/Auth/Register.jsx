@@ -1,5 +1,5 @@
 import "./Register.css";
-import register from "../../api/auth.api";
+import {register} from "../../api/auth.api";
 import { useState, useContext } from "react";
 import { Context } from "../../context/AuthContext";
 export default function Register() {
