@@ -2,6 +2,7 @@ import "./Register.css";
 import {register} from "../../api/auth.api";
 import { useState, useContext } from "react";
 import { Context } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 export default function Register() {
 const {url} = useContext(Context);
   const [data, setData] = useState({
@@ -124,7 +125,11 @@ const {url} = useContext(Context);
         />
         </div>
         <button type="submit">Create Account</button>
+        <p className="login-link">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
       </form>
+      
     </div>
   );
 }

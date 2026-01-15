@@ -2,6 +2,7 @@ import { login } from "../../api/auth.api.js";
 import { useContext, useState } from "react";
 import { Context } from "../../context/AuthContext.jsx";
 import './login.css';
+import { Link } from "react-router-dom";
 export default function Login() {
   //using the context api to access url, token, setToken from AuthContext
   const { url, token, setToken } = useContext(Context);
@@ -26,6 +27,8 @@ export default function Login() {
     if (res.data.success) {
       console.log("loggedIn");
         setToken(res.data.token);
+        // after successful login API response
+        localStorage.setItem("token", res.data.token);
     } else {
       console.log(`An error occured, ${res.data.message}`);
     }
@@ -51,7 +54,12 @@ export default function Login() {
         />
 
         <button>Login</button>
+        <p className="login-link">
+          Create an account! <Link to="/register">Register</Link>
+        </p>
       </form>
+
+      
     </div>
   );
 }

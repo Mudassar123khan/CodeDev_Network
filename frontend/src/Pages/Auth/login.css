@@ -71,3 +71,19 @@
     grid-template-columns: 1fr;
   }
 }
+
+.login-link {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280; /* gray */
+}
+
+.login-link a {
+  color: #FFA116;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}

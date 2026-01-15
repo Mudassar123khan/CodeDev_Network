@@ -5,7 +5,7 @@ export default function NavBar(){
   return(
     <div className="navbar">
       
-        <Link>
+        <Link to='/'>
         <img src={assets.logo} alt='CodeDev_Network' className='logo'/>
         </Link>
 
@@ -15,10 +15,10 @@ export default function NavBar(){
         <Link>
         Contest
         </Link>
-        <Link>
+        <Link to='/leaderboard'>
         Leaderboard
         </Link>
-        <Link>
+        <Link to='/problems'>
         Problems
         </Link>
         </ul>
