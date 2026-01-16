@@ -1,0 +1,24 @@
+.leaderboard {
+  padding: 2rem;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 12px;
+  text-align: center;
+  /* border-bottom: 1px solid #ddd; */
+}
+
+/* .leaderboard-table th {
+  background-color: #f4f4f4;
+} */
+
+.leaderboard-table tr:hover{
+    background-color: #464646;
+    transition: 0.4s;
+}

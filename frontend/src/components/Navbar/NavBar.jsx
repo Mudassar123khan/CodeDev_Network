@@ -1,7 +1,12 @@
 import {Link} from 'react-router-dom';
 import './NavBar.css';
 import {assets} from '../../assets/assets.js';
+import { useContext } from 'react';
+import { Context } from '../../context/AuthContext.jsx';
 export default function NavBar(){
+
+  const {token} = useContext(Context);
+
   return(
     <div className="navbar">
       
@@ -27,7 +32,9 @@ export default function NavBar(){
 
 
       <div className="navbar-right">
-
+        <div className="login-signup-box">
+          {token?<img src={assets.profile_icon} alt='profile-img'></img>:<><Link to='/login'>Login</Link> / <Link to='/register'>Register</Link></>}
+        </div>
       </div>
     </div>
   );
