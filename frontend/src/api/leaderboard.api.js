@@ -1,8 +1,12 @@
 import axios from "axios";
 
-const leaderboard = async (platform,url,token)=>{
-    const response = await axios.get(`${url}/leaderboard`,{headers:{Authorization:`Bearer ${token}`}},{params:{platform}});
-    return response.data;
-}
+const leaderboard = async (plat, url, token) => {
+  const response = await axios.get(`${url}/leaderboard`, {
+    headers: { Authorization: `Bearer ${token}` },
+    params: { platform: plat },
+  });
 
-export {leaderboard};
+  return response.data;
+};
+
+export { leaderboard };

@@ -22,3 +22,11 @@
     background-color: #464646;
     transition: 0.4s;
 }
+
+.sync-note{
+  color:red;
+  display: none;
+}
+.sync-note-active{
+  display: block;
+}

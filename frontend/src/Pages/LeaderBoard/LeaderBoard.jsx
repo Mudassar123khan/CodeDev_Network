@@ -2,6 +2,8 @@ import "./Leaderboard.css";
 import { leaderboard } from "../../api/leaderboard.api";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/AuthContext";
+import { syncUser } from "../../api/sync.api";
+
 
 export default function Leaderboard() {
     const [data,setData] = useState([]);
@@ -23,18 +25,27 @@ export default function Leaderboard() {
 
    //handler for platform capturing
    const onClickHandler = (e)=>{
-      const {name,value} = e.target;
-      console.log("Clicked");
-      console.log(value);
+      const {value} = e.target;
       setPlatform(value);
+   }
+
+   //handler for user syncing
+   const userSyncHandler =async ()=>{
+    const response = await syncUser(url,token);
+    if(response.success){
+      const pElement = document.querySelector('.sync-note');
+      pElement.classList.add('sync-note-active');
+    }
    }
 
 
   return (
     <div className="leaderboard">
+      <button name="sync-button" onClick={userSyncHandler}>SyncMe</button>
       <button name="leetcode" value='leetcode' onClick={onClickHandler}>Leetcode</button>
       <button name="codeforces" value='codeforces' onClick={onClickHandler}>Codeforces</button>
       <button name="codechef" value='codechef' onClick={onClickHandler}>Codechef</button>
+      <button name="gfg" value='gfg' onClick={onClickHandler}>GFG</button>
 
       <table className="leaderboard-table">
         <thead>
@@ -54,6 +65,7 @@ export default function Leaderboard() {
           ))}
         </tbody>
       </table>
+      <p className="sync-note">You are synced now</p>
     </div>
   );
 }
