@@ -128,7 +128,7 @@ const register = async(req,res)=>{
     }
 };
 
-const logout = async()=>{
+const logout = async(req,res)=>{
     console.log("Logout");
 };
 

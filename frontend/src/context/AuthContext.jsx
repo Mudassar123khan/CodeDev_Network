@@ -1,5 +1,5 @@
 
-import { createContext,useState } from "react";
+import { createContext,useEffect,useState } from "react";
 
 export const Context = createContext(null);
 
@@ -13,6 +13,13 @@ export const ContextProvider = ({children})=>{
         token,
         setToken
     }
+
+    //useeffect to set the token after referesh
+    useEffect(()=>{
+        if(localStorage.getItem("token")){
+            setToken(localStorage.getItem("token"));
+        }
+    },[]);
 
     return (
         <Context.Provider value={contextValue}>

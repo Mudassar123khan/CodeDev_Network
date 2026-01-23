@@ -13,4 +13,5 @@ const login = async (data,url)=>{
     const response = await axios.post(`${url}/auth/login`,data);
     return response;
 }
+
 export {register,login};

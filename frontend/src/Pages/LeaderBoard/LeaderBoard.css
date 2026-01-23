@@ -1,32 +1,122 @@
-.leaderboard {
-  padding: 2rem;
+/* Page wrapper */
+.leaderboard-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding-top: 80px;
+  color: #e6eaf2;
+  font-family: "Inter", system-ui, sans-serif;
 }
 
-.leaderboard-table {
+/* Card */
+.leaderboard-card {
   width: 100%;
-  border-collapse: collapse;
+  max-width: 1100px;
+  background: #2c2b2b;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.leaderboard-table th,
-.leaderboard-table td {
-  padding: 12px;
+/* Header */
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.leaderboard-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Buttons */
+.leaderboard-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.leaderboard-actions button {
+  background: transparent;
+  border: 1px solid #262a36;
+  color: #9aa4b2;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+
+.leaderboard-actions button.active {
+  background: #FFA116;
+  border-color: #FFA116;
+  color: #ffffff;
+}
+
+.sync-btn {
+  border-color: #FFA116;
+  color: #FFA116;
+}
+
+/* Leaderboard rows */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 140px;
+  align-items: center;
+  padding: 14px 18px;
+  background: #2c2b2b;
+  border-radius: 12px;
+  transition: background 0.25s;
+}
+
+.leaderboard-row:hover {
+  background: #282828;
+}
+
+/* Rank */
+.rank {
+  font-weight: 600;
   text-align: center;
-  /* border-bottom: 1px solid #ddd; */
 }
 
-/* .leaderboard-table th {
-  background-color: #f4f4f4;
-} */
-
-.leaderboard-table tr:hover{
-    background-color: #464646;
-    transition: 0.4s;
+.rank-1 {
+  color: #f5c542;
 }
 
-.sync-note{
-  color:red;
-  display: none;
+.rank-2 {
+  color: #b8c1cc;
 }
-.sync-note-active{
-  display: block;
+
+.rank-3 {
+  color: #cd7f32;
+}
+
+/* User */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.username {
+  font-weight: 600;
+}
+
+.you-tag {
+  font-size: 12px;
+  color: #FFA116;
+}
+
+/* Score */
+.score {
+  text-align: right;
+  font-weight: 600;
 }

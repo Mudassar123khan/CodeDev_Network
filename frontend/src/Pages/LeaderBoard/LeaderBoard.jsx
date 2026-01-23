@@ -1,71 +1,135 @@
 import "./Leaderboard.css";
 import { leaderboard } from "../../api/leaderboard.api";
+import { syncUser } from "../../api/sync.api";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/AuthContext";
-import { syncUser } from "../../api/sync.api";
-
+import { toast } from "react-toastify";
 
 export default function Leaderboard() {
-    const [data,setData] = useState([]);
-    const [platform,setPlatform] = useState("");
-    const {url, token} = useContext(Context);
+  const [data, setData] = useState([]);
+  const [platform, setPlatform] = useState("overall");
+  const { url, token } = useContext(Context);
+  const [syncing, setSyncing] = useState(false);
 
+  useEffect(() => {
+    fetchLeaderboardDetails();
+  }, [platform]);
 
-    //calls the fetchLeaderboardDetails function on every reload
-    useEffect(()=>{
-      fetchLeaderboardDetails();
-    },[platform]);
+  const fetchLeaderboardDetails = async () => {
+    const response = await leaderboard(
+      platform === "overall" ? "" : platform,
+      url,
+      token,
+    );
+    setData(response.data);
+  };
 
+  const onPlatformChange = (e) => {
+    setPlatform(e.target.value);
+  };
 
-    //function which calls the api function
-    const fetchLeaderboardDetails = async ()=>{
-        const response = await leaderboard(platform,url,token);
-        setData(response.data);
+  const userSyncHandler = async () => {
+    if (syncing) return;
+    setSyncing(true);
+
+    try {
+      const response = await syncUser(url, token);
+      if (response?.success) {
+        toast.success("Profile synced successfully");
+        fetchLeaderboardDetails();
+      } else {
+        toast.error("Sync failed");
+      }
+    } catch {
+      toast.error("Sync error");
+    } finally {
+      setSyncing(false);
     }
+  };
 
-   //handler for platform capturing
-   const onClickHandler = (e)=>{
-      const {value} = e.target;
-      setPlatform(value);
-   }
-
-   //handler for user syncing
-   const userSyncHandler =async ()=>{
-    const response = await syncUser(url,token);
-    if(response.success){
-      const pElement = document.querySelector('.sync-note');
-      pElement.classList.add('sync-note-active');
+  const getScoreByPlatform = (u) => {
+    if (platform === "overall") {
+      return u.totalScore;
     }
-   }
-
+    return u.platformScores?.[platform] ?? 0;
+  };
 
   return (
-    <div className="leaderboard">
-      <button name="sync-button" onClick={userSyncHandler}>SyncMe</button>
-      <button name="leetcode" value='leetcode' onClick={onClickHandler}>Leetcode</button>
-      <button name="codeforces" value='codeforces' onClick={onClickHandler}>Codeforces</button>
-      <button name="codechef" value='codechef' onClick={onClickHandler}>Codechef</button>
-      <button name="gfg" value='gfg' onClick={onClickHandler}>GFG</button>
+    <div className="leaderboard-page">
+      <div className="leaderboard-card">
+        <div className="leaderboard-header">
+          <h2>Leaderboard</h2>
 
-      <table className="leaderboard-table">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>User</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user,index) => (
-            <tr key={user._id}>
-              <td>{index+1}</td>
-              <td>{user.userId.username}</td>
-              <td>{user.totalScore}</td>
-            </tr>
+          <div className="leaderboard-actions">
+            <button
+              className="sync-btn"
+              onClick={userSyncHandler}
+              disabled={syncing}
+            >
+              {syncing ? "Syncing..." : "Sync Me"}
+            </button>
+
+            <button
+              value="overall"
+              onClick={onPlatformChange}
+              className={platform === "overall" ? "active" : ""}
+            >
+              Overall
+            </button>
+
+            <button
+              value="leetcode"
+              onClick={onPlatformChange}
+              className={platform === "leetcode" ? "active" : ""}
+            >
+              LeetCode
+            </button>
+
+            <button
+              value="codeforces"
+              onClick={onPlatformChange}
+              className={platform === "codeforces" ? "active" : ""}
+            >
+              Codeforces
+            </button>
+
+            <button
+              value="codechef"
+              onClick={onPlatformChange}
+              className={platform === "codechef" ? "active" : ""}
+            >
+              CodeChef
+            </button>
+
+            <button
+              value="gfg"
+              onClick={onPlatformChange}
+              className={platform === "gfg" ? "active" : ""}
+            >
+              GFG
+            </button>
+          </div>
+        </div>
+
+        <div className="leaderboard-list">
+          {data.map((u) => (
+            <div className="leaderboard-row" key={u._id}>
+              {/* Rank from backend */}
+              <div className={`rank rank-${u.rank <= 3 ? u.rank : ""}`}>
+                {u.rank}
+              </div>
+
+              {/* User */}
+              <div className="user">
+                <span className="username">{u.userId.username}</span>
+              </div>
+
+              {/* Score */}
+              <div className="score">{getScoreByPlatform(u)}</div>
+            </div>
           ))}
-        </tbody>
-      </table>
-      <p className="sync-note">You are synced now</p>
+        </div>
+      </div>
     </div>
   );
 }

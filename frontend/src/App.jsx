@@ -7,12 +7,23 @@ import { Context } from './context/AuthContext.jsx';
 import Home from './Pages/Home/Home.jsx';
 import LeaderBoard from './Pages/LeaderBoard/LeaderBoard.jsx';
 import Problems from './Pages/Problems/Problems.jsx';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
 
   const {token} = useContext(Context);
   return (
    <div className="app" id='app'>
     <NavBar/> 
+    <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="dark"
+      />
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={token?<Navigate to='/'/>:<Login/>}/>

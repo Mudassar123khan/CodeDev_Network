@@ -1,11 +1,12 @@
 /* Register.css */
 .register {
-  min-height: 100vh;
+  min-height: 93vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f4f6f8; /* light background */
   padding: 20px;
+
 }
 
 .register-form {

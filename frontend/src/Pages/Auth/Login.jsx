@@ -25,7 +25,6 @@ export default function Login() {
     const res = await login(data, url);
 
     if (res.data.success) {
-      console.log("loggedIn");
         setToken(res.data.token);
         // after successful login API response
         localStorage.setItem("token", res.data.token);

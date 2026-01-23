@@ -2,8 +2,9 @@
     background-color: #464646;
     padding: 12px 4px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
+    border-bottom: 1px solid #2A2A2A;
 }
 
 .logo{
@@ -13,10 +14,28 @@
 .navbar-menu{
     display: flex;
     list-style: none;
-    gap:20px;
+    gap: 30px;
     font-size: 18px;
+
 }
 
 .navbar-left{
     display: flex;
+    width: 50%;
+}
+
+.sidebar{
+    display: none;
+}
+.show-sidebar{
+    display: block;
+    cursor: pointer;
+}
+
+.profile-image{
+    cursor: pointer;
+}
+
+.navbar-menu-element:hover{
+    color:#ffffff;
 }
