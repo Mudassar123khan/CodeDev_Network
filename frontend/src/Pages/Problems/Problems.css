@@ -1,0 +1,46 @@
+.problems-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding-top: 80px;
+  color: #e6eaf2;
+}
+
+/* Card */
+.problem-card {
+  width: 100%;
+  max-width: 1100px;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* Header */
+.problem-header {
+  display: grid;
+  grid-template-columns: 70px 1fr 140px;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #2c2b2b;
+  padding: 14px 18px;
+  border-radius: 12px;
+}
+
+.problem-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.problem-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 140px;
+  align-items: center;
+  padding: 14px 18px;
+  background: #2c2b2b;
+  border-radius: 12px;
+  transition: background 0.25s;
+}
+
+.problem-row:hover {
+  background: #282828;
+}

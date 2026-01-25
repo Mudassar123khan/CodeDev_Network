@@ -1,14 +1,14 @@
 import "./Leaderboard.css";
 import { leaderboard } from "../../api/leaderboard.api";
 import { syncUser } from "../../api/sync.api";
-import { useContext, useEffect, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import { Context } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
 export default function Leaderboard() {
   const [data, setData] = useState([]);
   const [platform, setPlatform] = useState("overall");
-  const { url, token } = useContext(Context);
+  const { url, token, user } = useContext(Context);
   const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
@@ -48,88 +48,75 @@ export default function Leaderboard() {
   };
 
   const getScoreByPlatform = (u) => {
-    if (platform === "overall") {
-      return u.totalScore;
-    }
+    if (platform === "overall") return u.totalScore;
     return u.platformScores?.[platform] ?? 0;
   };
 
+  const podium = data.slice(0, 3);
+  const rest = data.slice(3);
+
+
   return (
     <div className="leaderboard-page">
-      <div className="leaderboard-card">
-        <div className="leaderboard-header">
-          <h2>Leaderboard</h2>
+      <div className="userstats">
+        
+      </div>
+      {/* CONTROL BAR */}
+      <div className="control-bar">
+        <h2>Leaderboard</h2>
 
-          <div className="leaderboard-actions">
-            <button
-              className="sync-btn"
-              onClick={userSyncHandler}
-              disabled={syncing}
-            >
-              {syncing ? "Syncing..." : "Sync Me"}
-            </button>
+        <div className="leaderboard-actions">
+          <button
+            className="sync-btn"
+            onClick={userSyncHandler}
+            disabled={syncing}
+          >
+            {syncing ? "Syncing..." : "Sync Me"}
+          </button>
 
+          {["overall", "leetcode", "codeforces", "codechef", "gfg"].map((p) => (
             <button
-              value="overall"
+              key={p}
+              value={p}
               onClick={onPlatformChange}
-              className={platform === "overall" ? "active" : ""}
+              className={platform === p ? "active" : ""}
             >
-              Overall
+              {p === "overall"
+                ? "Overall"
+                : p.charAt(0).toUpperCase() + p.slice(1)}
             </button>
-
-            <button
-              value="leetcode"
-              onClick={onPlatformChange}
-              className={platform === "leetcode" ? "active" : ""}
-            >
-              LeetCode
-            </button>
-
-            <button
-              value="codeforces"
-              onClick={onPlatformChange}
-              className={platform === "codeforces" ? "active" : ""}
-            >
-              Codeforces
-            </button>
-
-            <button
-              value="codechef"
-              onClick={onPlatformChange}
-              className={platform === "codechef" ? "active" : ""}
-            >
-              CodeChef
-            </button>
-
-            <button
-              value="gfg"
-              onClick={onPlatformChange}
-              className={platform === "gfg" ? "active" : ""}
-            >
-              GFG
-            </button>
-          </div>
-        </div>
-
-        <div className="leaderboard-list">
-          {data.map((u) => (
-            <div className="leaderboard-row" key={u._id}>
-              {/* Rank from backend */}
-              <div className={`rank rank-${u.rank <= 3 ? u.rank : ""}`}>
-                {u.rank}
-              </div>
-
-              {/* User */}
-              <div className="user">
-                <span className="username">{u.userId.username}</span>
-              </div>
-
-              {/* Score */}
-              <div className="score">{getScoreByPlatform(u)}</div>
-            </div>
           ))}
         </div>
+      </div>
+
+      {/* PODIUM */}
+      <div className="podium">
+        {podium.map((u) => (
+          <div key={u._id} className={`podium-card rank-${u.rank}`}>
+            <div className="podium-rank">#{u.rank}</div>
+            <div className="podium-user">{u.userId.username}</div>
+            <div className="podium-score">{getScoreByPlatform(u)}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* RANK LIST */}
+      <div className="leaderboard-list">
+        <div className="leaderboard-row headline">
+          <div className="rank">Rank</div>
+          <div className="user">User</div>
+          <div className="score">Score</div>
+        </div>
+        {rest.map((u) => (
+          <div className="leaderboard-row" key={u._id}>
+            <div className="rank">{u.rank}</div>
+            <div className="user">{u.userId.username}</div>
+            <div className="score">{getScoreByPlatform(u)}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+
+// changes 1 times

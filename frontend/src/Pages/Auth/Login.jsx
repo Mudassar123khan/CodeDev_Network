@@ -5,7 +5,7 @@ import './login.css';
 import { Link } from "react-router-dom";
 export default function Login() {
   //using the context api to access url, token, setToken from AuthContext
-  const { url, token, setToken } = useContext(Context);
+  const { url, setUser, setToken } = useContext(Context);
   //state variable to store the user login credentials
   const [data, setData] = useState({
     email: "",
@@ -23,11 +23,12 @@ export default function Login() {
   const loginHandler = async (event) => {
     event.preventDefault();
     const res = await login(data, url);
-
     if (res.data.success) {
         setToken(res.data.token);
+        setUser(res.data.user)
         // after successful login API response
         localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user",res.data.user);
     } else {
       console.log(`An error occured, ${res.data.message}`);
     }

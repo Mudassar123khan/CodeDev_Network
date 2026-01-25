@@ -1,37 +1,28 @@
-/* Page wrapper */
+/* Page */
 .leaderboard-page {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding-top: 80px;
-  color: #e6eaf2;
-  font-family: "Inter", system-ui, sans-serif;
-}
-
-/* Card */
-.leaderboard-card {
-  width: 100%;
+  background: #1b1b1b;
+  color: #cfcfcf;
+  padding: 80px 20px 40px;
+  font-family: system-ui, sans-serif;
   max-width: 1100px;
-  background: #2c2b2b;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  margin: 0 auto;
 }
 
-/* Header */
-.leaderboard-header {
+/* CONTROL BAR */
+.control-bar {
+  max-width: 1100px;
+  margin: 0 auto 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
 }
 
-.leaderboard-header h2 {
-  font-size: 28px;
+.control-bar h2 {
+  font-size: 24px;
   font-weight: 700;
 }
 
-/* Buttons */
 .leaderboard-actions {
   display: flex;
   gap: 10px;
@@ -40,83 +31,116 @@
 
 .leaderboard-actions button {
   background: transparent;
-  border: 1px solid #262a36;
-  color: #9aa4b2;
+  border: 1px solid #2d2d2d;
+  color: #cfcfcf;
   padding: 8px 14px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
 }
 
-
 .leaderboard-actions button.active {
-  background: #FFA116;
-  border-color: #FFA116;
+  background: #ffa116;
+  border-color: #ffa116;
   color: #ffffff;
 }
 
 .sync-btn {
-  border-color: #FFA116;
-  color: #FFA116;
+  border-color: #ffa116;
+  color: #ffa116;
 }
 
-/* Leaderboard rows */
+/* PODIUM */
+.podium {
+  max-width: 1100px;
+  margin: 0 auto 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.podium-card {
+  background: #2d2d2d;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.podium-rank {
+  color: #ffa116;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.podium-user {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.podium-score {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* RANK LIST */
 .leaderboard-list {
+  max-width: 1100px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .leaderboard-row {
+  background: #2d2d2d;
+  padding: 12px 16px;
+  border-radius: 6px;
   display: grid;
-  grid-template-columns: 70px 1fr 140px;
+  grid-template-columns: 60px 1fr 120px;
   align-items: center;
-  padding: 14px 18px;
-  background: #2c2b2b;
-  border-radius: 12px;
-  transition: background 0.25s;
 }
 
 .leaderboard-row:hover {
   background: #282828;
 }
 
-/* Rank */
+/* CSS for headline */
+.leaderboard-row.headline {
+  background: #282828;          /* Slight contrast from rows */
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: #cfcfcf;
+  cursor: default;
+}
+
+/* Disable hover effect on headline */
+.leaderboard-row.headline:hover {
+  background: #282828;
+}
+
+/* Align header text properly */
+.leaderboard-row.headline .rank {
+  text-align: left;
+}
+
+.leaderboard-row.headline .score {
+  text-align: right;
+}
+
+/*Ends here*/
 .rank {
   font-weight: 600;
-  text-align: center;
 }
 
-.rank-1 {
-  color: #f5c542;
-}
-
-.rank-2 {
-  color: #b8c1cc;
-}
-
-.rank-3 {
-  color: #cd7f32;
-}
-
-/* User */
 .user {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-weight: 500;
 }
 
-.username {
-  font-weight: 600;
-}
-
-.you-tag {
-  font-size: 12px;
-  color: #FFA116;
-}
-
-/* Score */
 .score {
   text-align: right;
   font-weight: 600;
 }
+
+
+/* changed 1 times */

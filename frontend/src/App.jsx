@@ -9,6 +9,7 @@ import LeaderBoard from './Pages/LeaderBoard/LeaderBoard.jsx';
 import Problems from './Pages/Problems/Problems.jsx';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProblemDetails from './Pages/Problems/ProblemDetails.jsx';
 function App() {
 
   const {token} = useContext(Context);
@@ -30,6 +31,7 @@ function App() {
         <Route path='/register' element={token?<Navigate to='/'/>:<Register/>}/>
         <Route path='/leaderboard' element={token?<LeaderBoard/>:<Login/>}/>
         <Route path='/problems' element={<Problems/>}/>
+        <Route path='/problems/:slug' element={token?<ProblemDetails/>:<Login/>}/>
       </Routes>
    </div>
   );

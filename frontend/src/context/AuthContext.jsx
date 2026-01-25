@@ -7,17 +7,21 @@ export const ContextProvider = ({children})=>{
     const url = 'http://localhost:5000/api';
 
     const [token, setToken] = useState(null);
+    const [user,setUser] = useState(null);
 
     const contextValue = {
         url,
         token,
-        setToken
+        setToken,
+        setUser,
+        user
     }
 
     //useeffect to set the token after referesh
     useEffect(()=>{
         if(localStorage.getItem("token")){
             setToken(localStorage.getItem("token"));
+            setToken(localStorage.getItem("user"));
         }
     },[]);
 
