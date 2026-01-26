@@ -1,0 +1,66 @@
+/* =========================
+   PAGE
+========================= */
+.contest-page {
+  min-height: 92vh;
+  background: #1b1b1b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px;
+  color: #cfcfcf;
+}
+
+/* =========================
+   CARD
+========================= */
+.contest-card {
+  max-width: 600px;
+  width: 100%;
+  background: #2d2d2d;
+  padding: 40px 32px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+/* Title */
+.contest-card h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+/* Subtitle */
+.contest-subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffa116;
+  margin-bottom: 20px;
+}
+
+/* Description */
+.contest-description {
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 28px;
+}
+
+/* Note */
+.contest-note {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 600px) {
+  .contest-card {
+    padding: 32px 24px;
+  }
+
+  .contest-card h1 {
+    font-size: 24px;
+  }
+}

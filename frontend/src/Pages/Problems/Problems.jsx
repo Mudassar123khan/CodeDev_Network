@@ -5,43 +5,48 @@ import "./Problems.css";
 import { Link } from "react-router-dom";
 
 export default function Problems() {
-  //state variable to store the problems
-  const [problem, setProblem] = useState([]);
-
-  //url fetched from Context api
+  const [problems, setProblems] = useState([]);
   const { url } = useContext(Context);
 
-  //function to call fetchProblems api
   const fetchProblems = async () => {
     const response = await fetchProblemsAPI(url);
-    setProblem(response);
+    setProblems(response);
   };
 
-  //using useEffect to render the problems when the page re-renders
   useEffect(() => {
     fetchProblems();
   }, []);
 
   return (
     <div className="problems-page">
-      <div className="problem-card">
-        <div className="problem-header">
-          <div className="problem-number">S.No</div>
-          <div className="problem-name">Problem</div>
-          <div className="problem-difficulty">Difficulty</div>
+      <div className="problems-container">
+        <h2 className="problems-title">Problems</h2>
+
+        {/* Header */}
+        <div className="problems-header">
+          <span>#</span>
+          <span>Problem</span>
+          <span>Difficulty</span>
         </div>
 
-        <div className="problem-list">
-          {problem.map((p, index) => (
+        {/* List */}
+        <div className="problems-list">
+          {problems.map((p, index) => (
             <div className="problem-row" key={p._id}>
-              {/*Serial number*/}
-              <div className="problem-number">{index + 1}</div>
+              <span className="problem-index">{index + 1}</span>
 
-              {/*Problem Title*/}
-              <div className="problem-title"><Link to={`/problems/${p.slug}`}>{p.title}</Link></div>
+              <Link
+                to={`/problems/${p.slug}`}
+                className="problem-link"
+              >
+                {p.title}
+              </Link>
 
-              {/*Problem difficulty*/}
-              <div className="problem-difficulty">{p.difficulty}</div>
+              <span
+                className={`problem-difficulty ${p.difficulty.toLowerCase()}`}
+              >
+                {p.difficulty}
+              </span>
             </div>
           ))}
         </div>

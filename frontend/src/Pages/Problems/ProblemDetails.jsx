@@ -42,14 +42,14 @@ export default function ProblemDetails() {
   }, [slug]);
 
   //submit button handler
-  const submitHandler =async ()=>{
-    const payload = {
-      problemId: problemDetail._id,
-      code,
-      language
-    }
-    const response = await createSubmission(url,payload,token);
-  }
+  // const submitHandler =async ()=>{
+  //   const payload = {
+  //     problemId: problemDetail._id,
+  //     code,
+  //     language
+  //   }
+  //   const response = await createSubmission(url,payload,token);
+  // }
 
   return (
     <div className="problem-details">
@@ -88,10 +88,13 @@ export default function ProblemDetails() {
           </select>
           <div className="run-submit-buttons">
             <button className="run-btn">Run</button>
-            <button className="submit-btn" onClick={submitHandler}>Submit</button>
+            <button className="submit-btn">Submit</button>
           </div>
         </div>
-
+        <div className="editor-info">
+        Code execution is under development. You will be able to run and
+          submit solutions soon.
+        </div>
         <CodeEditor language={language} code={code} setCode={setCode} />
       </div>
     </div>

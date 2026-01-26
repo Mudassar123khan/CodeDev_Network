@@ -1,7 +1,7 @@
 import "./Leaderboard.css";
 import { leaderboard } from "../../api/leaderboard.api";
 import { syncUser } from "../../api/sync.api";
-import { use, useContext, useEffect, useState } from "react";
+import {useContext, useEffect,useState } from "react";
 import { Context } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -56,11 +56,9 @@ export default function Leaderboard() {
   const rest = data.slice(3);
 
 
+
   return (
     <div className="leaderboard-page">
-      <div className="userstats">
-        
-      </div>
       {/* CONTROL BAR */}
       <div className="control-bar">
         <h2>Leaderboard</h2>

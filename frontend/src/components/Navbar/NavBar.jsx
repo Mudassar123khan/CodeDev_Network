@@ -30,7 +30,7 @@ export default function NavBar() {
 
       <div className="navbar-left">
         <ul className="navbar-menu">
-          <Link className="navbar-menu-element">Contest</Link>
+          <Link to="/contest" className="navbar-menu-element">Contest</Link>
           <Link to="/leaderboard" className="navbar-menu-element">Leaderboard</Link>
           <Link to="/problems" className="navbar-menu-element">Problems</Link>
         </ul>

@@ -21,7 +21,7 @@ export const ContextProvider = ({children})=>{
     useEffect(()=>{
         if(localStorage.getItem("token")){
             setToken(localStorage.getItem("token"));
-            setToken(localStorage.getItem("user"));
+            setUser(localStorage.getItem("user"));
         }
     },[]);
 

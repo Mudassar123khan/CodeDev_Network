@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import { Context } from "../../context/AuthContext.jsx";
 import './login.css';
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function Login() {
   //using the context api to access url, token, setToken from AuthContext
   const { url, setUser, setToken } = useContext(Context);
@@ -29,8 +30,9 @@ export default function Login() {
         // after successful login API response
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user",res.data.user);
+        toast.success("Loggedin successfully");
     } else {
-      console.log(`An error occured, ${res.data.message}`);
+      toast.error(res.message);
     }
   };
   return (

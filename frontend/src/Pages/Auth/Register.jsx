@@ -2,9 +2,11 @@ import "./Register.css";
 import {register} from "../../api/auth.api";
 import { useState, useContext } from "react";
 import { Context } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function Register() {
 const {url} = useContext(Context);
+const navigate = useNavigate();
   const [data, setData] = useState({
     username: "",
     email: "",
@@ -48,9 +50,10 @@ const {url} = useContext(Context);
     const response = await register(data,url);
 
     if(response.data.success){
-        console.log("user registered");
+        toast.success("Account created successfully");
+        navigate("/login");
     }else{
-        console.log(response.data.message);
+        toast.error(response.message);
     }
   };
 
@@ -124,7 +127,7 @@ const {url} = useContext(Context);
           placeholder="Codechef username"
         />
         </div>
-        <button type="submit">Create Account</button>
+        <button type="submit" >Create Account</button>
         <p className="login-link">
           Already have an account? <Link to="/login">Login</Link>
         </p>
