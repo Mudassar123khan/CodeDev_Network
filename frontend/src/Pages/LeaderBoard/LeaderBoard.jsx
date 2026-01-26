@@ -1,4 +1,4 @@
-import "./Leaderboard.css";
+import "./LeaderBoard.css";
 import { leaderboard } from "../../api/leaderboard.api";
 import { syncUser } from "../../api/sync.api";
 import {useContext, useEffect,useState } from "react";
