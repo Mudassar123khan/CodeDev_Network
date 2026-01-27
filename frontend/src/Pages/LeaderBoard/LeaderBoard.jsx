@@ -35,7 +35,7 @@ export default function Leaderboard() {
     try {
       const response = await syncUser(url, token);
       if (response?.success) {
-        toast.success("Profile synced successfully");
+        toast.success("You are in queue, profile will update within a minute");
         fetchLeaderboardDetails();
       } else {
         toast.error("Sync failed");

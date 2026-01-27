@@ -6,7 +6,6 @@ const PlatformStatSchema = new Schema(
     handle: { type: String, trim: true },
     rating: { type: Number, default: 0 },
     solvedCount: { type: Number, default: 0 },
-    lastSynced: { type: Date }
   },
   { _id: false }
 );
@@ -63,6 +62,12 @@ const ExternalStatsSchema = new Schema(
     lastSyncedAt: {
       type: Date,
       default: Date.now
+    },
+    syncStatus:{
+      type:String,
+      enum:["idle", "queued", "syncing", "done", "failed"],
+      default:"idle",
+      index:true
     }
   },
   {

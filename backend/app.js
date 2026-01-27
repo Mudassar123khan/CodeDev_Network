@@ -5,6 +5,7 @@ import problemsRouter from './routes/problem.routes.js';
 import submissionRouter from './routes/submission.routes.js';
 import syncRouter from './routes/sync.routes.js';
 import leaderBoardRouter from './routes/leaderboard.routes.js';
+import "./workers/sync.worker.js";
 const app = express();
 
 app.use(express.json());

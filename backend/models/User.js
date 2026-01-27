@@ -42,7 +42,7 @@ const UserSchema = new Schema({
     leetcode: { type: String, trim: true, default:"" },
     codechef: { type: String, trim: true, default:"" },
     gfg: { type: String, trim: true, default:"" }
-    }
+    },
 
     },
 

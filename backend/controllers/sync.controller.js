@@ -1,6 +1,5 @@
 import User from "../models/User.js";
-import scoreCalculator from "../services/leaderboard/scoreCalculator.js";
-import syncUserPlatforms from "../services/platformSync/platformSync.service.js";
+import { syncQueue } from "../workers/sync.queue.js";
 
 export const syncUser = async (req, res) => {
   try {
@@ -11,13 +10,12 @@ export const syncUser = async (req, res) => {
         message: "User not found"
       });
     }
-
-    await syncUserPlatforms(user);
-    await scoreCalculator(user);
+    //pushing the user in the sync queue
+    syncQueue.push(user);
 
     return res.status(200).json({
       success: true,
-      message: "Platforms synced successfully"
+      message: "queued"
     });
   } catch (err) {
     console.error("Sync error:", err.message);

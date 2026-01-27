@@ -17,7 +17,6 @@ const fetchCodechefStats = async (handle)=>{
             allH3s.forEach(el=>{
                 arr.push(el.innerHTML);
             });
-
             const problems = arr[3].split(" ")[3];
             return {
                 problems:parseInt(problems),
