@@ -1,60 +1,102 @@
 import { Link } from "react-router-dom";
 import "./NavBar.css";
 import { assets } from "../../assets/assets.js";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Context } from "../../context/AuthContext.jsx";
+
 export default function NavBar() {
   const { token, setToken } = useContext(Context);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  //handler to show the sidebar
-  const showSidebar = () => {
-    const sidebar = document.querySelector(".sidebar");
-    if(sidebar.classList.contains("show-sidebar")){
-      sidebar.classList.remove("show-sidebar");
-    }else{
-      sidebar.classList.add("show-sidebar");
-    }
-  };
-
-  //handler to logout user
-  const logout = ()=>{
+  const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
-  }
+    setMenuOpen(false);
+  };
 
   return (
     <div className="navbar">
-      <Link to="/">
+      {/* LEFT */}
+      <Link to="/" className="navbar-logo">
         <img src={assets.logo} alt="CodeDev_Network" className="logo" />
       </Link>
 
-      <div className="navbar-left">
-        <ul className="navbar-menu">
-          <Link to="/contest" className="navbar-menu-element">Contest</Link>
-          <Link to="/leaderboard" className="navbar-menu-element">Leaderboard</Link>
-          <Link to="/problems" className="navbar-menu-element">Problems</Link>
-        </ul>
+      {/* DESKTOP MENU */}
+      <ul className="navbar-menu desktop-menu">
+        <Link to="/contest">Contest</Link>
+        <Link to="/leaderboard">Leaderboard</Link>
+        <Link to="/problems">Problems</Link>
+      </ul>
+
+      {/* RIGHT (DESKTOP AUTH) */}
+      <div className="navbar-right desktop-only">
+  {token ? (
+    <div className="desktop-profile">
+      <img
+        src={assets.profile_icon}
+        className="profile-image"
+        alt="profile"
+      />
+      <div className="desktop-logout" onClick={logout}>
+        Logout
+      </div>
+    </div>
+  ) : (
+    <div className="auth-links">
+      <Link to="/login">Login</Link>
+      <span>/</span>
+      <Link to="/register">Register</Link>
+    </div>
+  )}
+</div>
+
+
+      {/* HAMBURGER */}
+      <div
+        className="hamburger"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        ☰
       </div>
 
-      <div className="navbar-right">
-        <div className="login-signup-box">
-          {token ? (
-            <>
-              <img
-                onClick={showSidebar}
-                className="profile-image"
-                src={assets.profile_icon}
-                alt="profile-img"
-              ></img>{" "}
-              <div className="sidebar" onClick={logout}>logout</div>
-            </>
-          ) : (
-            <>
-              <Link to="/login">Login</Link> /{" "}
-              <Link to="/register">Register</Link>
-            </>
-          )}
-        </div>
+      {/* MOBILE MENU */}
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        {/* PROFILE (TOP) */}
+        {token && (
+          <div className="menu-profile-top">
+            <img src={assets.profile_icon} alt="profile" />
+            <span>Profile</span>
+          </div>
+        )}
+
+        {/* NAV LINKS */}
+        <Link to="/contest" onClick={() => setMenuOpen(false)}>
+          Contest
+        </Link>
+        <Link to="/leaderboard" onClick={() => setMenuOpen(false)}>
+          Leaderboard
+        </Link>
+        <Link to="/problems" onClick={() => setMenuOpen(false)}>
+          Problems
+        </Link>
+
+        <div className="menu-divider" />
+
+        {/* AUTH */}
+        {token ? (
+          <button className="logout-btn" onClick={logout}>
+            Logout
+          </button>
+        ) : (
+          <>
+            <Link to="/login" onClick={() => setMenuOpen(false)}>
+              Login
+            </Link>
+            <Link to="/register" onClick={() => setMenuOpen(false)}>
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );
