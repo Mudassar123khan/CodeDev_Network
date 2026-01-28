@@ -2,7 +2,14 @@ import puppeteer from "puppeteer";
 
 const fetchGfgStats = async (handle) => {
   const browser = await puppeteer.launch({
-    headless: "new"
+    headless: "new",
+    args: [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu",
+    "--single-process"
+  ]
   });
 
   try {
