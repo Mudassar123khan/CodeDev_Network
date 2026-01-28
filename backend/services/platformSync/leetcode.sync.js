@@ -1,8 +1,10 @@
 import puppeteer from "puppeteer";
 
 const fetchLeetcodeStats = async (handle) => {
+  console.log("Chrome path:", puppeteer.executablePath());
   const browser = await puppeteer.launch({
     headless: "new",
+    executablePath: puppeteer.executablePath(),
     args: [
     "--no-sandbox",
     "--disable-setuid-sandbox",
