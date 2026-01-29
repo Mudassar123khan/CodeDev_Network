@@ -1,8 +1,14 @@
+/* =========================
+   BASE LAYOUT
+========================= */
+
 .problem-details {
   display: flex;
   height: calc(100vh - 64px);
+  background: #1b1b1b;
 }
 
+/* LEFT PANEL */
 .problem-left {
   width: 45%;
   overflow-y: auto;
@@ -11,147 +17,173 @@
   color: #cfcfcf;
 }
 
+/* RIGHT PANEL */
 .problem-right {
   width: 55%;
   display: flex;
   flex-direction: column;
+  padding: 16px;
 }
 
-.toolbar{
+/* =========================
+   TOOLBAR
+========================= */
+
+.toolbar {
   display: flex;
-  gap:200px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.run-submit-buttons{
+.run-submit-buttons {
   display: flex;
-  gap:10px;
+  gap: 10px;
 }
 
-/*Button styling*/
-/* Common button base */
 .run-submit-buttons button {
   padding: 6px 16px;
   font-size: 13px;
   font-weight: 500;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
   border: 1px solid transparent;
 }
 
-/* Run button */
 .run-submit-buttons .run-btn {
-  background-color: transparent;
+  background: transparent;
   color: #cfcfcf;
   border: 1px solid #3a3a3a;
 }
 
-.run-submit-buttons .run-btn:hover {
-  background-color: #2d2d2d;
-}
-
-/* Submit button */
 .run-submit-buttons .submit-btn {
-  background-color: #ffa116;
-  color: #000000;
-  border: 1px solid #ffa116;
+  background: #ffa116;
+  color: #000;
 }
-
-.run-submit-buttons .submit-btn:hover {
-  background-color: #ffb547;
-}
-
-
 
 .problem-right select {
   background: #282828;
   color: #cfcfcf;
   border: 1px solid #2d2d2d;
-  padding: 8px;
-  width: 20%;
+  padding: 6px 10px;
 }
 
-/* Problem title */
-.problem-left h1 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #ffffff;
-}
+/* =========================
+   EDITOR
+========================= */
 
-/* Description text */
-.problem-left p {
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 16px;
-}
-
-/* Test case block */
-.testCase {
-  background-color: #2d2d2d;
-  padding: 12px 14px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  border-left: 3px solid #ffa116;
-}
-
-.testCase h2 {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #ffa116;
-}
-
-.testCase p {
-  font-size: 13px;
-  margin: 0;
-  color: #cfcfcf;
-}
-
-/* Topic tags label */
-.problem-left span:first-of-type {
-  display: block;
-  margin-top: 18px;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #ffffff;
-}
-
-/* Individual tags */
-.tag {
-  display: inline-block;
-  background-color: #2d2d2d;
-  color: #ffa116;
-  padding: 4px 10px;
-  margin: 4px 6px 4px 0;
-  font-size: 12px;
-  border-radius: 14px;
-  border: 1px solid #3a3a3a;
-}
-
-/* Constraints section */
-.constraints {
-  margin-top: 20px;
-  padding: 12px 14px;
-  background-color: #2d2d2d;
-  border-radius: 6px;
-  font-size: 13px;
-  line-height: 1.5;
-  border-left: 3px solid #cfcfcf;
-}
-
-
-
-/*==================
-disable logic
-==============*/
 .editor-info {
   background: #2d2d2d;
   border-left: 4px solid #ffa116;
   padding: 10px 14px;
   margin-bottom: 10px;
   font-size: 13px;
-  color: #cfcfcf;
-  opacity: 0.9;
+}
+
+.editor-wrapper {
+  flex: 1;
+  min-height: 300px;
+}
+
+/* =========================
+   CONTENT STYLES
+========================= */
+
+.problem-left h1 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.problem-left p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.testCase {
+  background: #2d2d2d;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border-left: 3px solid #ffa116;
+}
+
+.tag {
+  display: inline-block;
+  background: #2d2d2d;
+  color: #ffa116;
+  padding: 4px 10px;
+  margin: 4px 6px 0 0;
+  font-size: 12px;
+  border-radius: 14px;
+}
+
+.constraints {
+  margin-top: 20px;
+  padding: 12px;
+  background: #2d2d2d;
+  border-left: 3px solid #cfcfcf;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .problem-details {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .problem-left,
+  .problem-right {
+    width: 100%;
+  }
+
+  .problem-left {
+    border-right: none;
+    border-bottom: 1px solid #2d2d2d;
+  }
+
+  .editor-wrapper {
+    min-height: 320px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .problem-left,
+  .problem-right {
+    padding: 14px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .run-submit-buttons {
+    width: 100%;
+  }
+
+  .run-submit-buttons button {
+    flex: 1;
+  }
+
+  .editor-wrapper {
+    min-height: 260px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+  .editor-wrapper {
+    min-height: 220px;
+  }
+
+  .run-submit-buttons {
+    flex-direction: column;
+  }
 }
