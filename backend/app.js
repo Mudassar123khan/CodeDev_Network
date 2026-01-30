@@ -22,6 +22,7 @@ app.use('/api/leaderboard',leaderBoardRouter);//leaderboard route
 
 //health monitoring route
 app.get('/api/health',(req,res)=>{
+  console.log("Health check request received");
   res.send("OK");
 });
 
