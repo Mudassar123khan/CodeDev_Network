@@ -20,4 +20,10 @@ app.use('/api/submissions',submissionRouter);//submissions route
 app.use('/api/sync',syncRouter);//sync route
 app.use('/api/leaderboard',leaderBoardRouter);//leaderboard route
 
+//health monitoring route
+app.get('/api/health',(req,res)=>{
+  console.log("Health check request received");
+  res.send("OK");
+});
+
 export default app;
