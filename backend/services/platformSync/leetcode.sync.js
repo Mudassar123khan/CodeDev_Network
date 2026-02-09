@@ -1,12 +1,15 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 
 const fetchLeetcodeStats = async (handle) => {
   const browser = await puppeteer.launch({
-    headless: "new",
+   executablePath: "/usr/bin/chromium",
+    headless: true,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--single-process",
     ],
   });
   try {
