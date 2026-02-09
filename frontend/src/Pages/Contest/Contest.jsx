@@ -12,7 +12,7 @@ export default function Contest() {
 
         <p className="contest-description">
           The contest module is currently under development.
-          Soon, College students will be able to participate in
+          Soon, Jamia students will be able to participate in
           campus-level competitive programming contests directly
           on this platform.
         </p>
