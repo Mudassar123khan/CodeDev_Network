@@ -1,8 +1,16 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 
 const fetchGfgStats = async (handle) => {
   const browser = await puppeteer.launch({
-    headless: "new"
+    executablePath: "/usr/bin/chromium",
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--single-process",
+    ],
   });
 
   try {
@@ -10,29 +18,27 @@ const fetchGfgStats = async (handle) => {
 
     await page.goto(
       `https://www.geeksforgeeks.org/profile/${handle}?tab=activity`,
-      { waitUntil: "networkidle2" }
+      { waitUntil: "networkidle2" },
     );
 
     await page.waitForSelector(".ScoreContainer_value__7yy7h");
 
     const problemsSolved = await page.evaluate(() => {
       const elements = document.querySelectorAll(
-        ".ScoreContainer_value__7yy7h"
+        ".ScoreContainer_value__7yy7h",
       );
-      return Array.from(elements).map(el => el.innerText);
+      return Array.from(elements).map((el) => el.innerText);
     });
 
     return {
-        handle,
-        rating:0,
-        solvedCount:parseInt(problemsSolved[1]) || 0,
-        lastSynced:new Date(),
-    }
-
+      handle,
+      rating: 0,
+      solvedCount: parseInt(problemsSolved[1]) || 0,
+      lastSynced: new Date(),
+    };
   } catch (err) {
     console.error("GFG scrape failed:", err.message);
     return null;
-
   } finally {
     await browser.close();
   }
