@@ -1,55 +1,59 @@
-import puppeteer from "puppeteer-core";
+import axios from "axios";
 
 const fetchLeetcodeStats = async (handle) => {
-  const browser = await puppeteer.launch({
-   executablePath: "/usr/bin/chromium",
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
-      "--single-process",
-    ],
-  });
+  const LEETCODE_GRAPHQL_URL = "https://leetcode.com/graphql";
+
+  // This query specifically targets the solved counts for all difficulties
+  const graphqlQuery = {
+    query: `
+      query userPublicProfile($username: String!) {
+        matchedUser(username: $username) {
+          submitStats: submitStatsGlobal {
+            acSubmissionNum {
+              difficulty
+              count
+            }
+          }
+        }
+      }
+    `,
+    variables: { username: handle },
+  };
+
   try {
-    const page = await browser.newPage();
-
-    await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    );
-
-    await page.setViewport({ width: 1366, height: 768 });
-
-    await page.goto(`https://leetcode.com/u/${handle}`, {
-      waitUntil: "networkidle2",
+    const response = await axios.post(LEETCODE_GRAPHQL_URL, graphqlQuery, {
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0", // Helps prevent basic bot blocking
+      },
     });
 
-    await page.waitForSelector(".absolute.inset-0 div div span");
+    const data = response.data.data;
 
-    //function to select the element and extract data
-    const findData = await page.evaluate(() => {
-      const problemsSolved = document.querySelector(
-        ".absolute.inset-0 div div span",
-      );
+    if (!data.matchedUser) {
+      throw new Error(`User "${handle}" not found on LeetCode.`);
+    }
 
-      return problemsSolved.innerText;
-    });
+    // Find the total solved count (difficulty: "All") from the array
+    const submissionStats = data.matchedUser.submitStats.acSubmissionNum;
+    const totalSolved = submissionStats.find((s) => s.difficulty === "All")?.count || 0;
 
-    const ques = findData;
     return {
       handle,
-      rating: 0,
-      solvedCount: Number(ques),
+      rating: 0, // Contest rating requires a separate query field if needed
+      solvedCount: totalSolved,
       lastSynced: new Date(),
     };
   } catch (err) {
-    console.log(
-      `An error occured while syncing leetcode, message: ${err.message}`,
-    );
-  } finally {
-    await browser.close();
+    console.error(`LeetCode GraphQL Sync Error: ${err.message}`);
+    // Return a default object or null so your worker doesn't crash
+    return {
+      handle,
+      rating: 0,
+      solvedCount: 0,
+      lastSynced: new Date(),
+      error: err.message
+    };
   }
 };
 
