@@ -34,7 +34,7 @@ const fetchLeetcodeStats = async (handle) => {
       throw new Error(`User "${handle}" not found on LeetCode.`);
     }
 
-    // Find the total solved count (difficulty: "All") from the array
+    // Find the total solved count from the array
     const submissionStats = data.matchedUser.submitStats.acSubmissionNum;
     const totalSolved = submissionStats.find((s) => s.difficulty === "All")?.count || 0;
 

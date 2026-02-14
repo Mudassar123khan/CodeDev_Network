@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import { syncQueue } from "../workers/sync.queue.js";
+import ExternalStats from "../models/ExternalStats.js";
 
 export const syncUser = async (req, res) => {
   try {
@@ -23,5 +24,25 @@ export const syncUser = async (req, res) => {
       success: false,
       message: "Internal server error"
     });
+  }
+};
+
+//controller to get t he sync status
+export const getSyncStatus = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const stats = await ExternalStats.findOne(
+      { userId },
+      { syncStatus: 1, lastSyncedAt: 1 }
+    );
+
+    if (!stats) {
+      return res.status(404).json({ message: "Stats not found" });
+    }
+
+    res.json(stats);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching sync status" });
   }
 };

@@ -10,4 +10,22 @@ const syncUser = async (url,token)=>{
     return response.data;
 }
 
-export{syncUser};
+const getSyncStatus = async (url, token, userId) => {
+  try {
+    const response = await axios.get(
+      `${url}/sync/status/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching sync status:", error);
+    return null;
+  }
+};
+
+export{syncUser,getSyncStatus};
