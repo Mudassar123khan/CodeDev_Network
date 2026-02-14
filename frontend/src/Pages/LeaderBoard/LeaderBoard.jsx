@@ -67,7 +67,7 @@ export default function Leaderboard() {
 
     pollingRef.current = setInterval(async () => {
       try {
-        const statusResponse = await getSyncStatus(url, token,user._id);
+        const statusResponse = await getSyncStatus(url, token);
 
         if (!statusResponse) return;
 
