@@ -10,10 +10,10 @@ const syncUser = async (url,token)=>{
     return response.data;
 }
 
-const getSyncStatus = async (url, token, userId) => {
+const getSyncStatus = async (url, token) => {
   try {
     const response = await axios.get(
-      `${url}/sync/status/${userId}`,
+      `${url}/sync/status`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

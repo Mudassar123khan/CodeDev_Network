@@ -29,7 +29,8 @@ export const syncUser = async (req, res) => {
 
 //controller to get t he sync status
 export const getSyncStatus = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user.id;
+  
 
   try {
     const stats = await ExternalStats.findOne(
