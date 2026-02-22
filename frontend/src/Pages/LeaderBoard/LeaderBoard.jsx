@@ -75,9 +75,9 @@ export default function Leaderboard() {
         const status = statusResponse.syncStatus;
         setSyncStatus(status);
 
-        if (statusResponse.lastSyncedAt) {
-          setLastSyncedAt(statusResponse.lastSyncedAt);
-        }
+        // if (statusResponse.lastSyncedAt) {
+        //   setLastSyncedAt(statusResponse.lastSyncedAt);
+        // }
 
         if (status === "done") {
           clearInterval(pollingRef.current);
