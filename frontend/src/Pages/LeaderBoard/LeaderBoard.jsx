@@ -12,6 +12,7 @@ export default function Leaderboard() {
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState("idle");
   const pollingRef = useRef(null);
+  // const [lastSyncedAt, setLastSyncedAt] = useState(new Date());
 
   useEffect(() => {
     fetchLeaderboardDetails();
@@ -74,6 +75,10 @@ export default function Leaderboard() {
         const status = statusResponse.syncStatus;
         setSyncStatus(status);
 
+        if (statusResponse.lastSyncedAt) {
+          setLastSyncedAt(statusResponse.lastSyncedAt);
+        }
+
         if (status === "done") {
           clearInterval(pollingRef.current);
           pollingRef.current = null;
@@ -110,15 +115,27 @@ export default function Leaderboard() {
         <h2>Leaderboard</h2>
 
         <div className="leaderboard-actions">
-          <button
-            className="sync-btn"
-            onClick={userSyncHandler}
-            disabled={
-              syncing || syncStatus === "queued" || syncStatus === "syncing"
-            }
-          >
-            {syncing ? "Syncing..." : "Sync Me"}
-          </button>
+          <div className="sync-section">
+            <button
+              className="sync-btn"
+              onClick={userSyncHandler}
+              disabled={
+                syncing || syncStatus === "queued" || syncStatus === "syncing"
+              }
+            >
+              {syncStatus === "syncing"
+                ? "Syncing..."
+                : syncStatus === "queued"
+                  ? "In Queue..."
+                  : "Sync Me"}
+            </button>
+
+            {/* {lastSyncedAt && (
+              <div className="last-synced">
+                Last synced: {new Date(lastSyncedAt).toLocaleString()}
+              </div>
+            )} */}
+          </div>
 
           {["overall", "leetcode", "codeforces", "codechef", "gfg"].map((p) => (
             <button

@@ -45,17 +45,26 @@ const navigate = useNavigate();
 
   //function to register a user
   const registerHandler = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    const response = await register(data,url);
+  try {
+    const response = await register(data, url);
 
-    if(response.data.success){
-        toast.success("Account created successfully");
-        navigate("/login");
-    }else{
-        toast.error(response.message);
+    if (response.data.success) {
+      toast.success("Account created successfully");
+      navigate("/login");
+    } else {
+      toast.error(response.data.message);
     }
-  };
+
+  } catch (error) {
+    if (error.response && error.response.data.message) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("Something went wrong");
+    }
+  }
+};
 
   return (
     <div className="register">

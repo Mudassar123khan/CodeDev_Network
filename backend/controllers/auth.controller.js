@@ -79,7 +79,7 @@ const register = async(req,res)=>{
         const exists =await User.findOne({$or:[{email},{username}]});
         if(exists){
             console.log("User already exists");
-            return res.status(409).json({success:false, message:"user already registered"});
+            return res.status(409).json({success:false, message:"User already registered"});
         }
 
         //hashing the password
