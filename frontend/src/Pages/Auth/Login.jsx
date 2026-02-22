@@ -1,7 +1,7 @@
 import { login } from "../../api/auth.api.js";
 import { useContext, useState } from "react";
 import { Context } from "../../context/AuthContext.jsx";
-import './login.css';
+import "./login.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 export default function Login() {
@@ -23,16 +23,23 @@ export default function Login() {
   //function to call the login function
   const loginHandler = async (event) => {
     event.preventDefault();
-    const res = await login(data, url);
-    if (res.data.success) {
+    try {
+      const res = await login(data, url);
+      if (res.data.success) {
         setToken(res.data.token);
-        setUser(res.data.user)
+        setUser(res.data.user);
         // after successful login API response
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user",res.data.user);
-        toast.success("Loggedin successfully");
-    } else {
-      toast.error(res.message);
+        localStorage.setItem("user", res.data.user);
+        toast.success("Logged in successfully");
+      }
+    } catch (error) {
+      if (error.response) {
+        // Backend sent response like 401
+        toast.error(error.response.data.message || "Invalid email or password");
+      } else {
+        toast.error("Server not responding");
+      }
     }
   };
   return (
@@ -60,8 +67,6 @@ export default function Login() {
           Create an account! <Link to="/register">Register</Link>
         </p>
       </form>
-
-      
     </div>
   );
 }
