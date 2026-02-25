@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { Context } from "../../context/AuthContext.jsx";
 
 export default function NavBar() {
-  const { token, setToken } = useContext(Context);
+  const { token, setToken, user } = useContext(Context);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const logout = () => {
@@ -30,32 +30,30 @@ export default function NavBar() {
 
       {/* RIGHT (DESKTOP AUTH) */}
       <div className="navbar-right desktop-only">
-  {token ? (
-    <div className="desktop-profile">
-      <img
-        src={assets.profile_icon}
-        className="profile-image"
-        alt="profile"
-      />
-      <div className="desktop-logout" onClick={logout}>
-        Logout
+        {token ? (
+          <div className="desktop-profile">
+            <Link to={`/profile/${user.username}`}>
+              <img
+                src={assets.profile_icon}
+                className="profile-image"
+                alt="profile"
+              />
+            </Link>
+            <div className="desktop-logout" onClick={logout}>
+              Logout
+            </div>
+          </div>
+        ) : (
+          <div className="auth-links">
+            <Link to="/login">Login</Link>
+            <span>/</span>
+            <Link to="/register">Register</Link>
+          </div>
+        )}
       </div>
-    </div>
-  ) : (
-    <div className="auth-links">
-      <Link to="/login">Login</Link>
-      <span>/</span>
-      <Link to="/register">Register</Link>
-    </div>
-  )}
-</div>
-
 
       {/* HAMBURGER */}
-      <div
-        className="hamburger"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
+      <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
         ☰
       </div>
 
@@ -63,10 +61,12 @@ export default function NavBar() {
       <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
         {/* PROFILE (TOP) */}
         {token && (
-          <div className="menu-profile-top">
-            <img src={assets.profile_icon} alt="profile" />
-            <span>Profile</span>
-          </div>
+          <Link to={`/profile/${user.username}`}>
+            <div className="menu-profile-top">
+              <img src={assets.profile_icon} alt="profile" />
+              <span>Profile</span>
+            </div>
+          </Link>
         )}
 
         {/* NAV LINKS */}

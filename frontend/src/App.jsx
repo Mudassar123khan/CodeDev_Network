@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProblemDetails from './Pages/Problems/ProblemDetails.jsx';
 import Contest from './Pages/Contest/Contest.jsx';
+import Profile from './Pages/Profile/Profile.jsx';
 function App() {
 
   const {token} = useContext(Context);
@@ -34,6 +35,7 @@ function App() {
         <Route path='/problems' element={<Problems/>}/>
         <Route path='/problems/:slug' element={token?<ProblemDetails/>:<Login/>}/>
         <Route path='/contest' element={token?<Contest/>:<Login/>}/>
+        <Route path='/profile/:username' element={token?<Profile/>:<Login/>}/>
       </Routes>
    </div>
   );

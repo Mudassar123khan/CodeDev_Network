@@ -241,3 +241,31 @@
   color: #9a9a9a;
   margin-top: 2px;
 }
+.profile-link {
+  text-decoration: none;
+  color: #ffffff;
+  transition: 0.2s ease;
+}
+
+.profile-link:hover {
+  color: #f59e0b; /* brand orange */
+  cursor: pointer;
+}
+
+.current-user {
+  border: 2px solid #f59e0b;
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.12),
+    rgba(245, 158, 11, 0.05)
+  );
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+}
+
+.leaderboard-row {
+  transition: 0.2s ease;
+}
+
+.leaderboard-row:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}

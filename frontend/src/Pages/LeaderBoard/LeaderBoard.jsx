@@ -4,6 +4,7 @@ import { syncUser, getSyncStatus } from "../../api/sync.api";
 import { useContext, useEffect, useState, useRef } from "react";
 import { Context } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export default function Leaderboard() {
   const [data, setData] = useState([]);
@@ -155,9 +156,19 @@ export default function Leaderboard() {
       {/* PODIUM */}
       <div className="podium">
         {podium.map((u) => (
-          <div key={u._id} className={`podium-card rank-${u.rank}`}>
+          <div
+            key={u._id}
+            className={`podium-card rank-${u.rank} ${
+              u.userId.username === user.username ? "current-user" : ""
+            }`}
+          >
             <div className="podium-rank">#{u.rank}</div>
-            <div className="podium-user">{u.userId.username}</div>
+            <Link
+              to={`/profile/${u.userId.username}`}
+              className="podium-user profile-link"
+            >
+              {u.userId.username}
+            </Link>
             <div className="podium-score">{getScoreByPlatform(u)}</div>
           </div>
         ))}
@@ -171,9 +182,21 @@ export default function Leaderboard() {
           <div className="score">Score</div>
         </div>
         {rest.map((u) => (
-          <div className="leaderboard-row" key={u._id}>
+          <div
+            className={`leaderboard-row ${
+              u.userId.username === user.username ? "current-user" : ""
+            }`}
+            key={u._id}
+          >
             <div className="rank">{u.rank}</div>
-            <div className="user">{u.userId.username}</div>
+            <div className="user">
+              <Link
+                to={`/profile/${u.userId.username}`}
+                className="profile-link"
+              >
+                {u.userId.username}
+              </Link>
+            </div>
             <div className="score">{getScoreByPlatform(u)}</div>
           </div>
         ))}

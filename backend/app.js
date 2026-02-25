@@ -6,6 +6,7 @@ import submissionRouter from './routes/submission.routes.js';
 import syncRouter from './routes/sync.routes.js';
 import leaderBoardRouter from './routes/leaderboard.routes.js';
 import "./workers/sync.worker.js";
+import getProfileRouter from './routes/profile.routes.js';
 const app = express();
 
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use('/api/problems',problemsRouter);//problems route
 app.use('/api/submissions',submissionRouter);//submissions route
 app.use('/api/sync',syncRouter);//sync route
 app.use('/api/leaderboard',leaderBoardRouter);//leaderboard route
+app.use('/api/getProfile',getProfileRouter);//profile route
 
 //health monitoring route
 app.get('/api/health',(req,res)=>{

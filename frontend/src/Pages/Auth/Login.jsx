@@ -30,7 +30,7 @@ export default function Login() {
         setUser(res.data.user);
         // after successful login API response
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         toast.success("Logged in successfully");
       }
     } catch (error) {
