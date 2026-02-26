@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import "./ProblemDetails.css";
 import { createSubmission } from "../../api/submission.api";
+import Spinner from "../../components/Spinner/Spinner.jsx";
 
 export default function ProblemDetails() {
   //fetching url from context api
@@ -19,11 +20,21 @@ export default function ProblemDetails() {
   const [language, setLanguage] = useState("java");
   const [code, setCode] = useState(`class Solution {\n\n}`);
 
+  //state variable for loader
+  const [loading, setLoading] = useState(true);
+
   //function to call the problem details api
   const fetchProblemDetails = async () => {
+  try {
+    setLoading(true);
     const response = await fetchOneProblemAPI(url, slug);
     setProblemDetail(response);
-  };
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const boilerplates = {
     java: `class Solution {\n    public static void main(String[] args) {\n    }\n}`,
@@ -50,6 +61,12 @@ export default function ProblemDetails() {
   //   }
   //   const response = await createSubmission(url,payload,token);
   // }
+
+
+  // Spinner
+  if (loading) {
+  return <Spinner fullPage />;
+}
 
   return (
     <div className="problem-details">

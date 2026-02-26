@@ -5,6 +5,7 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { Context } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import Spinner from "../../components/Spinner/Spinner";
 
 export default function Leaderboard() {
   const [data, setData] = useState([]);
@@ -13,19 +14,30 @@ export default function Leaderboard() {
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState("idle");
   const pollingRef = useRef(null);
+  const [loading, setLoading] = useState(true);
   // const [lastSyncedAt, setLastSyncedAt] = useState(new Date());
 
   useEffect(() => {
     fetchLeaderboardDetails();
   }, [platform]);
 
+  /* =========================
+   Fetching leaderboard details
+  ============================*/
   const fetchLeaderboardDetails = async () => {
-    const response = await leaderboard(
-      platform === "overall" ? "" : platform,
-      url,
-      token,
-    );
-    setData(response.data);
+    try {
+      setLoading(true);
+      const response = await leaderboard(
+        platform === "overall" ? "" : platform,
+        url,
+        token,
+      );
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onPlatformChange = (e) => {
@@ -108,6 +120,13 @@ export default function Leaderboard() {
       }
     };
   }, []);
+
+  /* ========================
+   LOADER
+  ========================*/
+  if (loading) {
+    return <Spinner fullPage />;
+  }
 
   return (
     <div className="leaderboard-page">
