@@ -2,7 +2,7 @@ import puppeteer from "puppeteer-core";
 
 const fetchCodechefStats = async (handle) => {
   const browser = await puppeteer.launch({
-    executablePath: "/usr/bin/chromium",
+    executablePath:process.env.EXECUTABLE_PATH,
     headless: true,
     args: [
       "--no-sandbox",

@@ -1,70 +1,67 @@
 import "./Register.css";
-import {register} from "../../api/auth.api";
+import { register } from "../../api/auth.api";
 import { useState, useContext } from "react";
 import { Context } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 export default function Register() {
-const {url} = useContext(Context);
-const navigate = useNavigate();
+  const { url } = useContext(Context);
+  const navigate = useNavigate();
+
+  const [showHelp, setShowHelp] = useState(false);
+
   const [data, setData] = useState({
     username: "",
     email: "",
     password: "",
-    platforms:{
-        leetcode: "",
-        codeforces: "",
-        codechef: "",
-        gfg: "",
-    }
-    
+    platforms: {
+      leetcode: "",
+      codeforces: "",
+      codechef: "",
+      gfg: "",
+    },
   });
 
-  //function to set the data coming from input form in state variable data
   const onChangeHandler = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  // check if input belongs to platforms
-  if (name in data.platforms) {
-    setData((prev) => ({
-      ...prev,
-      platforms: {
-        ...prev.platforms,
+    if (name in data.platforms) {
+      setData((prev) => ({
+        ...prev,
+        platforms: {
+          ...prev.platforms,
+          [name]: value,
+        },
+      }));
+    } else {
+      setData((prev) => ({
+        ...prev,
         [name]: value,
-      },
-    }));
-  } else {
-    // top-level fields
-    setData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-};
+      }));
+    }
+  };
 
-
-  //function to register a user
   const registerHandler = async (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  try {
-    const response = await register(data, url);
+    try {
+      const response = await register(data, url);
 
-    if (response.data.success) {
-      toast.success("Account created successfully");
-      navigate("/login");
-    } else {
-      toast.error(response.data.message);
+      if (response.data.success) {
+        toast.success("Account created successfully");
+        navigate("/login");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
-
-  } catch (error) {
-    if (error.response && error.response.data.message) {
-      toast.error(error.response.data.message);
-    } else {
-      toast.error("Something went wrong");
-    }
-  }
-};
+  };
 
   return (
     <div className="register">
@@ -100,48 +97,77 @@ const navigate = useNavigate();
         />
 
         <div className="handles-grid">
-        <input
-          type="text"
-          name="leetcode"
-          onChange={onChangeHandler}
-          value={data.leetcode}
-          className="leetcode"
-          placeholder="leetcode username"
-        />
+          <input
+            type="text"
+            name="leetcode"
+            onChange={onChangeHandler}
+            value={data.platforms.leetcode}
+            className="leetcode"
+            placeholder="LeetCode username"
+          />
 
-        <input
-          type="text"
-          name="gfg"
-          onChange={onChangeHandler}
-          value={data.gfg}
-          className="gfg"
-          placeholder="gfg username"
-        />
+          <input
+            type="text"
+            name="gfg"
+            onChange={onChangeHandler}
+            value={data.platforms.gfg}
+            className="gfg"
+            placeholder="GeeksforGeeks username"
+          />
 
-        <input
-          type="text"
-          name="codeforces"
-          onChange={onChangeHandler}
-          value={data.codeforces}
-          className="codeforces"
-          placeholder="Codeforces username"
-        />
+          <input
+            type="text"
+            name="codeforces"
+            onChange={onChangeHandler}
+            value={data.platforms.codeforces}
+            className="codeforces"
+            placeholder="Codeforces username"
+          />
 
-        <input
-          type="text"
-          name="codechef"
-          onChange={onChangeHandler}
-          value={data.codechef}
-          className="codechef"
-          placeholder="Codechef username"
-        />
+          <input
+            type="text"
+            name="codechef"
+            onChange={onChangeHandler}
+            value={data.platforms.codechef}
+            className="codechef"
+            placeholder="CodeChef username"
+          />
         </div>
-        <button type="submit" >Create Account</button>
+
+        {/* Toggle Help Section */}
+        <p
+          className="toggle-help"
+          onClick={() => setShowHelp(!showHelp)}
+        >
+          Don’t know your platform username?
+        </p>
+
+        {showHelp && (
+          <div className="platform-help">
+            <p>You can find your username in your profile URL:</p>
+            <ul>
+              <li>
+                <strong>LeetCode:</strong> https://leetcode.com/u/<span className="highlight">your_username</span>
+              </li>
+              <li>
+                <strong>GeeksforGeeks:</strong> https://www.geeksforgeeks.org/profile/<span className="highlight">your_username</span>
+              </li>
+              <li>
+                <strong>Codeforces:</strong> https://codeforces.com/profile/<span className="highlight">your_username</span>
+              </li>
+              <li>
+                <strong>CodeChef:</strong> https://www.codechef.com/users/<span className="highlight">your_username</span>
+              </li>
+            </ul>
+          </div>
+        )}
+
+        <button type="submit">Create Account</button>
+
         <p className="login-link">
           Already have an account? <Link to="/login">Login</Link>
         </p>
       </form>
-      
     </div>
   );
 }

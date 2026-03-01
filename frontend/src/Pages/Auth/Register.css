@@ -89,3 +89,36 @@
 .login-link a:hover {
   text-decoration: underline;
 }
+
+/*==================
+  HELP
+===================*/
+.toggle-help {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #ffa116;
+  cursor: pointer;
+  text-align: left;
+}
+
+.platform-help {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #9a9a9a;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.platform-help ul {
+  padding-left: 18px;
+  margin-top: 6px;
+}
+
+.platform-help li {
+  margin-bottom: 6px;
+}
+
+.highlight {
+  color: #ffa116;
+  font-weight: 600;
+}
