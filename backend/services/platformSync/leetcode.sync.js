@@ -3,7 +3,6 @@ import axios from "axios";
 const fetchLeetcodeStats = async (handle) => {
   const LEETCODE_GRAPHQL_URL = "https://leetcode.com/graphql";
 
-  // This query specifically targets the solved counts for all difficulties
   const graphqlQuery = {
     query: `
       query userPublicProfile($username: String!) {
@@ -15,6 +14,12 @@ const fetchLeetcodeStats = async (handle) => {
             }
           }
         }
+        userContestRanking(username: $username) {
+          rating
+          globalRanking
+          topPercentage
+          attendedContestsCount
+        }
       }
     `,
     variables: { username: handle },
@@ -24,29 +29,30 @@ const fetchLeetcodeStats = async (handle) => {
     const response = await axios.post(LEETCODE_GRAPHQL_URL, graphqlQuery, {
       headers: {
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0", // Helps prevent basic bot blocking
+        "User-Agent": "Mozilla/5.0",
       },
     });
 
-    const data = response.data.data;
+    const { matchedUser, userContestRanking } = response.data.data;
 
-    if (!data.matchedUser) {
+    if (!matchedUser) {
       throw new Error(`User "${handle}" not found on LeetCode.`);
     }
 
-    // Find the total solved count from the array
-    const submissionStats = data.matchedUser.submitStats.acSubmissionNum;
+    // Extract solved count
+    const submissionStats = matchedUser.submitStats.acSubmissionNum;
     const totalSolved = submissionStats.find((s) => s.difficulty === "All")?.count || 0;
 
     return {
       handle,
-      rating: 0, // Contest rating requires a separate query field if needed
+      // userContestRanking will be null if the user has never participated in a contest
+      rating: userContestRanking ? Math.round(userContestRanking.rating) : 0,
+      globalRanking: userContestRanking?.globalRanking || 0,
       solvedCount: totalSolved,
       lastSynced: new Date(),
     };
   } catch (err) {
     console.error(`LeetCode GraphQL Sync Error: ${err.message}`);
-    // Return a default object or null so your worker doesn't crash
     return {
       handle,
       rating: 0,
