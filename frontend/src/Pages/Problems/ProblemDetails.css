@@ -1,75 +1,215 @@
-/* =========================
-   BASE LAYOUT
-========================= */
+/* =======================================================================
+   PROBLEM DETAILS — site theme (#1b1b1b / #ffa116 palette)
+   ======================================================================= */
 
+/* ── Layout ─────────────────────────────────────────────────────────────── */
 .problem-details {
   display: flex;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 60px);
+  background: #1b1b1b;
+  font-family: inherit;
+  overflow: hidden;
+}
+
+/* ── Left Panel ─────────────────────────────────────────────────────────── */
+.problem-left {
+  width: 44%;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #2d2d2d;
+  overflow: hidden;
   background: #1b1b1b;
 }
 
-/* LEFT PANEL */
-
-.problem-left {
-  width: 45%;
-  overflow-y: auto;
-  border-right: 1px solid #2d2d2d;
-  padding: 20px 24px;
-  color: #cfcfcf;
-  display: flex;
-  flex-direction: column;
-}
-
-/* =========================
-   TABS & SUBMISSIONS
-========================= */
-
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
 .tabs {
   display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 0;
   border-bottom: 1px solid #2d2d2d;
-  padding-bottom: 10px;
+  background: #1b1b1b;
+  padding: 0 16px;
+  flex-shrink: 0;
 }
 
 .tab-btn {
   background: transparent;
   border: none;
+  border-bottom: 2px solid transparent;
   color: #8c8c8c;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  padding: 6px 4px;
-  position: relative;
-  transition: color 0.3s;
+  padding: 12px 14px 10px;
+  transition: color 0.2s, border-color 0.2s;
+  font-family: inherit;
 }
 
-.tab-btn:hover {
-  color: #cfcfcf;
-}
+.tab-btn:hover { color: #cfcfcf; }
 
 .tab-btn.active {
   color: #fff;
+  border-bottom-color: #ffa116;
 }
 
-.tab-btn.active::after {
-  content: '';
-  position: absolute;
-  bottom: -11px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #ffa116;
-}
-
+/* ── Scrollable tab content ─────────────────────────────────────────────── */
 .tab-content {
   flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: #2d2d2d transparent;
 }
 
+.tab-content::-webkit-scrollbar       { width: 4px; }
+.tab-content::-webkit-scrollbar-thumb { background: #2d2d2d; border-radius: 99px; }
+
+/* ── Description ─────────────────────────────────────────────────────────── */
+.problem-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.problem-difficulty {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.diff-easy   { background: rgba(44,187,93,.15); color: #2cbb5d; }
+.diff-medium { background: rgba(255,161,22,.15); color: #ffa116; }
+.diff-hard   { background: rgba(239,71,67,.15);  color: #ef4743; }
+
+.problem-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 14px;
+  line-height: 1.35;
+}
+
+.problem-description {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #cfcfcf;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+}
+
+/* ── Section labels ─────────────────────────────────────────────────────── */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6e6e6e;
+  margin-bottom: 10px;
+}
+
+/* ── Sample Test Cases ───────────────────────────────────────────────────── */
+.testCase {
+  background: #2d2d2d;
+  border: 1px solid #3a3a3a;
+  border-left: 3px solid #ffa116;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.testCase-header {
+  padding: 6px 12px;
+  background: #333;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.testCase-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.testCase-row label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6e6e6e;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.testCase-row pre {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  background: #1b1b1b;
+  color: #cfcfcf;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Tags ────────────────────────────────────────────────────────────────── */
+.tags-section { margin: 16px 0; }
+
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-block;
+  background: #2d2d2d;
+  color: #ffa116;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 14px;
+  border: 1px solid #3a3a3a;
+  transition: background 0.15s;
+}
+
+.tag:hover { background: #3a3a3a; }
+
+/* ── Constraints ─────────────────────────────────────────────────────────── */
+.constraints {
+  padding: 12px 14px;
+  background: #2d2d2d;
+  border-left: 3px solid #cfcfcf;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #cfcfcf;
+  font-family: 'Consolas', monospace;
+  line-height: 1.7;
+}
+
+/* ── Submissions list ────────────────────────────────────────────────────── */
 .submissions-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+}
+
+.submissions-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 0;
+  color: #6e6e6e;
+  font-size: 14px;
 }
 
 .submission-card {
@@ -82,32 +222,8 @@
   transition: background 0.2s;
 }
 
-.submission-card:hover {
-  background: #3a3a3a;
-}
-
-.submission-card.selected {
-  border: 1px solid #ffa116;
-}
-
-.submission-code-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  background: #282828;
-  border: 1px solid #2d2d2d;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 10px;
-  border-radius: 4px;
-}
-
-.submission-code-header h2 {
-  font-size: 16px;
-  margin: 0;
-  color: #fff;
-}
+.submission-card:hover    { background: #3a3a3a; }
+.submission-card.selected { border: 1px solid #ffa116; }
 
 .submission-header {
   display: flex;
@@ -131,222 +247,322 @@
   font-size: 14px;
 }
 
-.verdict-AC {
-  color: #2cbb5d;
+.verdict-AC  { color: #2cbb5d; }
+.verdict-WA,
+.verdict-RE,
+.verdict-CE  { color: #ef4743; }
+.verdict-TLE { color: #ffa116; }
+
+.language {
+  font-size: 13px;
+  color: #cfcfcf;
 }
 
-.verdict-WA, .verdict-RE, .verdict-CE {
-  color: #ef4743;
-}
 
-.verdict-TLE {
-  color: #ffa116;
-}
 
-/* RIGHT PANEL */
-
+/* ── Right Panel ─────────────────────────────────────────────────────────── */
 .problem-right {
-  width: 55%;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 16px;
   overflow: hidden;
+  background: #1b1b1b;
+  min-width: 0;
 }
 
-/* =========================
-   TOOLBAR
-========================= */
-
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  padding: 8px 14px;
+  background: #1b1b1b;
+  border-bottom: 1px solid #2d2d2d;
+  flex-shrink: 0;
 }
 
-.run-submit-buttons {
-  display: flex;
-  gap: 10px;
+.lang-select {
+  background: #2d2d2d;
+  color: #cfcfcf;
+  border: 1px solid #3a3a3a;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
 }
 
-.run-submit-buttons button {
-  padding: 6px 16px;
+.lang-select:hover { border-color: #4a4a4a; }
+.lang-select option { background: #2d2d2d; }
+
+.run-submit-buttons { display: flex; gap: 8px; }
+
+.run-btn, .submit-btn {
+  padding: 6px 18px;
   font-size: 13px;
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: none;
+  font-family: inherit;
+  transition: all 0.15s;
 }
 
-.run-submit-buttons .run-btn {
+.run-btn {
   background: transparent;
   color: #cfcfcf;
   border: 1px solid #3a3a3a;
 }
+.run-btn:hover:not(:disabled)   { background: #2d2d2d; border-color: #4a4a4a; }
+.run-btn:disabled                { opacity: 0.45; cursor: not-allowed; }
 
-.run-submit-buttons .submit-btn {
+.submit-btn {
   background: #ffa116;
   color: #000;
+  font-weight: 600;
 }
+.submit-btn:hover:not(:disabled) { background: #ffb84d; }
+.submit-btn:disabled              { opacity: 0.45; cursor: not-allowed; }
 
-.problem-right select {
-  background: #282828;
-  color: #cfcfcf;
-  border: 1px solid #2d2d2d;
-  padding: 6px 10px;
-}
-
-/* =========================
-   EDITOR
-========================= */
-
-.editor-info {
-  background: #2d2d2d;
-  border-left: 4px solid #ffa116;
-  padding: 10px 14px;
-  margin-bottom: 10px;
-  font-size: 13px;
-}
-
-/* editor should take remaining height */
-
-.editor-wrapper {
-  flex: 1;
-  min-height: 0;
-}
-
-/* =========================
-   CONTENT STYLES
-========================= */
-
-.problem-left h1 {
-  font-size: 22px;
-  margin-bottom: 12px;
-  color: #fff;
-}
-
-.problem-left p {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.testCase {
-  background: #2d2d2d;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  border-left: 3px solid #ffa116;
-}
-
-.tag {
-  display: inline-block;
-  background: #2d2d2d;
-  color: #ffa116;
-  padding: 4px 10px;
-  margin: 4px 6px 0 0;
-  font-size: 12px;
-  border-radius: 14px;
-}
-
-.constraints {
-  margin-top: 20px;
-  padding: 12px;
-  background: #2d2d2d;
-  border-left: 3px solid #cfcfcf;
-}
-
-/* =========================
-   EXECUTION PANEL
-========================= */
-
-.execution-panel {
-  background: #1f1f1f;
-  border-top: 2px solid #ffa116;
-  max-height: 200px;
-  display: flex;
-  flex-direction: column;
-}
-
-.execution-header {
+/* ── Submission code header ───────────────────────────────────────────────── */
+.submission-code-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 14px;
-  background: #2d2d2d;
+  background: #1b1b1b;
+  border-bottom: 1px solid #2d2d2d;
+  flex-shrink: 0;
+}
+
+.submission-code-header h2 {
   font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.close-btn {
+  background: #2d2d2d;
+  border: 1px solid #3a3a3a;
+  color: #cfcfcf;
+  font-size: 12px;
   font-weight: 500;
-}
-
-.close-result {
-  background: transparent;
-  border: none;
-  color: #cfcfcf;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.close-result:hover {
-  color: #ffffff;
-}
-
-.execution-result {
-  padding: 12px 14px;
-  font-size: 13px;
-  color: #cfcfcf;
-  overflow-y: auto;
-}
-
-.execution-result pre {
-  background: #111;
-  padding: 10px;
+  padding: 4px 12px;
   border-radius: 4px;
-  overflow-x: auto;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.close-btn:hover { background: #3a3a3a; color: #fff; }
+
+/* ── Editor container (resizable top section) ─────────────────────────────── */
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* height is set inline via JS drag */
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* ── Drag Handle ─────────────────────────────────────────────────────────── */
+.drag-handle {
+  height: 5px;
+  background: #2d2d2d;
+  cursor: row-resize;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s;
+  user-select: none;
+}
 
-@media (max-width: 1024px) {
-  .problem-details {
-    flex-direction: column;
-    height: auto;
-  }
+.drag-handle:hover,
+.drag-handle.dragging {
+  background: #ffa116;
+}
 
-  .problem-left,
-  .problem-right {
-    width: 100%;
-  }
+.drag-handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 2px;
+  border-radius: 1px;
+  background: #4a4a4a;
+}
 
-  .problem-left {
-    border-right: none;
-    border-bottom: 1px solid #2d2d2d;
-  }
+.drag-handle:hover::after { background: #1b1b1b; }
+
+/* ── Result pane (always visible below editor) ────────────────────────────── */
+.result-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #1b1b1b;
+  border-top: 1px solid #2d2d2d;
+  /* height is set inline via JS drag */
+  min-height: 36px;
+}
+
+.result-pane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: #1b1b1b;
+  border-bottom: 1px solid #2d2d2d;
+  flex-shrink: 0;
+}
+
+.result-pane-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #cfcfcf;
+}
+
+.result-verdict-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 99px;
+}
+
+.result-pane-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  scrollbar-width: thin;
+  scrollbar-color: #2d2d2d transparent;
+}
+.result-pane-body::-webkit-scrollbar       { width: 4px; }
+.result-pane-body::-webkit-scrollbar-thumb { background: #2d2d2d; border-radius: 99px; }
+
+/* Loading pulse */
+.exec-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #8c8c8c;
+  font-size: 13px;
+  padding: 6px 0;
+}
+
+.pulse-dots { display: flex; gap: 4px; }
+.pulse-dots span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #ffa116;
+  animation: pulseDot 1.2s infinite ease-in-out;
+}
+.pulse-dots span:nth-child(2) { animation-delay: 0.2s; }
+.pulse-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulseDot {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.85); }
+  40%            { opacity: 1;   transform: scale(1); }
+}
+
+/* ── Result Cards ─────────────────────────────────────────────────────────── */
+.results-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.result-card {
+  background: #2d2d2d;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  overflow: hidden;
+  border-left: 3px solid #3a3a3a;
+}
+.result-card.pass { border-left-color: #2cbb5d; }
+.result-card.fail { border-left-color: #ef4743; }
+.result-card.warn { border-left-color: #ffa116; }
+
+.result-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  background: #333;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.result-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.result-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.result-card-body {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.result-row label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6e6e6e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+
+.result-row pre {
+  font-family: 'Consolas', 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  background: #1b1b1b;
+  color: #cfcfcf;
+  padding: 7px 10px;
+  border-radius: 4px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.result-meta {
+  display: flex;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+.result-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.result-meta-item strong { color: #cfcfcf; font-weight: 600; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .problem-details  { flex-direction: column; height: auto; overflow: auto; }
+  .problem-left     { width: 100%; min-width: unset; border-right: none; border-bottom: 1px solid #2d2d2d; max-height: 50vh; }
+  .problem-right    { height: 70vh; }
 }
 
 @media (max-width: 600px) {
-  .problem-left,
-  .problem-right {
-    padding: 14px;
-  }
-
-  .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .run-submit-buttons {
-    width: 100%;
-  }
-
-  .run-submit-buttons button {
-    flex: 1;
-  }
-}
-
-@media (max-width: 400px) {
-  .run-submit-buttons {
-    flex-direction: column;
-  }
+  .toolbar          { flex-wrap: wrap; gap: 8px; }
+  .run-submit-buttons { width: 100%; }
+  .run-btn, .submit-btn { flex: 1; }
 }
