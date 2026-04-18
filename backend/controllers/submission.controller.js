@@ -42,7 +42,7 @@ const createSubmission = async (req, res) => {
     }
 
     //adding the submission to the queue for processing
-    await submissionQueue.add('runSubmission', {
+    const job = await submissionQueue.add('runSubmission', {
       problemId,
       code,
       language,
@@ -53,7 +53,8 @@ const createSubmission = async (req, res) => {
     //returning the response
     res.status(200).json({
       success: true,
-      message: "Submission received and is being processed"
+      message: "Submission received and is being processed",
+      jobId: job.id,
     });
 
   } catch (err) {

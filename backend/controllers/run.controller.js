@@ -38,10 +38,13 @@ const codeRunner = async (req, res) => {
       });
     }
 
+    const userId = req.user.id;
+
     await submissionQueue.add('runSubmission', {
       problemId,
       code,
       language,
+      userId,
       type:"runTest"
     });
 
