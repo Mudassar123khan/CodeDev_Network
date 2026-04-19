@@ -4,6 +4,7 @@ import Problem from "../models/Problem.js";
 import { JUDGE0_URL } from "../config/judgeUrl.js";
 import Submission from "../models/Submission.js";
 import { languageMap } from "../config/languages.js";
+import { getIO } from "../config/socket.js";
 
 const normalize = (str) => {
     return (str || "").trim().replace(/\s+/g, " ");
@@ -97,9 +98,15 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
             executionTime
         });
 
-        console.log(`Processed submission ${newSubmission._id} with verdict ${verdict}`);
+        // Return a plain serialisable object (not a Mongoose doc) so BullMQ
+        // can store it in Redis and the completed-handler can emit test details.
+        return {
+            _id: newSubmission._id.toString(),
+            verdict: newSubmission.verdict,
+            executionTime: newSubmission.executionTime,
+            outputs,
+        };
 
-        return newSubmission;
     } else if (type === "runTest") {
         // Similar logic for running a single test case without saving the submission
         // This can be used for "Run Code" feature in the frontend
@@ -194,11 +201,45 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
 })
 
 submissionWorker.on("completed", (job, result) => {
-    console.log(`Job ${job.id} completed with result:`, result);
+    console.log(`Job ${job.id} completed`);
+    const { userId, type } = job.data;
+
+    try {
+        const io = getIO();
+
+        if (type === "submission") {
+            io.to(`room:${userId}`).emit("submission:result", {
+                verdict: result.verdict,
+                executionTime: result.executionTime,
+                submissionId: result._id,
+                outputs: result.outputs || [],
+            });
+
+        } else if (type === "runTest") {
+            // result is the outputs array returned by the runTest branch
+            io.to(`room:${userId}`).emit("run:result", {
+                outputs: result,
+            });
+        }
+    } catch (err) {
+        // Socket.io may not be initialised in test environments — log & move on
+        console.warn("[WS] Could not emit result:", err.message);
+    }
 });
 
 submissionWorker.on("failed", (job, err) => {
     console.error(`Job ${job.id} failed with error:`, err);
+
+    const { userId, type } = job.data || {};
+    if (!userId) return;
+
+    try {
+        const io = getIO();
+        const event = type === "runTest" ? "run:result" : "submission:result";
+        io.to(`room:${userId}`).emit(event, { error: err.message || "Job failed" });
+    } catch (socketErr) {
+        console.warn("[WS] Could not emit failure:", socketErr.message);
+    }
 });
 
 export default submissionWorker;

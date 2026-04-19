@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { fetchOneProblemAPI } from "../../api/problem.api";
 import { Context } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
@@ -8,204 +8,255 @@ import { createSubmission } from "../../api/submission.api";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 import runCode from "../../api/codeRunner.api.js";
 import { getAllSubmissionsOfAProblem } from "../../api/submission.api.js";
+import useSocket from "../../hooks/useSocket.js";
+
+/* ── helpers ────────────────────────────────────────────────────────────── */
+
+const verdictClass = (v = "") => {
+  if (["AC", "Accepted", "Passed"].includes(v)) return "verdict-AC";
+  if (v === "TLE") return "verdict-TLE";
+  return "verdict-WA";
+};
+
+const resultCardClass = (status = "") => {
+  if (["Accepted", "Passed"].includes(status)) return "result-card pass";
+  if (status === "TLE") return "result-card warn";
+  return "result-card fail";
+};
+
+const resultBadgeClass = (status = "") => {
+  if (["Accepted", "Passed"].includes(status)) return "result-status-badge verdict-AC";
+  if (status === "TLE") return "result-status-badge verdict-TLE";
+  return "result-status-badge verdict-WA";
+};
+
+/* ── component ──────────────────────────────────────────────────────────── */
 
 export default function ProblemDetails() {
-  //fetching url from context api
   const { url, token } = useContext(Context);
-
-  //use params hook to extract slug from the url
+  const socketRef = useSocket(url, token);
   const { slug } = useParams();
-  //state variable to store the problem detail
+
   const [problemDetail, setProblemDetail] = useState({});
+  const [language, setLanguage]           = useState("java");
+  const [code, setCode]                   = useState("import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}");
+  const [loading, setLoading]             = useState(true);
 
-  //state variables for code editor
-  const [language, setLanguage] = useState("java");
-  const [code, setCode] = useState(`class Solution {\n\n}`);
-
-  //state variable for loader
-  const [loading, setLoading] = useState(true);
-
-  //state variables for tabs and submissions
-  const [activeTab, setActiveTab] = useState("description");
-  const [submission,setSubmissions] = useState([]);
+  const [activeTab, setActiveTab]                   = useState("description");
+  const [submissions, setSubmissions]               = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
-  // const [submission, setSubmission] = useState([
-  //   {
-  //     _id: "1",
-  //     language: "java",
-  //     verdict: "AC",
-  //     executionTime: 0.05,
-  //     createdAt: new Date().toISOString(),
-  //   },
-  //   {
-  //     _id: "2",
-  //     language: "cpp",
-  //     verdict: "WA",
-  //     executionTime: 0.02,
-  //     createdAt: new Date(Date.now() - 86400000).toISOString(),
-  //   },
-  // ]);
 
-  //state variables for storing the status of code and result of the code 
-  const [results, setResults] = useState([]);
-  const [verdict, setVerdict] = useState(null);
-  const [running, setRunning] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  const [results, setResults]   = useState([]);
+  const [verdict, setVerdict]   = useState(null);
+  const [running, setRunning]   = useState(false);
 
+  /* ── resizable editor / result pane ────────────────────────────────── */
+  // editorPct: percentage of the right panel height given to the editor
+  const [editorPct, setEditorPct]   = useState(65);   // 65% editor, 35% result
+  const isDragging                  = useRef(false);
+  const dragStartY                  = useRef(0);
+  const dragStartPct                = useRef(0);
+  const rightPanelRef               = useRef(null);
 
+  const onMouseDownDivider = useCallback((e) => {
+    e.preventDefault();
+    isDragging.current    = true;
+    dragStartY.current    = e.clientY;
+    dragStartPct.current  = editorPct;
+    document.body.style.cursor    = "row-resize";
+    document.body.style.userSelect = "none";
+  }, [editorPct]);
 
-  //function to call the problem details api
-  const fetchProblemDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await fetchOneProblemAPI(url, slug);
-      setProblemDetail(response);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (!isDragging.current || !rightPanelRef.current) return;
+      const panelH  = rightPanelRef.current.clientHeight;
+      const delta   = e.clientY - dragStartY.current;
+      const deltaPct = (delta / panelH) * 100;
+      const next    = Math.min(85, Math.max(20, dragStartPct.current + deltaPct));
+      setEditorPct(next);
+    };
 
+    const onMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current            = false;
+      document.body.style.cursor    = "";
+      document.body.style.userSelect = "";
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, []);
+
+  /* ── boilerplates ─────────────────────────────────────────────────── */
   const boilerplates = {
-    java: `import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}`,
-    cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n\n}`,
-    python: `def solve():\n    pass`,
+    java:   "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}",
+    cpp:    "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n\n}",
+    python: "def solve():\n    pass",
   };
 
-  //useEffect to re-render after language change
-  useEffect(() => {
-    setCode(boilerplates[language]);
-  }, [language]);
+  useEffect(() => { setCode(boilerplates[language]); }, [language]);
 
-  //useEffect to re-render when new problem is requested
+  /* ── fetch problem ────────────────────────────────────────────────── */
   useEffect(() => {
-    fetchProblemDetails();
+    const fetch = async () => {
+      try {
+        setLoading(true);
+        setProblemDetail(await fetchOneProblemAPI(url, slug));
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    };
+    fetch();
   }, [slug]);
 
-  //submit button handler
+  /* ── fetch past submissions ───────────────────────────────────────── */
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await getAllSubmissionsOfAProblem(url, slug, token);
+        setSubmissions(res.data);
+      } catch (e) { console.error(e); }
+    };
+    fetch();
+  }, [slug]);
+
+  /* ── WebSocket listeners ──────────────────────────────────────────── */
+  useEffect(() => {
+    const socket = socketRef.current;
+    if (!socket) return;
+    const handler = (data) => {
+      setVerdict(data.error ? "Error" : data.verdict);
+      setResults(data.error ? [] : (data.outputs || []));
+      setRunning(false);
+    };
+    socket.on("submission:result", handler);
+    return () => socket.off("submission:result", handler);
+  }, [socketRef.current]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const socket = socketRef.current;
+    if (!socket) return;
+    const handler = (data) => {
+      if (data.error) { setVerdict("Error"); setResults([]); }
+      else {
+        const outputs = data.outputs || [];
+        setVerdict(outputs.every(o => o.status === "Passed") ? "AC" : (outputs[0]?.status || "WA"));
+        setResults(outputs);
+      }
+      setRunning(false);
+    };
+    socket.on("run:result", handler);
+    return () => socket.off("run:result", handler);
+  }, [socketRef.current]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ── handlers ─────────────────────────────────────────────────────── */
   const submitHandler = async () => {
     try {
-      setRunning(true);
-
-      const payload = {
-        problemId: problemDetail._id,
-        code,
-        language
-      };
-
-      const response = await createSubmission(url, payload, token);
-
-      setVerdict(response.verdict);
-      setResults(response.output || []);   //important
-
-    } catch (error) {
-      console.error(error);
-      setVerdict("Error");
-      setResults([]);
-    } finally {
-      setRunning(false);
+      setRunning(true); setResults([]); setVerdict(null);
+      await createSubmission(url, { problemId: problemDetail._id, code, language }, token);
+    } catch (e) {
+      console.error(e); setVerdict("Error"); setResults([]); setRunning(false);
     }
   };
 
-  //handler to call the codeRunner function to only run the code
   const runHandler = async () => {
     try {
-      setRunning(true);
-
-      const payload = {
-        problemId: problemDetail._id,
-        code,
-        language
-      };
-
-      const response = await runCode(url, payload, token);
-
-      setVerdict(response.verdict);
-      setResults(response.output || []);   //important
-
-    } catch (error) {
-      console.error(error);
-      setVerdict("Error");
-      setResults([]);
-    } finally {
-      setRunning(false);
+      setRunning(true); setResults([]); setVerdict(null);
+      await runCode(url, { problemId: problemDetail._id, code, language }, token);
+    } catch (e) {
+      console.error(e); setVerdict("Error"); setResults([]); setRunning(false);
     }
   };
 
-  //calling the api to fetch submissions of the problem for the user
-  useEffect(()=>{
-    const fetchSubmissions = async()=>{
-      try {
-        const response = await getAllSubmissionsOfAProblem(url,slug,token);
-        setSubmissions(response.data);
-        console.log(response.data[0].code);
-        //console.log(response);
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  const sampleTestCases = problemDetail?.testCases?.filter(t => t.isSample) || [];
 
-    fetchSubmissions();
-  },[slug])
+  if (loading) return <Spinner fullPage />;
 
-
-  // Spinner
-  if (loading) {
-    return <Spinner fullPage />;
-  }
-
+  /* ── render ───────────────────────────────────────────────────────── */
   return (
     <div className="problem-details">
-      {/* Left */}
+
+      {/* ═══════════════ LEFT PANEL ═══════════════ */}
       <div className="problem-left">
+
         <div className="tabs">
-          <button 
-            className={`tab-btn ${activeTab === "description" ? "active" : ""}`}
-            onClick={() => setActiveTab("description")}
-          >
-            Description
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === "submissions" ? "active" : ""}`}
-            onClick={() => setActiveTab("submissions")}
-          >
-            Submissions
-          </button>
+          {["description", "submissions"].map(tab => (
+            <button
+              key={tab}
+              className={`tab-btn${activeTab === tab ? " active" : ""}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab === "submissions" && submissions.length > 0 && (
+                <span style={{ marginLeft: 6, fontSize: 11, background: "#2d2d2d", color: "#8c8c8c", padding: "1px 6px", borderRadius: 99, fontWeight: 600 }}>
+                  {submissions.length}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
+        {/* Description */}
         {activeTab === "description" && (
-          <div className="tab-content description-content">
-            <h1>{problemDetail.title}</h1>
-            <p>{problemDetail.description}</p>
-
-            {problemDetail?.testCases?.map((test, index) => (
-              <div className="testCase" key={index}>
-                <h2>Input: {test.input}</h2>
-                <p>Output: {test.output}</p>
+          <div className="tab-content">
+            {problemDetail.difficulty && (
+              <div className="problem-meta">
+                <span className={`problem-difficulty diff-${(problemDetail.difficulty || "").toLowerCase()}`}>
+                  {problemDetail.difficulty}
+                </span>
               </div>
-            ))}
+            )}
 
-            <span>Topic Tags:</span>
-            {problemDetail?.tags?.map((tag, index) => (
-              <span className="tag" key={index}>{tag}</span>
-            ))}
+            <h1 className="problem-title">{problemDetail.title}</h1>
+            <p className="problem-description">{problemDetail.description}</p>
 
-            <div className="constraints">
-              Constraints: {problemDetail.constraints}
-            </div>
+            {sampleTestCases.length > 0 && (
+              <>
+                <p className="section-label">Examples</p>
+                {sampleTestCases.map((test, i) => (
+                  <div className="testCase" key={i}>
+                    <div className="testCase-header">Example {i + 1}</div>
+                    <div className="testCase-body">
+                      <div className="testCase-row"><label>Input</label><pre>{test.input}</pre></div>
+                      <div className="testCase-row"><label>Output</label><pre>{test.output}</pre></div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+
+            {problemDetail?.tags?.length > 0 && (
+              <div className="tags-section">
+                <p className="section-label">Topics</p>
+                <div className="tags-row">
+                  {problemDetail.tags.map((tag, i) => <span className="tag" key={i}>{tag}</span>)}
+                </div>
+              </div>
+            )}
+
+            {problemDetail.constraints && (
+              <div style={{ marginTop: 16 }}>
+                <p className="section-label">Constraints</p>
+                <div className="constraints">{problemDetail.constraints}</div>
+              </div>
+            )}
           </div>
         )}
 
+        {/* Submissions */}
         {activeTab === "submissions" && (
-          <div className="tab-content submissions-content">
-            {submission.length > 0 ? (
+          <div className="tab-content">
+            {submissions.length > 0 ? (
               <div className="submissions-list">
-                {submission.map((sub, idx) => (
-                  <div 
-                    className={`submission-card ${selectedSubmission?._id === sub._id ? "selected" : ""}`} 
+                {submissions.map((sub, idx) => (
+                  <div
                     key={idx}
-                    onClick={() => setSelectedSubmission(sub)}
+                    className={`submission-card ${selectedSubmission?._id === sub._id ? "selected" : ""}`}
+                    onClick={() => setSelectedSubmission(selectedSubmission?._id === sub._id ? null : sub)}
                     style={{ cursor: "pointer" }}
                   >
                     <div className="submission-header">
@@ -220,121 +271,152 @@ export default function ProblemDetails() {
                 ))}
               </div>
             ) : (
-              <p>No submissions yet.</p>
+              <div className="submissions-empty">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>No submissions yet</span>
+              </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Right */}
-      <div className="problem-right">
-        {/* Submission Code View */}
-        <div style={{ display: selectedSubmission ? "flex" : "none", flexDirection: "column", flex: 1 }}>
-          {selectedSubmission && (
-            <>
-              <div className="submission-code-header">
-                <h2>Submission Code ({selectedSubmission.language})</h2>
-                <button 
-                  className="close-result" 
-                  onClick={() => setSelectedSubmission(null)}
-                >
-                  Close
+      {/* ═══════════════ RIGHT PANEL ═══════════════ */}
+      <div className="problem-right" ref={rightPanelRef}>
+
+        {/* ── Submission code viewer (overrides editor) ── */}
+        {selectedSubmission ? (
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden" }}>
+            <div className="submission-code-header">
+              <h2>
+                Submission · <span style={{ color: "#8c8c8c", fontWeight: 400 }}>{selectedSubmission.language}</span>
+                <span className={`verdict-badge ${verdictClass(selectedSubmission.verdict)}`} style={{ marginLeft: 10, fontSize: 11 }}>
+                  {selectedSubmission.verdict === "AC" ? "Accepted" : selectedSubmission.verdict}
+                </span>
+              </h2>
+              <button className="close-btn" onClick={() => setSelectedSubmission(null)}>✕ Close</button>
+            </div>
+            {/* CodeEditor fills the remaining height */}
+            <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+              <CodeEditor
+                key="submission-editor"
+                language={selectedSubmission.language}
+                code={selectedSubmission.code || ""}
+                setCode={() => {}}
+                readOnly={true}
+              />
+            </div>
+          </div>
+
+        ) : (
+          /* ── Main editor + result pane (resizable) ── */
+          <>
+            {/* Toolbar */}
+            <div className="toolbar">
+              <select className="lang-select" value={language} onChange={e => setLanguage(e.target.value)}>
+                <option value="java">Java</option>
+                <option value="cpp">C++</option>
+                <option value="python">Python</option>
+              </select>
+              <div className="run-submit-buttons">
+                <button className="run-btn" disabled={running} onClick={runHandler}>
+                  {running ? "Running…" : "▶ Run"}
+                </button>
+                <button className="submit-btn" disabled={running} onClick={submitHandler}>
+                  {running ? "Judging…" : "Submit"}
                 </button>
               </div>
-              <CodeEditor 
-                key="submission-editor"
-                language={selectedSubmission.language} 
-                code={selectedSubmission.code || ""} 
-                setCode={() => {}} 
-                readOnly={true} 
-              />
-            </>
-          )}
-        </div>
-
-        {/* Main Editor View */}
-        <div style={{ display: !selectedSubmission ? "flex" : "none", flexDirection: "column", flex: 1 }}>
-            <div className="toolbar">
-              <select
-                value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            <option value="java">Java</option>
-            <option value="cpp">C++</option>
-          </select>
-
-          <div className="run-submit-buttons">
-            <button
-              className="run-btn"
-              onClick={() => {
-                setShowResult(true);
-                runHandler();
-              }}
-            >
-              Run
-            </button>
-
-            <button
-              className="submit-btn"
-              onClick={() => {
-                setShowResult(true);
-                submitHandler();
-              }}
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-        <CodeEditor language={language} code={code} setCode={setCode} />
-
-        {/* Execution Panel */}
-        {showResult && (
-          <div className="execution-panel">
-            <div className="execution-header">
-              <span>Execution Result</span>
-
-              <button
-                className="close-result"
-                onClick={() => setShowResult(false)}
-              >
-                Close
-              </button>
             </div>
 
-            <div className="execution-result">
-              {running && <p>Running...</p>}
+            {/* Editor pane — height controlled by drag */}
+            <div
+              className="editor-pane"
+              style={{ height: `${editorPct}%`, display: "flex", flexDirection: "column" }}
+            >
+              <CodeEditor language={language} code={code} setCode={setCode} />
+            </div>
 
-              {!running && results.length > 0 && (
-                <>
-                  <h3>Verdict: {verdict}</h3>
+            {/* Drag handle */}
+            <div
+              className="drag-handle"
+              onMouseDown={onMouseDownDivider}
+              title="Drag to resize"
+            />
 
-                  <div className="results-submit">
-                    {results.map((res, index) => (
-                      <div key={index} className="result-card">
-                        <h4>Test Case {index + 1}</h4>
+            {/* Result pane — takes remaining height */}
+            <div
+              className="result-pane"
+              style={{ flex: 1, minHeight: 0 }}
+            >
+              <div className="result-pane-header">
+                <div className="result-pane-title">
+                  <span>Test Results</span>
+                  {!running && verdict && (
+                    <span className={`result-verdict-pill ${verdictClass(verdict)}`}>
+                      {verdict === "AC" ? "Accepted" : verdict}
+                    </span>
+                  )}
+                </div>
+              </div>
 
-                        <p><strong>Status:</strong> {res.status}</p>
+              <div className="result-pane-body">
+                {running && (
+                  <div className="exec-loading">
+                    <div className="pulse-dots"><span /><span /><span /></div>
+                    Judging your code…
+                  </div>
+                )}
 
-                        <p><strong>Input:</strong></p>
-                        <pre>{res.input}</pre>
-
-                        <p><strong>Expected Output:</strong></p>
-                        <pre>{res.expectedOutput}</pre>
-
-                        <p><strong>Your Output:</strong></p>
-                        <pre>{res.actualOutput}</pre>
-
-                        <p><strong>Time:</strong> {res.executionTime}s</p>
-                        <p><strong>Memory:</strong> {res.memoryUsed} KB</p>
+                {!running && results.length > 0 && (
+                  <div className="results-grid">
+                    {results.map((res, i) => (
+                      <div key={i} className={resultCardClass(res.status)}>
+                        <div className="result-card-header">
+                          <span className="result-card-title">Test {i + 1}</span>
+                          <span className={resultBadgeClass(res.status)}>{res.status}</span>
+                        </div>
+                        <div className="result-card-body">
+                          {res.input && res.input !== "—" && (
+                            <div className="result-row"><label>Input</label><pre>{res.input}</pre></div>
+                          )}
+                          {res.expectedOutput && res.expectedOutput !== "—" && (
+                            <div className="result-row"><label>Expected</label><pre>{res.expectedOutput}</pre></div>
+                          )}
+                          {res.actualOutput && res.actualOutput !== "—" && (
+                            <div className="result-row"><label>Your Output</label><pre>{res.actualOutput}</pre></div>
+                          )}
+                          <div className="result-meta">
+                            <div className="result-meta-item">
+                              ⏱ <strong>{res.executionTime}s</strong>
+                            </div>
+                            {res.memoryUsed && res.memoryUsed !== "—" && (
+                              <div className="result-meta-item">
+                                💾 <strong>{res.memoryUsed} KB</strong>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
-                </>
-              )}
+                )}
+
+                {!running && results.length === 0 && !verdict && (
+                  <p style={{ color: "#6e6e6e", fontSize: 13, marginTop: 4 }}>
+                    Run or submit your code to see results here.
+                  </p>
+                )}
+
+                {!running && results.length === 0 && verdict && (
+                  <p style={{ color: "#8c8c8c", fontSize: 13 }}>
+                    Verdict: <span className={`result-verdict-pill ${verdictClass(verdict)}`}>{verdict}</span>
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          </>
         )}
-        </div>
       </div>
     </div>
   );

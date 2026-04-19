@@ -1,28 +1,12 @@
-import { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 
 export default function CodeEditor({ language, code, setCode, readOnly = false }) {
-  const containerRef = useRef(null);
-  const [editorHeight, setEditorHeight] = useState("400px");
-
-  useEffect(() => {
-    const updateHeight = () => {
-      if (window.innerWidth <= 768) {
-        setEditorHeight("350px");   // Mobile
-      } else {
-        setEditorHeight("70%");    // Desktop
-      }
-    };
-
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
-  }, []);
-
   return (
-    <div ref={containerRef} style={{ flex: 1 }}>
+    // flex:1 + height:100% lets the parent (editor-pane) control the height
+    // automaticLayout:true re-measures whenever the container resizes (including drag)
+    <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
       <Editor
-        height={editorHeight}
+        height="100%"
         language={language}
         value={code}
         theme="vs-dark"
@@ -30,7 +14,7 @@ export default function CodeEditor({ language, code, setCode, readOnly = false }
         options={{
           fontSize: 14,
           minimap: { enabled: false },
-          automaticLayout: true,
+          automaticLayout: true,   // re-measures on container resize
           scrollBeyondLastLine: false,
           readOnly: readOnly,
         }}
