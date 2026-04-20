@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Contest from "../models/Contest.js";
 import ContestSubmission from "../models/ContestSubmission.js";
 import Scoreboard from "../models/Scoreboard.js";
+import submissionQueue from "../services/bullMQ.queue.js";
 
 const createContest = async (req, res) => {
   try {
@@ -381,4 +382,58 @@ const deleteContest = async (req, res) => {
   }
 };
 
-export { createContest, getContest, joinContest, leaveContest, getContestProblems, getAllContests, updateContest, deleteContest };
+const contestSubmission = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const { problemId, code, language } = req.body;
+    const userId = req.user.id;
+
+    // Validate input
+    if (!slug || !problemId || !code || !language) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    const contest = await Contest.findOne({ slug }).populate("problems.problemId");
+    if (!contest) {
+      return res.status(404).json({ success: false, message: "Contest not found" });
+    }
+
+    // Check if user is a participant
+    if (!contest.participants.includes(userId)) {
+      return res.status(403).json({ success: false, message: "You have not joined this contest" });
+    }
+
+    // Check if contest is running
+    const now = new Date();
+    if (now < contest.startTime) {
+      return res.status(403).json({ success: false, message: "Contest has not started yet" });
+    }
+    if (now > contest.endTime) {
+      return res.status(403).json({ success: false, message: "Contest has already ended" });
+    }
+
+    // Check if problem is part of the contest
+    const contestProblem = contest.problems.find(p => p.problemId._id.toString() === problemId);
+    if (!contestProblem) {
+      return res.status(400).json({ success: false, message: "Problem is not part of the contest" });
+    }
+
+    // Here you would typically add code to evaluate the submission and update its status
+    //adding the submission to the queue for processing
+    const job = await submissionQueue.add('runSubmission', {
+      problemId,
+      code,
+      language,
+      userId,
+      contestId: contest._id,
+      type:"contestSubmission"
+    });
+
+    return res.status(201).json({ success: true, message: "Submission received", submissionId: job.id });
+  } catch (error) {
+    console.error("Contest Submission Error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
+
+export { createContest, getContest, joinContest, leaveContest, getContestProblems, getAllContests, updateContest, deleteContest , contestSubmission};

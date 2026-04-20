@@ -9,6 +9,7 @@ import Spinner from "../../components/Spinner/Spinner.jsx";
 import runCode from "../../api/codeRunner.api.js";
 import { getAllSubmissionsOfAProblem } from "../../api/submission.api.js";
 import useSocket from "../../hooks/useSocket.js";
+import { createContestSubmissionAPI } from "../../api/contest.api.js";
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
 
@@ -35,7 +36,7 @@ const resultBadgeClass = (status = "") => {
 export default function ProblemDetails() {
   const { url, token } = useContext(Context);
   const socketRef = useSocket(url, token);
-  const { slug } = useParams();
+  const { slug , contestSlug} = useParams();
 
   const [problemDetail, setProblemDetail] = useState({});
   const [language, setLanguage]           = useState("java");
@@ -153,11 +154,36 @@ export default function ProblemDetails() {
     return () => socket.off("run:result", handler);
   }, [socketRef.current]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Contest submissions emit a different event — handle it here
+  useEffect(() => {
+    const socket = socketRef.current;
+    if (!socket) return;
+    const handler = (data) => {
+      setVerdict(data.error ? "Error" : data.verdict);
+      // Normalise field names: worker uses "expected" but the result pane reads "expectedOutput"
+      const outputs = (data.outputs || []).map(o => ({
+        ...o,
+        expectedOutput: o.expectedOutput ?? o.expected ?? "",
+      }));
+      setResults(data.error ? [] : outputs);
+      setRunning(false);
+    };
+    socket.on("contestSubmission:result", handler);
+    return () => socket.off("contestSubmission:result", handler);
+  }, [socketRef.current]); // eslint-disable-line react-hooks/exhaustive-deps
+
   /* ── handlers ─────────────────────────────────────────────────────── */
   const submitHandler = async () => {
     try {
       setRunning(true); setResults([]); setVerdict(null);
-      await createSubmission(url, { problemId: problemDetail._id, code, language }, token);
+
+      if(contestSlug) {
+        // If the problem is part of a contest, use the contest submission API
+        await createContestSubmissionAPI(url,contestSlug, {problemId:problemDetail._id, code, language}, token);
+      } else {
+        // Otherwise, use the regular submission API
+        await createSubmission(url, { problemId: problemDetail._id, code, language }, token);
+      }
     } catch (e) {
       console.error(e); setVerdict("Error"); setResults([]); setRunning(false);
     }

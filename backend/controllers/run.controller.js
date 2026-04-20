@@ -1,5 +1,7 @@
 import Problem from "../models/Problem.js";
 import { languageMap } from "../config/languages.js";
+import axios from "axios";
+import { JUDGE0_URL } from "../config/judgeUrl.js";
 import submissionQueue from "../services/bullMQ.queue.js";
 
 
