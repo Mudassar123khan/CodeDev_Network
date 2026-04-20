@@ -321,7 +321,7 @@ export default function ProblemDetails() {
               </select>
               <div className="run-submit-buttons">
                 <button className="run-btn" disabled={running} onClick={runHandler}>
-                  {running ? "Running…" : "▶ Run"}
+                  {running ? "Running…" : "Run"}
                 </button>
                 <button className="submit-btn" disabled={running} onClick={submitHandler}>
                   {running ? "Judging…" : "Submit"}

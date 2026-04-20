@@ -35,4 +35,22 @@ const leaveContestAPI = async (url, slug, token) => {
   return response.data;
 };
 
-export { getAllContestsAPI, joinContestAPI, leaveContestAPI };
+const getContestBySlugAPI = async (url, slug, token) => {
+  const response = await axios.get(`${url}/contest/${slug}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+const getContestProblemsAPI = async (url, slug, token) => {
+  const response = await axios.get(`${url}/contest/${slug}/problems`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export { getAllContestsAPI, joinContestAPI, leaveContestAPI, getContestBySlugAPI, getContestProblemsAPI };

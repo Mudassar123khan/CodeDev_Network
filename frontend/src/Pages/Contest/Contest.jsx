@@ -44,7 +44,7 @@ export default function Contest() {
 
   // participants array contains ObjectId strings from backend
   const isUserRegistered = (contest) =>
-    user && contest.participants.some((p) => p === user._id || p.toString() === user._id);
+    user && contest.participants.some((p) => p === user.id || p.toString() === user.id);
 
   const handleRegister = async (slug) => {
     if (!user) {
@@ -94,12 +94,12 @@ export default function Contest() {
     });
 
     return (
-      <div className="contest-card" key={contest._id}>
+      <div className="contest-card" key={contest._id} onClick={() => navigate(`/contest/${contest.slug}`)} style={{ cursor: 'pointer' }}>
         <div className="contest-info">
           <div className="contest-title-row">
             <h3>{contest.title}</h3>
             {isRegistered && (
-              <span className="registered-badge">✓ Registered</span>
+              <span className="registered-badge">Registered</span>
             )}
           </div>
           <p className="contest-time">Starts: {startDate}</p>
@@ -110,7 +110,7 @@ export default function Contest() {
           {type === "upcoming" && (
             isRegistered ? (
               <button
-                onClick={() => handleUnregister(contest.slug)}
+                onClick={(e) => { e.stopPropagation(); handleUnregister(contest.slug); }}
                 className="btn-unregister"
                 disabled={isActing}
               >
@@ -118,7 +118,7 @@ export default function Contest() {
               </button>
             ) : (
               <button
-                onClick={() => handleRegister(contest.slug)}
+                onClick={(e) => { e.stopPropagation(); handleRegister(contest.slug); }}
                 className="btn-primary"
                 disabled={isActing}
               >
@@ -128,15 +128,15 @@ export default function Contest() {
           )}
 
           {type === "running" && (
-            <Link to={`/contest/${contest.slug}`} className="btn-primary">
+            <button onClick={(e) => { e.stopPropagation(); navigate(`/contest/${contest.slug}`); }} className="btn-primary">
               Enter
-            </Link>
+            </button>
           )}
 
           {type === "ended" && (
-            <Link to={`/contest/${contest.slug}`} className="btn-secondary">
+            <button onClick={(e) => { e.stopPropagation(); navigate(`/contest/${contest.slug}`); }} className="btn-secondary">
               View
-            </Link>
+            </button>
           )}
         </div>
       </div>
