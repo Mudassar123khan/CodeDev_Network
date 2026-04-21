@@ -14,6 +14,7 @@ router.post('/:slug/join',authMiddleware,joinContest)
 router.post('/:slug/leave',authMiddleware,leaveContest)
 router.get('/:slug/problems',authMiddleware,getContestProblems)
 router.post('/:slug/submit',authMiddleware,contestSubmission)
+//router.get('/:slug/leaderboard',authMiddleware)
 
 
 export default router
