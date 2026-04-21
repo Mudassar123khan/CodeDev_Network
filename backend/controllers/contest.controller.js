@@ -426,6 +426,7 @@ const contestSubmission = async (req, res) => {
       language,
       userId,
       contestId: contest._id,
+      points:contest.problems.points,
       type:"contestSubmission"
     });
 

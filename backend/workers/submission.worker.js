@@ -277,6 +277,7 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
             verdict,
             executionTime,
             contestId: job.data.contestId,
+            points:job.data.points,
         });
 
         return {

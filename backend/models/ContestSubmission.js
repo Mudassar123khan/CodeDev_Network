@@ -50,11 +50,6 @@ const ContestSubmissionSchema = new Schema(
       type: Number,
       default: 0,
     },
-    status: {
-      type: String,
-      enum: ["pending", "running", "completed","failed"],
-      default: "pending",
-    },
     isBest: {
       type: Boolean,
       default: false,
