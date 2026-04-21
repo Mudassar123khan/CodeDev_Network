@@ -243,10 +243,10 @@ const getContestProblems = async (req, res) => {
       select: "title slug",
     });
 
-    if(!contest){
+    if (!contest) {
       return res.status(404).json({
-        success:false,
-        message:"Contest not found"
+        success: false,
+        message: "Contest not found"
       })
     }
 
@@ -338,15 +338,15 @@ const updateContest = async (req, res) => {
     if (slug) contest.slug = slug;
     if (startTime) contest.startTime = startTime;
     if (endTime) contest.endTime = endTime;
-    
+
     if (problems && Array.isArray(problems)) {
-        const isValidProblems = problems.every(
-          (p) => p.problemId && p.order !== undefined && p.points !== undefined,
-        );
-        if (!isValidProblems) {
-            return res.status(400).json({ success: false, message: "Invalid problems format" });
-        }
-        contest.problems = problems;
+      const isValidProblems = problems.every(
+        (p) => p.problemId && p.order !== undefined && p.points !== undefined,
+      );
+      if (!isValidProblems) {
+        return res.status(400).json({ success: false, message: "Invalid problems format" });
+      }
+      contest.problems = problems;
     }
 
     await contest.save();
@@ -369,7 +369,7 @@ const updateContest = async (req, res) => {
 const deleteContest = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const deletedContest = await Contest.findByIdAndDelete(id);
     if (!deletedContest) {
       return res.status(404).json({ success: false, message: "Contest not found" });
@@ -426,8 +426,8 @@ const contestSubmission = async (req, res) => {
       language,
       userId,
       contestId: contest._id,
-      points:contest.problems.points,
-      type:"contestSubmission"
+      points: contestProblem.points,
+      type: "contestSubmission"
     });
 
     return res.status(201).json({ success: true, message: "Submission received", submissionId: job.id });
@@ -437,6 +437,53 @@ const contestSubmission = async (req, res) => {
   }
 }
 
+const getContestLeaderboard = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const contest = await Contest.findOne({ slug }).populate("problems.problemId");
+    if (!contest) {
+      return res.status(404).json({ success: false, message: "Contest not found" });
+    }
+
+    // Fetch all submissions for the contest
+    const submissions = await ContestSubmission.find({ contestId: contest._id })
+      .populate("userId", "username")
+      .populate("problemId", "title");
+
+    // Calculate scores and prepare leaderboard data
+    const leaderboard = {};
+
+    submissions.forEach(sub => {
+      const userId = sub.userId._id.toString();
+      if (!leaderboard[userId]) {
+        leaderboard[userId] = {
+          username: sub.userId.username,
+          totalPoints: 0,
+          problemsSolved: new Set(),
+        };
+      }
+      if (sub.verdict === "AC") {
+        const problemPoints = contest.problems.find(p => p.problemId._id.toString() === sub.problemId._id.toString())?.points || 0;
+        if (!leaderboard[userId].problemsSolved.has(sub.problemId._id.toString())) {
+          leaderboard[userId].totalPoints += problemPoints;
+          leaderboard[userId].problemsSolved.add(sub.problemId._id.toString());
+        }
+      }
+    });
+
+    // Convert leaderboard object to array and sort by total points
+    const sortedLeaderboard = Object.values(leaderboard).map(user => ({
+      ...user,
+      problemsSolved: Array.from(user.problemsSolved)
+    })).sort((a, b) => b.totalPoints - a.totalPoints);
+    console.log("Leaderboard:", sortedLeaderboard);
+    return res.status(200).json({ success: true, leaderboard: sortedLeaderboard });
+  } catch (error) {
+    console.error("Get Contest Leaderboard Error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 
-export { createContest, getContest, joinContest, leaveContest, getContestProblems, getAllContests, updateContest, deleteContest , contestSubmission};
+export { createContest, getContest, joinContest, leaveContest, getContestProblems, getAllContests, updateContest, deleteContest, contestSubmission, getContestLeaderboard };

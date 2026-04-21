@@ -66,4 +66,13 @@ const createContestSubmissionAPI = async (url,contestSlug, data, token) => {
   return response.data;
 };
 
-export { getAllContestsAPI, joinContestAPI, leaveContestAPI, getContestBySlugAPI, getContestProblemsAPI, createContestSubmissionAPI };
+const getContestLeaderboardAPI = async (url, slug, token) => {
+  const response = await axios.get(`${url}/contest/${slug}/leaderboard`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export { getAllContestsAPI, joinContestAPI, leaveContestAPI, getContestBySlugAPI, getContestProblemsAPI, createContestSubmissionAPI,getContestLeaderboardAPI };

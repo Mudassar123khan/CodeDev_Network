@@ -269,6 +269,10 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
             if (verdict !== "AC") break;
         }
 
+        let points = job.data.points
+        if(verdict !== "AC"){
+            points = 0; // No points if not accepted
+        }
         const newSubmission = await ContestSubmission.create({
             userId,
             problemId,
@@ -277,7 +281,7 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
             verdict,
             executionTime,
             contestId: job.data.contestId,
-            points:job.data.points,
+            score:points,
         });
 
         return {

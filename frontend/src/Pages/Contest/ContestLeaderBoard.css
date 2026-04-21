@@ -1,0 +1,355 @@
+/* ============================================================
+   Contest Leaderboard Page - Clean & Consistent Theme
+   ============================================================ */
+
+.clb-page {
+  min-height: 100vh;
+  padding: 100px 20px 60px;
+  color: #cfcfcf;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.clb-container {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* ── HEADER SECTION ── */
+.clb-header-section {
+  margin-bottom: 24px;
+}
+
+.clb-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #a0a0a0;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  transition: color 0.2s;
+}
+
+.clb-back-link:hover {
+  color: #ffa116;
+}
+
+.clb-title-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.clb-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+
+.clb-subtitle {
+  font-size: 15px;
+  color: #a0a0a0;
+  margin: 0;
+  font-weight: 500;
+}
+
+.clb-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.clb-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.clb-timer-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+.clb-refresh-btn {
+  background: #2d2d2d;
+  border: 1px solid #3d3d3d;
+  color: #a0a0a0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clb-refresh-btn:hover {
+  border-color: #ffa116;
+  color: #ffa116;
+  background: rgba(255, 161, 22, 0.05);
+}
+
+.clb-refresh-btn.spinning svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}
+
+/* ── STATS BAR ── */
+.clb-stats-bar {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 16px 30px;
+  background: #232323;
+  border: 1px solid #3d3d3d;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.clb-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clb-stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a0a0a0;
+  font-weight: 600;
+}
+
+.clb-stat-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.clb-stat-val.highlight {
+  color: #ffa116;
+}
+
+.clb-stat-item.my-rank {
+  margin-left: auto;
+  padding-left: 24px;
+  border-left: 1px solid #3d3d3d;
+  align-items: flex-end;
+}
+
+.clb-stat-item.my-rank .clb-stat-val small {
+  font-size: 14px;
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
+/* ── TABLE CARD ── */
+.clb-table-card {
+  background: #232323;
+  border: 1px solid #3d3d3d;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.clb-table-responsive {
+  overflow-x: auto;
+}
+
+.clb-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.clb-table th {
+  padding: 16px 20px;
+  background: #2d2d2d;
+  font-size: 13px;
+  font-weight: 600;
+  color: #cccccc;
+  border-bottom: 1px solid #3d3d3d;
+  white-space: nowrap;
+}
+
+.th-rank { width: 80px; text-align: center !important; }
+.th-user { min-width: 200px; }
+.th-prob { text-align: center !important; min-width: 100px; }
+.th-score { width: 100px; text-align: right !important; padding-right: 30px !important; }
+
+.th-prob-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.th-prob-pts {
+  font-size: 11px;
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
+.clb-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #3d3d3d;
+  color: #cfcfcf;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.clb-table tr:last-child td {
+  border-bottom: none;
+}
+
+.clb-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.row-me td {
+  background: rgba(255, 161, 22, 0.08) !important;
+}
+
+/* Rank Styling */
+.td-rank { text-align: center; }
+.rank-num {
+  font-weight: 600;
+  color: #a0a0a0;
+}
+.medal {
+  font-size: 20px;
+}
+
+/* User Styling */
+.user-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.user-link:hover {
+  color: #ffa116;
+}
+
+.badge-me {
+  margin-left: 10px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 12px;
+  background: rgba(255, 161, 22, 0.15);
+  color: #ffa116;
+  border: 1px solid rgba(255, 161, 22, 0.3);
+}
+
+/* Problem Status */
+.td-prob { text-align: center; }
+
+.prob-solved {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+}
+
+.prob-unsolved {
+  display: inline-block;
+  width: 12px;
+  height: 2px;
+  background: #4d4d4d;
+  border-radius: 2px;
+}
+
+/* Score Styling */
+.td-score {
+  text-align: right;
+  padding-right: 30px !important;
+}
+
+.score-val {
+  font-weight: 700;
+  color: #ffa116;
+  font-size: 16px;
+}
+
+/* ── EMPTY STATE ── */
+.clb-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: #232323;
+  border: 1px solid #3d3d3d;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.clb-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.clb-empty h3 {
+  font-size: 20px;
+  color: #ffffff;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.clb-empty p {
+  font-size: 14px;
+  color: #a0a0a0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .clb-page { padding: 80px 16px 40px; }
+  .clb-stats-bar { 
+    flex-wrap: wrap; 
+    gap: 16px;
+    padding: 20px;
+  }
+  .clb-stat-item.my-rank {
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid #3d3d3d;
+    padding-top: 16px;
+    align-items: flex-start;
+  }
+  .clb-title { font-size: 24px; }
+  .clb-actions { width: 100%; justify-content: space-between; margin-top: 8px; }
+}
