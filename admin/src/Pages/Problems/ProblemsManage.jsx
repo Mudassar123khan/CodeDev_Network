@@ -13,7 +13,7 @@ export default function ProblemsManage() {
   const [showModal, setShowModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
-    id: '', title: '', description: '', difficulty: 'easy', tags: '', constraints: '', slug: '', testCasesJson: '[]'
+    id: '', title: '', description: '', difficulty: 'easy', tags: '', constraints: '', slug: '', testCasesJson: '[]', isContestProblem: false
   });
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function ProblemsManage() {
 
   const openCreateModal = () => {
     setIsEdit(false);
-    setFormData({ id: '', title: '', description: '', difficulty: 'easy', tags: '', constraints: '', slug: '', testCasesJson: '[]' });
+    setFormData({ id: '', title: '', description: '', difficulty: 'easy', tags: '', constraints: '', slug: '', testCasesJson: '[]', isContestProblem: false });
     setShowModal(true);
   };
 
@@ -63,13 +63,15 @@ export default function ProblemsManage() {
       tags: problem.tags ? problem.tags.join(', ') : '',
       constraints: problem.constraints || '',
       slug: problem.slug || '',
-      testCasesJson: problem.testCases ? JSON.stringify(problem.testCases, null, 2) : '[]'
+      testCasesJson: problem.testCases ? JSON.stringify(problem.testCases, null, 2) : '[]',
+      isContestProblem: problem.isContestProblem || false
     });
     setShowModal(true);
   };
 
   const handleFormChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -89,7 +91,8 @@ export default function ProblemsManage() {
         slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
         constraints: formData.constraints,
-        testCases: parsedTestCases
+        testCases: parsedTestCases,
+        isContestProblem: formData.isContestProblem
       };
 
       if (isEdit) {
@@ -187,6 +190,17 @@ export default function ProblemsManage() {
               <div className="form-group">
                 <label>Constraints</label>
                 <textarea rows="2" name="constraints" value={formData.constraints} onChange={handleFormChange} />
+              </div>
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input 
+                  type="checkbox" 
+                  name="isContestProblem" 
+                  checked={formData.isContestProblem} 
+                  onChange={handleFormChange} 
+                  id="isContestProblem"
+                  style={{ width: 'auto', margin: 0 }}
+                />
+                <label htmlFor="isContestProblem" style={{ margin: 0 }}>Is Contest Problem (Hide from Practice)</label>
               </div>
               <div className="form-group">
                 <label>Test Cases (Valid JSON Array)</label>

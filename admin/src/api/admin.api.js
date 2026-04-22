@@ -34,7 +34,7 @@ export const syncSingleUser = async (url, token, id) => {
 // Problem Admin Logic (Reusing existing problem backend APIs)
 export const getAllProblems = async (url) => {
   // Existing route returns all problems 
-  return await axios.get(`${url}/problems`); 
+  return await axios.get(`${url}/problems?admin=true`); 
 };
 
 export const createProblem = async (url, token, data) => {

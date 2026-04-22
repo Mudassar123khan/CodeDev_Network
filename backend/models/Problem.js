@@ -79,6 +79,14 @@ const ProblemSchema = new Schema(
     memoryLimit: {
       type: Number,
       default: 131072
+    },
+    isContestProblem: {
+      type: Boolean,
+      default: false
+    },
+    contest: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Contest"
     }
 
   },

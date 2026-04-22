@@ -2,7 +2,7 @@ import Problem from '../models/Problem.js';
 
 const createProblem = async (req,res)=>{
     try{
-        const {title, description,difficulty,tags,constraints, slug,testCases} = req.body;
+        const {title, description,difficulty,tags,constraints, slug,testCases, isContestProblem} = req.body;
         if(!title || !description || !difficulty || !tags || !constraints || !slug || !testCases || tags.length===0 || testCases.length===0){
             return res.status(400).json({
                 success:false,
@@ -29,7 +29,8 @@ const createProblem = async (req,res)=>{
             constraints,
             createdBy:req.user.id,
             slug,
-            testCases
+            testCases,
+            isContestProblem: !!isContestProblem
         });
 
         console.log("Problem created");
@@ -54,7 +55,8 @@ const createProblem = async (req,res)=>{
 
 const getProblems = async (req,res)=>{
     try{
-        const problems = await Problem.find({});
+        const filter = req.query.admin === 'true' ? {} : { isContestProblem: { $ne: true } };
+        const problems = await Problem.find(filter);
 
         res.status(200).json({
             success:true,
@@ -90,6 +92,24 @@ const getOneProblem = async (req,res)=>{
             message: "Problem not found",
             });
         }
+        
+        if (problem.isContestProblem) {
+            const Contest = (await import('../models/Contest.js')).default;
+            const contest = problem.contest 
+              ? await Contest.findById(problem.contest) 
+              : await Contest.findOne({ "problems.problemId": problem._id });
+              
+            if (contest) {
+                const now = new Date();
+                if (now < contest.startTime) {
+                    return res.status(403).json({
+                        success: false,
+                        message: "This problem is part of an upcoming contest and is not yet available.",
+                    });
+                }
+            }
+        }
+
         console.log("Problem found");
         res.status(200).json({
             success:true,
@@ -119,6 +139,7 @@ const updateProblem = async (req,res)=>{
             "constraints",
             "testCases",
             "slug",
+            "isContestProblem"
         ];
 
         //object storing the updates
