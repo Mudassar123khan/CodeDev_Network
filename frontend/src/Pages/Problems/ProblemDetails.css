@@ -22,6 +22,35 @@
   background: #1b1b1b;
 }
 
+/* ── Back to Contest Button ────────────────────────────────────────────────── */
+.back-to-contest-container {
+  padding: 10px 16px;
+  background: #1b1b1b;
+  border-bottom: 1px solid #2d2d2d;
+}
+
+.back-to-contest-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #8c8c8c;
+  border: 1px solid #3a3a3a;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.back-to-contest-btn:hover {
+  background: #2d2d2d;
+  color: #fff;
+  border-color: #4a4a4a;
+}
+
 /* ── Tabs ────────────────────────────────────────────────────────────────── */
 .tabs {
   display: flex;

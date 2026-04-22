@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { fetchOneProblemAPI } from "../../api/problem.api";
 import { Context } from "../../context/AuthContext";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import "./ProblemDetails.css";
 import { createSubmission } from "../../api/submission.api";
@@ -9,7 +9,7 @@ import Spinner from "../../components/Spinner/Spinner.jsx";
 import runCode from "../../api/codeRunner.api.js";
 import { getAllSubmissionsOfAProblem } from "../../api/submission.api.js";
 import useSocket from "../../hooks/useSocket.js";
-import { createContestSubmissionAPI } from "../../api/contest.api.js";
+import { createContestSubmissionAPI, fetchContestSubmissionsAPI } from "../../api/contest.api.js";
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
 
@@ -37,6 +37,7 @@ export default function ProblemDetails() {
   const { url, token } = useContext(Context);
   const socketRef = useSocket(url, token);
   const { slug , contestSlug} = useParams();
+  const navigate = useNavigate();
 
   const [problemDetail, setProblemDetail] = useState({});
   const [language, setLanguage]           = useState("java");
@@ -118,8 +119,13 @@ export default function ProblemDetails() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await getAllSubmissionsOfAProblem(url, slug, token);
-        setSubmissions(res.data);
+        if(!contestSlug) {
+          const res = await getAllSubmissionsOfAProblem(url, slug, token);
+          setSubmissions(res.data);
+        }else {
+          const res = await fetchContestSubmissionsAPI(url, contestSlug, slug, token);
+          setSubmissions(res.data);
+        }
       } catch (e) { console.error(e); }
     };
     fetch();
@@ -208,6 +214,20 @@ export default function ProblemDetails() {
 
       {/* ═══════════════ LEFT PANEL ═══════════════ */}
       <div className="problem-left">
+
+        {contestSlug && (
+          <div className="back-to-contest-container">
+            <button 
+              className="back-to-contest-btn" 
+              onClick={() => navigate(`/contest/${contestSlug}`)}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back to Contest
+            </button>
+          </div>
+        )}
 
         <div className="tabs">
           {["description", "submissions"].map(tab => (

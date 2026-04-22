@@ -477,7 +477,6 @@ const getContestLeaderboard = async (req, res) => {
       ...user,
       problemsSolved: Array.from(user.problemsSolved)
     })).sort((a, b) => b.totalPoints - a.totalPoints);
-    console.log("Leaderboard:", sortedLeaderboard);
     return res.status(200).json({ success: true, leaderboard: sortedLeaderboard });
   } catch (error) {
     console.error("Get Contest Leaderboard Error:", error);
@@ -485,5 +484,37 @@ const getContestLeaderboard = async (req, res) => {
   }
 };
 
+const getAllSubmissionsOfAContestProblem = async (req, res) => {
+  try {
+    const { slug ,contestSlug} = req.params;
+    const userId = req.user.id;
 
-export { createContest, getContest, joinContest, leaveContest, getContestProblems, getAllContests, updateContest, deleteContest, contestSubmission, getContestLeaderboard };
+    const contest = await Contest.findOne({ slug: contestSlug });
+    if (!contest) {
+      return res.status(404).json({ success: false, message: "Contest not found" });
+    }
+
+    // Check if user is a participant
+    if (!contest.participants.includes(userId)) {
+      return res.status(403).json({ success: false, message: "You have not joined this contest" });
+    }
+
+    const problem = await Problem.findOne({ slug });
+    if (!problem) {
+      return res.status(404).json({ success: false, message: "Problem not found" });
+    }
+
+    const submissions = await ContestSubmission.find({
+      contestId: contest._id,
+      problemId: problem._id,
+      userId
+    }).populate("problemId", "title").sort({ createdAt: -1 });
+
+    return res.status(200).json({ success: true, data: submissions });
+  } catch (error) {
+    console.error("Get Submissions of Contest Problem Error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export { createContest, getContest, joinContest, leaveContest, getContestProblems, getAllContests, updateContest, deleteContest, contestSubmission, getContestLeaderboard, getAllSubmissionsOfAContestProblem };
