@@ -3,6 +3,6 @@ import authMiddleware from '../middleware/auth.middleware.js';
 import getleaderBoard from '../controllers/leaderboard.controller.js';
 const router = express.Router();
 
-router.get('/',authMiddleware,getleaderBoard);
+router.get('/',getleaderBoard);
 
 export default router;

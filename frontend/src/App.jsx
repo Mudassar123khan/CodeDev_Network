@@ -33,7 +33,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={token ? <Navigate to='/' /> : <Login />} />
         <Route path='/register' element={token ? <Navigate to='/' /> : <Register />} />
-        <Route path='/leaderboard' element={token ? <LeaderBoard /> : <Login />} />
+        <Route path='/leaderboard' element={<LeaderBoard />} />
         <Route path='/problems' element={<Problems />} />
         <Route path='/problems/:slug' element={token ? <ProblemDetails /> : <Login />} />
         <Route path='/contest/:contestSlug/problems/:slug' element={token ? <ProblemDetails /> : <Login />} />

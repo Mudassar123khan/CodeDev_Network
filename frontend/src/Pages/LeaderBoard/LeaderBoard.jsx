@@ -13,15 +13,15 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(true);
 
   // Pull global states and startPolling from Context
-  const { 
-    url, 
-    token, 
-    user, 
-    syncing, 
-    setSyncing, 
-    syncStatus, 
-    setSyncStatus, 
-    startPolling 
+  const {
+    url,
+    token,
+    user,
+    syncing,
+    setSyncing,
+    syncStatus,
+    setSyncStatus,
+    startPolling
   } = useContext(Context);
 
   useEffect(() => {
@@ -101,8 +101,8 @@ export default function Leaderboard() {
               {syncStatus === "syncing"
                 ? "Syncing..."
                 : syncStatus === "queued"
-                ? "In Queue..."
-                : "Sync Me"}
+                  ? "In Queue..."
+                  : "Sync Me"}
             </button>
           </div>
 
@@ -125,9 +125,8 @@ export default function Leaderboard() {
         {podium.map((u) => (
           <div
             key={u._id}
-            className={`podium-card rank-${u.rank} ${
-              u.userId.username === user.username ? "current-user" : ""
-            }`}
+            className={`podium-card rank-${u.rank} ${u.userId.username === user.username ? "current-user" : ""
+              }`}
           >
             <div className="podium-rank">#{u.rank}</div>
             <Link to={`/profile/${u.userId.username}`} className="podium-user profile-link">
@@ -146,9 +145,8 @@ export default function Leaderboard() {
         </div>
         {rest.map((u) => (
           <div
-            className={`leaderboard-row ${
-              u.userId.username === user.username ? "current-user" : ""
-            }`}
+            className={`leaderboard-row ${u.userId.username === user.username ? "current-user" : ""
+              }`}
             key={u._id}
           >
             <div className="rank">{u.rank}</div>
