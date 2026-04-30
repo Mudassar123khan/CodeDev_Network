@@ -37,7 +37,14 @@
   box-shadow: 0 0 0 1px #FFA116;
 }
 
-.register-form button {
+.form-title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.register-form .primary-btn {
   margin-top: 10px;
   padding: 12px;
   font-size: 16px;
@@ -48,10 +55,35 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  width: 100%;
 }
 
-.register-form button:hover {
+.register-form .primary-btn:hover {
   background-color: #c07d19;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.register-form .secondary-btn {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7280;
+  background-color: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.register-form .secondary-btn:hover {
+  background-color: #f3f4f6;
+  color: #374151;
 }
 
 .handles-grid {
