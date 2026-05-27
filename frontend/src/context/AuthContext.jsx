@@ -4,7 +4,7 @@ import { getSyncStatus } from "../api/sync.api"; // Ensure path is correct
 export const Context = createContext(null);
 
 export const ContextProvider = ({ children }) => {
-  const url = "http://10.24.197.197:3000/api";
+  const url = "http://10.63.172.197:3000/api";
   //const url = "http://localhost:3000/api";
   //const url = 'https://codedev-network-1.onrender.com/api';
   

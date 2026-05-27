@@ -11,6 +11,11 @@ import "./workers/sync.worker.js"
 import "./workers/submission.worker.js"
 import getProfileRouter from './routes/profile.routes.js'
 const app = express()
+import promClient from 'prom-client'
+
+const collectDefaultMetrics = promClient.collectDefaultMetrics;
+collectDefaultMetrics({ register: promClient.register });
+
 
 
 app.use(express.json())
@@ -35,5 +40,16 @@ app.get('/api/health',(req,res)=>{
   console.log("Health check request received")
   res.send("OK")
 });
+
+//route for prometheus metrics
+app.get('/metrics', async (req, res) => {
+  try {
+    res.setHeader ('Content-Type', promClient.register.contentType);
+    const metrics = await promClient.register.metrics();
+    res.send(metrics); 
+  } catch (ex) {
+    res.status(500).end(ex);
+  }
+}) 
 
 export default app
