@@ -159,7 +159,7 @@
 }
 /* =========================
    DESKTOP PROFILE DROPDOWN (FIXED)
-========================= */
+ ========================= */
 .desktop-profile {
   position: relative;
   display: flex;
@@ -167,36 +167,57 @@
   cursor: pointer;
 }
 
-/* Invisible hover buffer */
-.desktop-profile::after {
-  content: "";
+.desktop-dropdown-menu {
   position: absolute;
-  top: 28px;
-  right: 0;
-  width: 100%;
-  height: 10px;
-}
-
-.desktop-logout {
-  display: none;
-  position: absolute;
-  top: 38px;
+  top: 42px;
   right: 0;
   background: #2d2d2d;
-  padding: 8px 14px;
-  border-radius: 6px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  min-width: 140px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  z-index: 1000;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.desktop-dropdown-menu a,
+.desktop-dropdown-menu .desktop-logout {
+  padding: 10px 16px;
   font-size: 14px;
   color: #cfcfcf;
+  text-decoration: none;
   cursor: pointer;
-  white-space: nowrap;
-}
-
-/* KEEP dropdown open */
-.desktop-profile:hover .desktop-logout,
-.desktop-logout:hover {
+  transition: all 0.2s ease;
   display: block;
+  text-align: left;
 }
 
-.desktop-logout:hover {
-  background: #282828;
+.desktop-dropdown-menu a:hover {
+  background: #3d3d3d;
+  color: #ffffff;
+}
+
+.desktop-dropdown-menu .desktop-logout:hover {
+  background: #3d3d3d;
+  color: #ff5b5b;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #444;
+  margin: 4px 0;
 }

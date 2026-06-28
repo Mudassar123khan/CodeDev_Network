@@ -1,18 +1,33 @@
 import { Link } from "react-router-dom";
 import "./NavBar.css";
 import { assets } from "../../assets/assets.js";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { Context } from "../../context/AuthContext.jsx";
 
 export default function NavBar() {
   const { token, setToken, user } = useContext(Context);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
     setMenuOpen(false);
+    setDropdownOpen(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="navbar">
@@ -31,17 +46,24 @@ export default function NavBar() {
       {/* RIGHT (DESKTOP AUTH) */}
       <div className="navbar-right desktop-only">
         {token ? (
-          <div className="desktop-profile">
-            <Link to={`/profile/${user.username}`}>
-              <img
-                src={assets.profile_icon}
-                className="profile-image"
-                alt="profile"
-              />
-            </Link>
-            <div className="desktop-logout" onClick={logout}>
-              Logout
-            </div>
+          <div className="desktop-profile" ref={dropdownRef}>
+            <img
+              src={assets.profile_icon}
+              className="profile-image"
+              alt="profile"
+              onClick={() => setDropdownOpen((prev) => !prev)}
+            />
+            {dropdownOpen && (
+              <div className="desktop-dropdown-menu">
+                <Link to={`/profile/${user.username}`} onClick={() => setDropdownOpen(false)}>
+                  Profile
+                </Link>
+                <div className="dropdown-divider" />
+                <div className="desktop-logout" onClick={logout}>
+                  Logout
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="auth-links">
