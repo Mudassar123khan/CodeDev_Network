@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getAllContests, deleteContest, createContest, updateContest } from '../../api/admin.api';
+import { getAllContests, deleteContest, createContest, updateContest, getAllProblems, getContestBySlug } from '../../api/admin.api';
 import { Context } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import '../Manage.css';
@@ -7,6 +7,7 @@ import '../Manage.css';
 export default function ContestsManage() {
   const { url, token } = useContext(Context);
   const [contests, setContests] = useState([]);
+  const [allProblems, setAllProblems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Modal State
@@ -15,12 +16,13 @@ export default function ContestsManage() {
   
   // Date values for input fields need to be styled "YYYY-MM-DDTHH:mm" for datetime-local
   const [formData, setFormData] = useState({
-    id: '', title: '', slug: '', startTime: '', endTime: '', problemsJson: '[]'
+    id: '', title: '', slug: '', startTime: '', endTime: '', problemSlugs: ''
   });
 
   useEffect(() => {
     fetchContests();
-  }, []);
+    fetchProblems();
+  }, [url, token]);
 
   const fetchContests = async () => {
     try {
@@ -33,6 +35,15 @@ export default function ContestsManage() {
       toast.error("Failed to fetch contests");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchProblems = async () => {
+    try {
+      const res = await getAllProblems(url);
+      setAllProblems(res.data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch problems", error);
     }
   };
 
@@ -58,24 +69,39 @@ export default function ContestsManage() {
 
   const openCreateModal = () => {
     setIsEdit(false);
-    setFormData({ id: '', title: '', slug: '', startTime: '', endTime: '', problemsJson: '[]' });
+    setFormData({ id: '', title: '', slug: '', startTime: '', endTime: '', problemSlugs: '' });
     setShowModal(true);
   };
 
-  const openEditModal = (contest) => {
+  const openEditModal = async (contest) => {
     setIsEdit(true);
-    // Note: contest object might not contain .problems due to select("-problems")
-    // If not, editing problems requires fetching them individually or ignoring it for now.
-    // For MVPs, we assume we might simply preserve existing problems on backend if problems is undefined inside body.
     setFormData({
       id: contest._id,
       title: contest.title || '',
       slug: contest.slug || '',
       startTime: toInputDateStr(contest.startTime),
       endTime: toInputDateStr(contest.endTime),
-      problemsJson: '[]' // Since we excluded it in fetch, editing problems is unsupported visually unless fetched
+      problemSlugs: 'Loading...'
     });
     setShowModal(true);
+
+    try {
+      const res = await getContestBySlug(url, token, contest.slug);
+      if (res.data.success) {
+        const fullContest = res.data.contest;
+        const slugs = fullContest.problems.map(p => p.problemId?.slug || p.problemId).filter(Boolean).join(', ');
+        setFormData(prev => ({
+          ...prev,
+          problemSlugs: slugs
+        }));
+      } else {
+        setFormData(prev => ({ ...prev, problemSlugs: '' }));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load contest problems");
+      setFormData(prev => ({ ...prev, problemSlugs: '' }));
+    }
   };
 
   const handleFormChange = (e) => {
@@ -84,12 +110,28 @@ export default function ContestsManage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.problemSlugs === 'Loading...') {
+      return toast.error("Please wait for contest problems to load.");
+    }
+
     try {
-      let parsedProblems = [];
-      try {
-        parsedProblems = JSON.parse(formData.problemsJson);
-      } catch (err) {
-        return toast.error("Invalid JSON format for Problems");
+      const slugs = formData.problemSlugs
+        .split(/[\n,]+/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      const parsedProblems = [];
+      for (let i = 0; i < slugs.length; i++) {
+        const slug = slugs[i];
+        const problem = allProblems.find(p => p.slug.toLowerCase() === slug.toLowerCase());
+        if (!problem) {
+          return toast.error(`Problem slug "${slug}" not found in database!`);
+        }
+        parsedProblems.push({
+          problemId: problem._id,
+          order: i + 1,
+          points: 100 // default points
+        });
       }
 
       if (!isEdit && parsedProblems.length === 0) {
@@ -100,13 +142,9 @@ export default function ContestsManage() {
         title: formData.title,
         slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         startTime: new Date(formData.startTime).toISOString(),
-        endTime: new Date(formData.endTime).toISOString()
+        endTime: new Date(formData.endTime).toISOString(),
+        problems: parsedProblems
       };
-
-      // Only attach problems if we actually provided them (allows bypass on edits if excluded)
-      if (parsedProblems.length > 0) {
-          submitData.problems = parsedProblems;
-      }
 
       if (isEdit) {
         const res = await updateContest(url, token, formData.id, submitData);
@@ -196,14 +234,14 @@ export default function ContestsManage() {
               </div>
               
               <div className="form-group">
-                <label>Problems (Valid JSON Array)</label>
+                <label>Problems (List of slugs separated by commas or newlines)</label>
                 {!isEdit && <p style={{fontSize: '11px', color: '#888', marginBottom: '4px'}}>Mandatory for creation.</p>}
                 <textarea 
                   rows="4" 
-                  name="problemsJson" 
-                  value={formData.problemsJson} 
+                  name="problemSlugs" 
+                  value={formData.problemSlugs} 
                   onChange={handleFormChange} 
-                  placeholder='[{"problemId":"<id-here>","order":1,"points":100}]'
+                  placeholder="e.g. two-sum, add-two-numbers"
                 />
               </div>
               

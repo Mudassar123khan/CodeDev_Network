@@ -1,49 +1,232 @@
 /* =========================
-   PAGE
+   PAGE CONTAINER
 ========================= */
 .contest-page {
   min-height: 100vh;
-  padding: 80px 20px 40px;
+  padding: 100px 24px 60px;
   display: flex;
   justify-content: center;
+  background-color: #1b1b1b;
   color: #cfcfcf;
 }
 
 .contest-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   HEADER & SEARCH
+========================= */
+.contest-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .page-title {
   font-size: 28px;
   font-weight: 700;
-  margin-bottom: 40px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #555555;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.search-input {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #3d3d3d;
+  border-radius: 6px;
+  padding: 8px 12px 8px 36px;
+  font-size: 14px;
+  color: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 240px;
+}
+
+.search-input:focus {
+  border-color: #ffa116;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.search-input::placeholder {
+  color: #555555;
+}
+
+/* =========================
+   LIVE STATUS NOTICE
+========================= */
+.live-notice-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid #161616;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 24px;
+  color: #777777;
+  font-size: 13px;
+}
+
+.info-icon {
+  color: #444444;
+  display: flex;
+  align-items: center;
+}
+
+/* =========================
+   STATS GRID
+========================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: #2d2d2d;
+  border: 1px solid #3d3d3d;
+  border-radius: 6px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 700;
   color: #ffffff;
 }
 
+.stat-label {
+  font-size: 13px;
+  color: #666666;
+}
+
+.stat-card.accent-registered .stat-number {
+  color: #ffa116;
+}
+
 /* =========================
-   SECTIONS
+   FILTER TABS
+========================= */
+.filter-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  background: transparent;
+  border: 1px solid #2d2d2d;
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: #888888;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.filter-tab:hover {
+  border-color: #333333;
+  color: #bbbbbb;
+}
+
+.filter-tab.active {
+  border-color: #3d3d3d;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tab-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #666666;
+}
+
+.filter-tab.active .tab-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #888888;
+}
+
+/* =========================
+   SECTIONS & EMPTY CARDS
 ========================= */
 .contest-section {
-  margin-bottom: 48px;
+  margin-bottom: 36px;
 }
 
-.contest-section h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #ffa116;
-  border-bottom: 1px solid #3d3d3d;
-  padding-bottom: 8px;
+.section-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #555555;
+  letter-spacing: 0.12em;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.empty-section-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1.5px dashed #1a1a1a;
+  border-radius: 8px;
+  padding: 48px 24px;
+  background: transparent;
+  text-align: center;
+}
+
+.empty-icon {
+  color: #333333;
+  display: flex;
+  align-items: center;
+}
+
+.empty-text {
+  color: #555555;
+  font-size: 13.5px;
+  margin: 0;
 }
 
 /* =========================
-   LIST & CARDS
+   CONTEST LIST & CARDS
 ========================= */
 .contest-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .contest-card {
@@ -51,136 +234,225 @@
   justify-content: space-between;
   align-items: center;
   background: #2d2d2d;
-  padding: 20px 24px;
-  border-radius: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #3d3d3d;
+  border-radius: 6px;
+  padding: 18px 24px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .contest-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: #444444;
 }
 
-/* Title row with inline registered badge */
+.contest-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.contest-card-icon-container {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid #3d3d3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444444;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.contest-card-icon-container.registered {
+  background: rgba(255, 161, 22, 0.03);
+  border-color: rgba(255, 161, 22, 0.15);
+  color: #ffa116;
+}
+
+.contest-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .contest-title-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
 }
 
 .contest-title-row h3 {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   color: #ffffff;
   margin: 0;
 }
 
-.contest-time {
-  font-size: 14px;
-  color: #a0a0a0;
-  margin-bottom: 2px;
-}
-
-/* =========================
-   REGISTERED BADGE
-========================= */
 .registered-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
+  font-size: 10.5px;
   font-weight: 600;
-  color: #4caf87;
-  background: rgba(76, 175, 135, 0.12);
-  border: 1px solid rgba(76, 175, 135, 0.3);
-  border-radius: 20px;
-  padding: 3px 10px;
+  color: #ffa116;
+  background: rgba(255, 161, 22, 0.06);
+  border: 1px solid rgba(255, 161, 22, 0.15);
+  border-radius: 12px;
+  padding: 1px 8px;
+}
+
+.contest-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  font-size: 12.5px;
+  color: #666666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-item svg {
+  color: #444444;
 }
 
 /* =========================
-   ACTIONS
+   CONTEST CARD RIGHT
 ========================= */
-.contest-action .btn-primary,
-.contest-action .btn-secondary,
-.contest-action .btn-unregister {
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  display: inline-block;
-  transition: all 0.2s ease;
-  border: none;
+.contest-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
 }
 
-.contest-action .btn-primary {
+.duration-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+.duration-text {
+  font-size: 11.5px;
+  color: #555555;
+  font-weight: 500;
+}
+
+.contest-action {
+  display: flex;
+}
+
+.btn-action {
+  padding: 6px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.btn-view {
   background: #ffa116;
+  border-color: #ffa116;
   color: #ffffff;
 }
 
-.contest-action .btn-primary:hover:not(:disabled) {
+.btn-view:hover {
   background: #e58e0d;
+  border-color: #e58e0d;
 }
 
-.contest-action .btn-secondary {
-  background: transparent;
-  border: 1px solid #cfcfcf;
-  color: #cfcfcf;
-}
-
-.contest-action .btn-secondary:hover {
+.btn-register {
+  background: #ffa116;
   border-color: #ffa116;
-  color: #ffa116;
+  color: #ffffff;
 }
 
-/* Unregister toggle button */
-.contest-action .btn-unregister {
+.btn-register:hover {
+  background: #e58e0d;
+  border-color: #e58e0d;
+}
+
+.btn-unregister {
   background: transparent;
-  border: 1px solid #f28b82;
+  border-color: rgba(242, 139, 130, 0.2);
   color: #f28b82;
 }
 
-.contest-action .btn-unregister:hover:not(:disabled) {
-  background: rgba(242, 139, 130, 0.1);
+.btn-unregister:hover {
+  background: rgba(242, 139, 130, 0.04);
 }
 
-.contest-action button:disabled {
-  opacity: 0.6;
+.btn-enter {
+  background: #ffa116;
+  border-color: #ffa116;
+  color: #ffffff;
+}
+
+.btn-enter:hover {
+  background: #e58e0d;
+  border-color: #e58e0d;
+}
+
+.btn-action:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* =========================
-   MISC
+   RESPONSIVE DESIGN
 ========================= */
-.empty-msg {
-  font-size: 15px;
-  color: #a0a0a0;
-  background: #2d2d2d;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
+@media (max-width: 768px) {
+  .contest-page {
+    padding: 90px 16px 40px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .contest-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
 @media (max-width: 600px) {
   .contest-card {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+    padding: 16px 20px;
   }
 
-  .contest-action {
+  .contest-card-right {
     width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #1a1a1a;
+    padding-top: 12px;
+    margin-top: 4px;
   }
 
-  .contest-action button,
-  .contest-action a {
-    width: 100%;
-    text-align: center;
+  .btn-action {
+    padding: 6px 14px;
+    font-size: 13px;
   }
 }

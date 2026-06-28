@@ -65,3 +65,8 @@ export const updateContest = async (url, token, id, data) => {
 export const deleteContest = async (url, token, id) => {
   return await axios.delete(`${url}/contest/${id}`, getHeaders(token));
 };
+
+export const getContestBySlug = async (url, token, slug) => {
+  return await axios.get(`${url}/contest/${slug}`, getHeaders(token));
+};
+
