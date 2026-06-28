@@ -366,11 +366,11 @@ export default function ProblemDetails() {
                 <option value="python">Python</option>
               </select>
               <div className="run-submit-buttons">
-                <button className="run-btn" disabled={running} onClick={runHandler}>
-                  {running ? "Running…" : "Run"}
+                <button className="run-btn" disabled={true} onClick={runHandler}>
+                  Run
                 </button>
-                <button className="submit-btn" disabled={running} onClick={submitHandler}>
-                  {running ? "Judging…" : "Submit"}
+                <button className="submit-btn" disabled={true} onClick={submitHandler}>
+                  Submit
                 </button>
               </div>
             </div>
