@@ -19,7 +19,7 @@ async function startSyncWorker() {
     try {
       //updating the status in db
       await ExternalStats.updateOne(
-        { userId:userId },
+        { userId: userId },
         { syncStatus: "syncing", lastSyncError: null },
       );
 
@@ -27,17 +27,18 @@ async function startSyncWorker() {
       console.time("sync");
       await syncUserPlatforms(user); // Puppeteer runs here
       await scoreCalculator(user); //score calculator
+      console.log(user.username);
       console.timeEnd("sync");
 
       //updating the status in db
       await ExternalStats.updateOne(
-        { userId:userId },
+        { userId: userId },
         { syncStatus: "done", lastSyncedAt: new Date() },
       );
     } catch (err) {
       //updating the status in db
       await ExternalStats.updateOne(
-        { userId:userId },
+        { userId: userId },
         { syncStatus: "failed", lastSyncError: err.message },
       );
       console.error("Sync failed:", user, err);
