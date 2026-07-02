@@ -193,7 +193,6 @@ export default function Contest() {
   // Calculated Stats
   const allContests = [...contests.running, ...contests.upcoming, ...contests.ended];
   const totalCount = allContests.length;
-  const registeredCount = allContests.filter(isUserRegistered).length;
   const upcomingCount = contests.upcoming.length;
   const endedCount = contests.ended.length;
 

@@ -45,7 +45,7 @@ const Profile = () => {
           loadProfile(); 
         });
       }
-    } catch (error) {
+    } catch {
       toast.error("Sync failed");
     } finally {
       setSyncing(false);

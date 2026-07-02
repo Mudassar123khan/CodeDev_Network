@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useEffect, useState } from "react";
 
 export const Context = createContext(null);
@@ -21,7 +22,9 @@ export const ContextProvider = ({ children }) => {
       try {
         const stored = localStorage.getItem("user");
         if (stored && stored !== 'undefined') setUser(JSON.parse(stored));
-      } catch (err) {}
+      } catch {
+        // Ignore error
+      }
     }
   }, []);
 

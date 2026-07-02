@@ -27,7 +27,7 @@ export default function ProblemsManage() {
       if (res.data.success) {
         setProblems(res.data.data);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch problems");
     } finally {
       setLoading(false);
@@ -80,7 +80,7 @@ export default function ProblemsManage() {
       let parsedTestCases = [];
       try {
         parsedTestCases = JSON.parse(formData.testCasesJson);
-      } catch (err) {
+      } catch {
         return toast.error("Invalid JSON format for Test Cases");
       }
 

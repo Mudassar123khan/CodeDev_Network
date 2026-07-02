@@ -67,7 +67,7 @@ export default function Leaderboard() {
       } else {
         toast.error("Sync failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("Sync error");
     } finally {
       setSyncing(false);

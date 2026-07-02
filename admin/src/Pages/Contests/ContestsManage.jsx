@@ -31,7 +31,7 @@ export default function ContestsManage() {
       if (res.data.success) {
         setContests(res.data.contests);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch contests");
     } finally {
       setLoading(false);

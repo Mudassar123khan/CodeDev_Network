@@ -25,7 +25,7 @@ export default function UsersManage() {
       if (res.data.success) {
         setUsers(res.data.data);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch users");
     } finally {
       setLoading(false);

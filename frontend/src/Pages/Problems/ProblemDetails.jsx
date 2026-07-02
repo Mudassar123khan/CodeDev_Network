@@ -36,53 +36,53 @@ const resultBadgeClass = (status = "") => {
 export default function ProblemDetails() {
   const { url, token } = useContext(Context);
   const socketRef = useSocket(url, token);
-  const { slug , contestSlug} = useParams();
+  const { slug, contestSlug } = useParams();
   const navigate = useNavigate();
 
   const [problemDetail, setProblemDetail] = useState({});
-  const [language, setLanguage]           = useState("java");
-  const [code, setCode]                   = useState("import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}");
-  const [loading, setLoading]             = useState(true);
+  const [language, setLanguage] = useState("java");
+  const [code, setCode] = useState("import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}");
+  const [loading, setLoading] = useState(true);
 
-  const [activeTab, setActiveTab]                   = useState("description");
-  const [submissions, setSubmissions]               = useState([]);
+  const [activeTab, setActiveTab] = useState("description");
+  const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
-  const [results, setResults]   = useState([]);
-  const [verdict, setVerdict]   = useState(null);
-  const [running, setRunning]   = useState(false);
+  const [results, setResults] = useState([]);
+  const [verdict, setVerdict] = useState(null);
+  const [running, setRunning] = useState(false);
 
   /* ── resizable editor / result pane ────────────────────────────────── */
   // editorPct: percentage of the right panel height given to the editor
-  const [editorPct, setEditorPct]   = useState(65);   // 65% editor, 35% result
-  const isDragging                  = useRef(false);
-  const dragStartY                  = useRef(0);
-  const dragStartPct                = useRef(0);
-  const rightPanelRef               = useRef(null);
+  const [editorPct, setEditorPct] = useState(65);   // 65% editor, 35% result
+  const isDragging = useRef(false);
+  const dragStartY = useRef(0);
+  const dragStartPct = useRef(0);
+  const rightPanelRef = useRef(null);
 
   const onMouseDownDivider = useCallback((e) => {
     e.preventDefault();
-    isDragging.current    = true;
-    dragStartY.current    = e.clientY;
-    dragStartPct.current  = editorPct;
-    document.body.style.cursor    = "row-resize";
+    isDragging.current = true;
+    dragStartY.current = e.clientY;
+    dragStartPct.current = editorPct;
+    document.body.style.cursor = "row-resize";
     document.body.style.userSelect = "none";
   }, [editorPct]);
 
   useEffect(() => {
     const onMouseMove = (e) => {
       if (!isDragging.current || !rightPanelRef.current) return;
-      const panelH  = rightPanelRef.current.clientHeight;
-      const delta   = e.clientY - dragStartY.current;
+      const panelH = rightPanelRef.current.clientHeight;
+      const delta = e.clientY - dragStartY.current;
       const deltaPct = (delta / panelH) * 100;
-      const next    = Math.min(85, Math.max(20, dragStartPct.current + deltaPct));
+      const next = Math.min(85, Math.max(20, dragStartPct.current + deltaPct));
       setEditorPct(next);
     };
 
     const onMouseUp = () => {
       if (!isDragging.current) return;
-      isDragging.current            = false;
-      document.body.style.cursor    = "";
+      isDragging.current = false;
+      document.body.style.cursor = "";
       document.body.style.userSelect = "";
     };
 
@@ -96,8 +96,8 @@ export default function ProblemDetails() {
 
   /* ── boilerplates ─────────────────────────────────────────────────── */
   const boilerplates = {
-    java:   "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}",
-    cpp:    "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n\n}",
+    java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}",
+    cpp: "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n\n}",
     python: "def solve():\n    pass",
   };
 
@@ -119,10 +119,10 @@ export default function ProblemDetails() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        if(!contestSlug) {
+        if (!contestSlug) {
           const res = await getAllSubmissionsOfAProblem(url, slug, token);
           setSubmissions(res.data);
-        }else {
+        } else {
           const res = await fetchContestSubmissionsAPI(url, contestSlug, slug, token);
           setSubmissions(res.data);
         }
@@ -183,9 +183,9 @@ export default function ProblemDetails() {
     try {
       setRunning(true); setResults([]); setVerdict(null);
 
-      if(contestSlug) {
+      if (contestSlug) {
         // If the problem is part of a contest, use the contest submission API
-        await createContestSubmissionAPI(url,contestSlug, {problemId:problemDetail._id, code, language}, token);
+        await createContestSubmissionAPI(url, contestSlug, { problemId: problemDetail._id, code, language }, token);
       } else {
         // Otherwise, use the regular submission API
         await createSubmission(url, { problemId: problemDetail._id, code, language }, token);
@@ -217,12 +217,12 @@ export default function ProblemDetails() {
 
         {contestSlug && (
           <div className="back-to-contest-container">
-            <button 
-              className="back-to-contest-btn" 
+            <button
+              className="back-to-contest-btn"
               onClick={() => navigate(`/contest/${contestSlug}`)}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
               Back to Contest
             </button>
@@ -319,7 +319,7 @@ export default function ProblemDetails() {
             ) : (
               <div className="submissions-empty">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <span>No submissions yet</span>
               </div>
@@ -349,7 +349,7 @@ export default function ProblemDetails() {
                 key="submission-editor"
                 language={selectedSubmission.language}
                 code={selectedSubmission.code || ""}
-                setCode={() => {}}
+                setCode={() => { }}
                 readOnly={true}
               />
             </div>
@@ -366,11 +366,11 @@ export default function ProblemDetails() {
                 <option value="python">Python</option>
               </select>
               <div className="run-submit-buttons">
-                <button className="run-btn" disabled={true} onClick={runHandler}>
-                  Run
+                <button className="run-btn" disabled={running} onClick={runHandler}>
+                  {running ? "Running…" : "Run"}
                 </button>
-                <button className="submit-btn" disabled={true} onClick={submitHandler}>
-                  Submit
+                <button className="submit-btn" disabled={running} onClick={submitHandler}>
+                  {running ? "Judging…" : "Submit"}
                 </button>
               </div>
             </div>
