@@ -51,28 +51,3 @@ jobs:
       - name: Build Admin
         working-directory: ./admin
         run: npm run build
-
-  npm-audit:
-    name: Security Audit
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Run npm audit (Frontend)
-        working-directory: ./frontend
-        run: npm audit
-
-      - name: Run npm audit (Admin)
-        working-directory: ./admin
-        run: npm audit
-
-      - name: Run npm audit (Backend)
-        working-directory: ./backend
-        run: npm audit
