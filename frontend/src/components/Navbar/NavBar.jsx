@@ -41,6 +41,7 @@ export default function NavBar() {
         <Link to="/contest">Contest</Link>
         <Link to="/leaderboard">Leaderboard</Link>
         <Link to="/problems">Problems</Link>
+        <Link to="/interviews">Interviews</Link>
       </ul>
 
       {/* RIGHT (DESKTOP AUTH) */}
@@ -100,6 +101,9 @@ export default function NavBar() {
         </Link>
         <Link to="/problems" onClick={() => setMenuOpen(false)}>
           Problems
+        </Link>
+        <Link to="/interviews" onClick={() => setMenuOpen(false)}>
+          Interviews
         </Link>
 
         <div className="menu-divider" />

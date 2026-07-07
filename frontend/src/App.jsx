@@ -14,6 +14,10 @@ import Contest from './Pages/Contest/Contest.jsx';
 import ContestDetails from './Pages/Contest/ContestDetails.jsx';
 import ContestLeaderBoard from './Pages/Contest/ContestLeaderBoard.jsx';
 import Profile from './Pages/Profile/Profile.jsx';
+import InterviewExperienceList from './Pages/InterviewExperience/InterviewExperienceList.jsx';
+import InterviewExperienceForm from './Pages/InterviewExperience/InterviewExperienceForm.jsx';
+import InterviewExperienceDetail from './Pages/InterviewExperience/InterviewExperienceDetail.jsx';
+
 function App() {
 
   const { token } = useContext(Context);
@@ -41,6 +45,9 @@ function App() {
         <Route path='/contest/:slug' element={token ? <ContestDetails /> : <Login />} />
         <Route path='/contest/:slug/leaderboard' element={token ? <ContestLeaderBoard /> : <Login />} />
         <Route path='/profile/:username' element={token ? <Profile /> : <Login />} />
+        <Route path='/interviews' element={<InterviewExperienceList />} />
+        <Route path='/interviews/new' element={token ? <InterviewExperienceForm /> : <Login />} />
+        <Route path='/interviews/:id' element={token ? <InterviewExperienceDetail /> : <Login />} />
       </Routes>
     </div>
   );

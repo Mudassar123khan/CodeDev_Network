@@ -10,6 +10,7 @@ import contestRouter from './routes/contest.routes.js'
 import "./workers/sync.worker.js"
 import "./workers/submission.worker.js"
 import getProfileRouter from './routes/profile.routes.js'
+import interviewRouter from './routes/interview.routes.js'
 const app = express()
 import promClient from 'prom-client'
 
@@ -34,6 +35,7 @@ app.use('/api/leaderboard',leaderBoardRouter)//leaderboard route
 app.use('/api/getProfile',getProfileRouter)//profile route
 app.use('/api/admin',adminRouter)//admin routes
 app.use('/api/contest',contestRouter);//contest routes
+app.use('/api/interviews', interviewRouter);//interview experiences routes
 
 //health monitoring route
 app.get('/api/health',(req,res)=>{

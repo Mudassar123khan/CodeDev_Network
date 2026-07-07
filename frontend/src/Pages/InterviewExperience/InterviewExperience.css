@@ -1,0 +1,666 @@
+/* ==========================================================================
+   Interview Experience Shared Styling
+   ========================================================================== */
+
+.interview-page {
+  min-height: 100vh;
+  padding: 100px 24px 60px;
+  display: flex;
+  justify-content: center;
+  background-color: #1b1b1b;
+  color: #cfcfcf;
+}
+
+.interview-container {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page Header & Search Row */
+.interview-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #a5a5a5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #888888;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.search-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #3d3d3d;
+  border-radius: 8px;
+  padding: 10px 14px 10px 38px;
+  font-size: 14px;
+  color: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 280px;
+}
+
+.search-input:focus {
+  border-color: #ffa116;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 8px rgba(254, 161, 22, 0.15);
+}
+
+.search-input::placeholder {
+  color: #666666;
+}
+
+/* Toolbar Filters */
+.filters-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #2d2d2d;
+  padding: 14px 20px;
+  border-radius: 10px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  background: #252525;
+  border: 1px solid #3d3d3d;
+  color: #cfcfcf;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-select:focus {
+  border-color: #ffa116;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ffa116 0%, #df8500 100%);
+  color: #1b1b1b;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(254, 161, 22, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Experience Cards */
+.experience-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.experience-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #2d2d2d;
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.experience-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: #444444;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+}
+
+.card-icon-container {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #333333;
+  color: #ffa116;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card-title-row h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.outcome-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.outcome-badge.cleared {
+  background: rgba(46, 117, 89, 0.15);
+  color: #2ec4b6;
+  border: 1px solid rgba(46, 117, 89, 0.3);
+}
+
+.outcome-badge.rejected {
+  background: rgba(230, 57, 70, 0.15);
+  color: #e63946;
+  border: 1px solid rgba(230, 57, 70, 0.3);
+}
+
+.card-meta-row {
+  display: flex;
+  gap: 16px;
+  color: #888888;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.card-author {
+  font-size: 12px;
+  color: #666666;
+}
+
+.card-author span {
+  color: #888888;
+  font-weight: 500;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #3d3d3d;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #ffa116;
+}
+
+/* Empty State */
+.empty-section-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px dashed #333333;
+  border-radius: 10px;
+  text-align: center;
+  color: #666666;
+}
+
+.empty-icon {
+  margin-bottom: 16px;
+  color: #444444;
+}
+
+.empty-text {
+  font-size: 15px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Interview Experience Detail Page
+   ========================================================================== */
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  margin-top: 10px;
+}
+
+@media (max-width: 850px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #2d2d2d;
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.section-box h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  border-bottom: 1px solid #2d2d2d;
+  padding-bottom: 10px;
+}
+
+.detail-header-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid #2d2d2d;
+  border-radius: 10px;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-title-details h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  color: #ffffff;
+}
+
+.header-title-details p {
+  margin: 0;
+  font-size: 16px;
+  color: #888888;
+}
+
+.header-status-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Sidebar Info Card */
+.sidebar-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #2d2d2d;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: fit-content;
+}
+
+.info-item-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item-label {
+  font-size: 12px;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item-value {
+  font-size: 15px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Rounds Timeline */
+.rounds-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.round-detail-item {
+  position: relative;
+  padding-left: 24px;
+  border-left: 2px solid #3d3d3d;
+}
+
+.round-detail-item::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffa116;
+  border: 2px solid #1b1b1b;
+}
+
+.round-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.round-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.round-badge-group {
+  display: flex;
+  gap: 8px;
+}
+
+.pill-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #3d3d3d;
+  color: #cfcfcf;
+}
+
+.pill-badge.difficulty-easy {
+  color: #2ec4b6;
+  border-color: rgba(46, 117, 89, 0.3);
+}
+
+.pill-badge.difficulty-medium {
+  color: #ffa116;
+  border-color: rgba(254, 161, 22, 0.3);
+}
+
+.pill-badge.difficulty-hard {
+  color: #e63946;
+  border-color: rgba(230, 57, 70, 0.3);
+}
+
+.round-summary {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid #252525;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b5b5b5;
+  white-space: pre-line;
+}
+
+.feedback-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feedback-text-block {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b5b5b5;
+  white-space: pre-line;
+}
+
+/* ==========================================================================
+   Interview Experience Creation Form
+   ========================================================================== */
+
+.form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #2d2d2d;
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.form-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #2d2d2d;
+  padding-bottom: 8px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #888888;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #3d3d3d;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: #ffa116;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Dynamic Round Creation CSS */
+.rounds-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.round-form-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid #333333;
+  border-radius: 8px;
+  padding: 20px;
+  position: relative;
+}
+
+.round-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.round-form-header h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #ffa116;
+}
+
+.btn-remove-round {
+  background: none;
+  border: none;
+  color: #e63946;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-remove-round:hover {
+  background: rgba(230, 57, 70, 0.1);
+}
+
+.btn-add-round {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed #444444;
+  color: #ffa116;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-add-round:hover {
+  background: rgba(254, 161, 22, 0.05);
+  border-color: #ffa116;
+}
+
+.form-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Back Link Button */
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #888888;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 16px;
+  width: fit-content;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: #ffffff;
+}
+
+/* Extra Icons and badges */
+.info-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
