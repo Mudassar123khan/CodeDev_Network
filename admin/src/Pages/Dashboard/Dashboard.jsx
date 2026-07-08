@@ -41,6 +41,12 @@ export default function Dashboard() {
           >
             Manage Contests
           </NavLink>
+          <NavLink 
+            to="/admin/dashboard/interviews" 
+            className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}
+          >
+            Manage Interviews
+          </NavLink>
         </nav>
       </aside>
 

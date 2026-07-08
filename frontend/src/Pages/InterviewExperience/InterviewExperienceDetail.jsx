@@ -204,12 +204,12 @@ export default function InterviewExperienceDetail() {
               </span>
               <span className="info-item-value">{experience.personalInfo.name}</span>
             </div>
-            <div className="info-item-group">
+            {/* <div className="info-item-group">
               <span className="info-item-label">
                 <MailIcon /> Email Contact
               </span>
               <span className="info-item-value">{experience.personalInfo.email}</span>
-            </div>
+            </div> */}
             {experience.personalInfo.currentRole && (
               <div className="info-item-group">
                 <span className="info-item-label">Current Role</span>

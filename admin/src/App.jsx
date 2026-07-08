@@ -7,6 +7,7 @@ import Dashboard from './Pages/Dashboard/Dashboard';
 import UsersManage from './Pages/Users/UsersManage';
 import ProblemsManage from './Pages/Problems/ProblemsManage';
 import ContestsManage from './Pages/Contests/ContestsManage';
+import InterviewsManage from './Pages/Interviews/InterviewsManage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -32,6 +33,7 @@ function App() {
           <Route path="users" element={<UsersManage />} />
           <Route path="problems" element={<ProblemsManage />} />
           <Route path="contests" element={<ContestsManage />} />
+          <Route path="interviews" element={<InterviewsManage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/admin/dashboard" />} />

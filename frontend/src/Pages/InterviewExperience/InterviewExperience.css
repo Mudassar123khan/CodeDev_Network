@@ -557,11 +557,24 @@
   width: 100%;
 }
 
+.form-field select {
+  background-color: #252525;
+}
+
+.form-field select option {
+  background-color: #252525;
+  color: #ffffff;
+}
+
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
   border-color: #ffa116;
   background: rgba(255, 255, 255, 0.05);
+}
+
+.form-field select:focus {
+  background-color: #2e2e2e;
 }
 
 .form-field textarea {

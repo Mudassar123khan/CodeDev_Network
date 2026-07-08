@@ -70,3 +70,12 @@ export const getContestBySlug = async (url, token, slug) => {
   return await axios.get(`${url}/contest/${slug}`, getHeaders(token));
 };
 
+// Interview Experience Admin Logic
+export const getAllInterviews = async (url, token) => {
+  return await axios.get(`${url}/admin/interviews`, getHeaders(token));
+};
+
+export const deleteInterview = async (url, token, id) => {
+  return await axios.delete(`${url}/admin/interviews/${id}`, getHeaders(token));
+};
+

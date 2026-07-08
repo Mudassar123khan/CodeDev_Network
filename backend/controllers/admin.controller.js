@@ -1,6 +1,12 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { syncQueue } from "../workers/sync.queue.js";
+import Submission from "../models/Submission.js";
+import ContestSubmission from "../models/ContestSubmission.js";
+import ExternalStats from "../models/ExternalStats.js";
+import Scoreboard from "../models/Scoreboard.js";
+import InterviewExperience from "../models/InterviewExperience.js";
+import Contest from "../models/Contest.js";
 
 // Get all users
 export const getAllUsers = async (req, res) => {
@@ -84,13 +90,24 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Perform cascading deletes of user-related data in parallel
+        await Promise.all([
+            Submission.deleteMany({ userId: id }),
+            ContestSubmission.deleteMany({ userId: id }),
+            ExternalStats.deleteMany({ userId: id }),
+            Scoreboard.deleteMany({ userId: id }),
+            InterviewExperience.deleteMany({ user: id }),
+            Contest.updateMany({ participants: id }, { $pull: { participants: id } })
+        ]);
+
         const deletedUser = await User.findByIdAndDelete(id);
 
         if (!deletedUser) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        res.status(200).json({ success: true, message: "User deleted" });
+        res.status(200).json({ success: true, message: "User deleted and all associated data cleared" });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: "Internal server error" });
@@ -126,6 +143,38 @@ export const syncAllUsers = async (req, res) => {
         res.status(200).json({ success: true, message: `All ${users.length} users have been queued for sync.` });
     } catch (err) {
         console.error("Admin full sync error:", err);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+// Get all interview experiences for admin panel
+export const getAllInterviewsAdmin = async (req, res) => {
+    try {
+        const experiences = await InterviewExperience.find({})
+            .populate("user", "username email")
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.status(200).json({ success: true, count: experiences.length, data: experiences });
+    } catch (err) {
+        console.error("Error fetching admin interview experiences:", err);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+// Delete an interview experience by admin
+export const deleteInterviewAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedExperience = await InterviewExperience.findByIdAndDelete(id);
+
+        if (!deletedExperience) {
+            return res.status(404).json({ success: false, message: "Interview experience not found" });
+        }
+
+        res.status(200).json({ success: true, message: "Interview experience deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting interview experience by admin:", err);
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
