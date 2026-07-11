@@ -180,28 +180,13 @@ export default function ProblemDetails() {
 
   /* ── handlers ─────────────────────────────────────────────────────── */
   const submitHandler = async () => {
-    try {
-      setRunning(true); setResults([]); setVerdict(null);
-
-      if (contestSlug) {
-        // If the problem is part of a contest, use the contest submission API
-        await createContestSubmissionAPI(url, contestSlug, { problemId: problemDetail._id, code, language }, token);
-      } else {
-        // Otherwise, use the regular submission API
-        await createSubmission(url, { problemId: problemDetail._id, code, language }, token);
-      }
-    } catch (e) {
-      console.error(e); setVerdict("Error"); setResults([]); setRunning(false);
-    }
+    // Disabled globally
+    return;
   };
 
   const runHandler = async () => {
-    try {
-      setRunning(true); setResults([]); setVerdict(null);
-      await runCode(url, { problemId: problemDetail._id, code, language }, token);
-    } catch (e) {
-      console.error(e); setVerdict("Error"); setResults([]); setRunning(false);
-    }
+    // Disabled globally
+    return;
   };
 
   const sampleTestCases = problemDetail?.testCases?.filter(t => t.isSample) || [];
@@ -366,11 +351,11 @@ export default function ProblemDetails() {
                 <option value="python">Python</option>
               </select>
               <div className="run-submit-buttons">
-                <button className="run-btn" disabled={running} onClick={runHandler}>
-                  {running ? "Running…" : "Run"}
+                <button className="run-btn" disabled={true} onClick={runHandler}>
+                  Run
                 </button>
-                <button className="submit-btn" disabled={running} onClick={submitHandler}>
-                  {running ? "Judging…" : "Submit"}
+                <button className="submit-btn" disabled={true} onClick={submitHandler}>
+                  Submit
                 </button>
               </div>
             </div>
