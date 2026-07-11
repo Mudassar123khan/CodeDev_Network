@@ -137,8 +137,11 @@ export default function InterviewExperienceForm() {
     try {
       setSubmitting(true);
 
-      // Clean numerical fields
-      const cleanedFormData = { ...formData };
+      // Clean numerical fields without mutating state
+      const cleanedFormData = {
+        ...formData,
+        personalInfo: { ...formData.personalInfo }
+      };
       if (cleanedFormData.personalInfo.gradYear) {
         cleanedFormData.personalInfo.gradYear = Number(cleanedFormData.personalInfo.gradYear);
       } else {
@@ -211,7 +214,7 @@ export default function InterviewExperienceForm() {
                 <input
                   type="number"
                   placeholder="e.g. 2026"
-                  value={formData.personalInfo.gradYear}
+                  value={formData.personalInfo.gradYear || ""}
                   onChange={(e) => handleNestedChange("personalInfo", "gradYear", e.target.value)}
                 />
               </div>
