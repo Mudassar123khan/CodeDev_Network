@@ -4,7 +4,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f4f6f8; /* light background */
+  background-color: #f4f6f8;
+  /* light background */
   padding: 20px;
 
 }
@@ -68,6 +69,10 @@
   margin-top: 10px;
 }
 
+.button-group .primary-btn {
+  margin-top: 0;
+}
+
 .register-form .secondary-btn {
   padding: 12px;
   font-size: 16px;
@@ -93,7 +98,7 @@
   margin-top: 8px;
 }
 
-.handles-grid > div {
+.handles-grid>div {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -109,7 +114,8 @@
 .login-link {
   text-align: center;
   font-size: 14px;
-  color: #6b7280; /* gray */
+  color: #6b7280;
+  /* gray */
 }
 
 .login-link a {
