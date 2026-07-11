@@ -9,7 +9,20 @@ const RoundSchema = new Schema({
   },
   roundType: {
     type: String,
-    enum: ["Technical", "HR", "Coding test", "Final interview"],
+    enum: [
+      "Technical",
+      "HR",
+      "Coding test",
+      "Final interview",
+      "Offer discussion",
+      "Cultural fit",
+      "Group discussion",
+      "Aptitude test",
+      "System design",
+      "Case study",
+      "Behavioral",
+      "Managerial"
+    ],
     required: true
   },
   difficulty: {
@@ -58,6 +71,14 @@ const InterviewExperienceSchema = new Schema(
       },
       gradYear: {
         type: Number
+      },
+      linkedin: {
+        type: String,
+        trim: true
+      },
+      showLinkedin: {
+        type: Boolean,
+        default: false
       }
     },
     companyDetails: {

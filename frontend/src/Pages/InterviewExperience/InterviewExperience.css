@@ -113,7 +113,7 @@
 
 .btn-primary {
   background: linear-gradient(135deg, #ffa116 0%, #df8500 100%);
-  color: #1b1b1b;
+  color: white;
   border: none;
   font-weight: 600;
   font-size: 14px;
@@ -676,4 +676,20 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+/* LinkedIn link */
+.linkedin-link {
+  color: #0a66c2;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.linkedin-link:hover {
+  text-decoration: underline;
+  color: #004182;
 }

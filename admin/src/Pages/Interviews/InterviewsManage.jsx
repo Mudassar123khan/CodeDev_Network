@@ -175,6 +175,20 @@ export default function InterviewsManage() {
                     {selectedExp.personalInfo?.gradYear && (
                       <div><strong>Graduation Year:</strong> {selectedExp.personalInfo?.gradYear}</div>
                     )}
+                    {selectedExp.personalInfo?.linkedin && (
+                      <div>
+                        <strong>LinkedIn:</strong>{" "}
+                        <a
+                          href={selectedExp.personalInfo.linkedin.startsWith("http") ? selectedExp.personalInfo.linkedin : `https://${selectedExp.personalInfo.linkedin}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "#3b82f6", textDecoration: "underline" }}
+                        >
+                          {selectedExp.personalInfo.linkedin}
+                        </a>
+                        {" "}({selectedExp.personalInfo.showLinkedin ? "Public" : "Private"})
+                      </div>
+                    )}
                     {selectedExp.user && (
                       <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px', borderTop: '1px dashed #cbd5e1', paddingTop: '4px' }}>
                         Registered User Account: {selectedExp.user.username} ({selectedExp.user.email})

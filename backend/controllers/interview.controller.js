@@ -85,10 +85,17 @@ export const getAllInterviewExperiences = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
+    const cleanedExperiences = experiences.map((exp) => {
+      if (exp.personalInfo && !exp.personalInfo.showLinkedin) {
+        delete exp.personalInfo.linkedin;
+      }
+      return exp;
+    });
+
     res.status(200).json({
       success: true,
-      count: experiences.length,
-      data: experiences,
+      count: cleanedExperiences.length,
+      data: cleanedExperiences,
     });
   } catch (error) {
     console.error("Error fetching interview experiences:", error);
@@ -113,6 +120,10 @@ export const getInterviewExperienceById = async (req, res) => {
         success: false,
         message: "Interview experience not found.",
       });
+    }
+
+    if (experience.personalInfo && !experience.personalInfo.showLinkedin) {
+      delete experience.personalInfo.linkedin;
     }
 
     res.status(200).json({

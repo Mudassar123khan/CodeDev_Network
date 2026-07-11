@@ -212,6 +212,14 @@ export default function InterviewExperienceList() {
               <option value="HR">HR</option>
               <option value="Coding test">Coding test</option>
               <option value="Final interview">Final interview</option>
+              <option value="Offer discussion">Offer discussion</option>
+              <option value="Cultural fit">Cultural fit</option>
+              <option value="Group discussion">Group discussion</option>
+              <option value="Aptitude test">Aptitude test</option>
+              <option value="System design">System design</option>
+              <option value="Case study">Case study</option>
+              <option value="Behavioral">Behavioral</option>
+              <option value="Managerial">Managerial</option>
             </select>
           </div>
         </div>

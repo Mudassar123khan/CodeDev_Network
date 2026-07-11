@@ -41,6 +41,8 @@ export default function InterviewExperienceForm() {
       email: user?.email || "",
       currentRole: "",
       gradYear: "",
+      linkedin: "",
+      showLinkedin: false,
     },
     companyDetails: {
       companyName: "",
@@ -214,6 +216,29 @@ export default function InterviewExperienceForm() {
                 />
               </div>
             </div>
+            <div className="form-grid-2">
+              <div className="form-field" style={{ marginBottom: "8px" }}>
+                <label>LinkedIn Profile URL (Optional)</label>
+                <input
+                  type="url"
+                  placeholder="e.g. https://linkedin.com/in/username"
+                  value={formData.personalInfo.linkedin}
+                  onChange={(e) => handleNestedChange("personalInfo", "linkedin", e.target.value)}
+                />
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
+                  <input
+                    type="checkbox"
+                    id="showLinkedin"
+                    checked={formData.personalInfo.showLinkedin}
+                    onChange={(e) => handleNestedChange("personalInfo", "showLinkedin", e.target.checked)}
+                    style={{ width: "14px", height: "14px", cursor: "pointer", accentColor: "#ffa116" }}
+                  />
+                  <label htmlFor="showLinkedin" style={{ fontSize: "12px", color: "#888888", cursor: "pointer", userSelect: "none", margin: 0 }}>
+                    Show LinkedIn on the platform
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* 2. Company Details */}
@@ -317,6 +342,14 @@ export default function InterviewExperienceForm() {
                         <option value="HR">HR</option>
                         <option value="Coding test">Coding test</option>
                         <option value="Final interview">Final interview</option>
+                        <option value="Offer discussion">Offer discussion</option>
+                        <option value="Cultural fit">Cultural fit</option>
+                        <option value="Group discussion">Group discussion</option>
+                        <option value="Aptitude test">Aptitude test</option>
+                        <option value="System design">System design</option>
+                        <option value="Case study">Case study</option>
+                        <option value="Behavioral">Behavioral</option>
+                        <option value="Managerial">Managerial</option>
                       </select>
                     </div>
                   </div>
