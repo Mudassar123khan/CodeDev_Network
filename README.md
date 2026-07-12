@@ -54,6 +54,11 @@ A unified competitive programming platform that aggregates coding profiles acros
 - Separate React + Vite admin dashboard (`/admin`)
 - Manage problems, contests, users, and platform data
 
+### 📝 Interview Experience Sharing *(Fully Implemented)*
+- Share detailed interview experiences (company details, job role, difficulty, round-wise summary)
+- View list of interview experiences and read details of shared experiences
+- Admin dashboard interface to review and delete interview experiences
+
 ### 🌐 Deployment
 - Dockerized backend (Node.js + headless Chrome for scraping)
 - Backend deployed on **Render**
@@ -103,6 +108,7 @@ CodeDev_Network/
 │       │   ├── Contest/        # Contest listing, detail, leaderboard
 │       │   ├── Discuss/        # Community discussions (planned)
 │       │   ├── Home/           # Landing / Dashboard
+│       │   ├── InterviewExperience/ # Interview experiences (list, form, detail)
 │       │   ├── LeaderBoard/    # Global & per-platform rankings
 │       │   ├── Learn/          # Learning resources (planned)
 │       │   ├── Problems/       # Problem set, problem detail & submission
@@ -120,6 +126,7 @@ CodeDev_Network/
 │   ├── routes/
 │   │   ├── auth.routes.js
 │   │   ├── contest.routes.js
+│   │   ├── interview.routes.js # Interview experiences routes
 │   │   ├── leaderboard.routes.js
 │   │   ├── problem.routes.js
 │   │   ├── profile.routes.js
@@ -127,6 +134,8 @@ CodeDev_Network/
 │   │   ├── sync.routes.js
 │   │   └── admin.routes.js
 │   ├── controllers/            # Route handler logic
+│   │   ├── interview.controller.js # Interview experience handlers
+│   │   └── ...
 │   ├── services/
 │   │   ├── leaderboard/        # Ranking computation engine
 │   │   └── platformSync/       # LeetCode, Codeforces, GFG, CodeChef scrapers
@@ -137,7 +146,8 @@ CodeDev_Network/
 │   │   ├── Contest.js
 │   │   ├── ContestSubmission.js
 │   │   ├── Scoreboard.js
-│   │   └── ExternalStats.js
+│   │   ├── ExternalStats.js
+│   │   └── InterviewExperience.js # Interview experience model
 │   ├── workers/
 │   │   ├── sync.worker.js      # Background profile sync worker
 │   │   ├── sync.queue.js       # BullMQ sync queue
@@ -235,6 +245,11 @@ Leaderboard service recomputes weighted rankings
 | POST | `/api/contest/create` | Create a contest | Admin |
 | PUT | `/api/contest/:id` | Update a contest | Admin |
 | DELETE | `/api/contest/:id` | Delete a contest | Admin |
+| GET | `/api/interviews` | Public list of experiences | Public |
+| POST | `/api/interviews` | Create interview experience | Auth |
+| GET | `/api/interviews/:id` | View interview experience detail | Auth |
+| GET | `/api/admin/interviews` | Get all interviews for admin | Admin |
+| DELETE | `/api/admin/interviews/:id` | Delete an interview | Admin |
 
 ---
 
@@ -293,6 +308,7 @@ docker run -p 5000:5000 --env-file .env.docker codedev-backend
 | Contest submission & per-problem scoring | ✅ Working |
 | Contest scoreboard / leaderboard | ✅ Working |
 | Admin panel | ✅ Working |
+| Interview Experience sharing | ✅ Working |
 | Discussion forum | 🔜 Planned |
 | Learn section | 🔜 Planned |
 | Judge0 cloud deployment | ⏳ Pending |
