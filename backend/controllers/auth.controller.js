@@ -50,7 +50,8 @@ const login = async(req,res)=>{
                 id:user._id,
                 username:user.username,
                 email:user.email,
-                role:user.role
+                role:user.role,
+                branch:user.branch
             }
         });
     }catch(err){
@@ -65,9 +66,9 @@ const login = async(req,res)=>{
 //register controller
 const register = async(req,res)=>{
     try{
-        const {username,email, password, platforms}= req.body;
+        const {username,email, password, branch, platforms}= req.body;
 
-        if(!username || !email || !password){
+        if(!username || !email || !password || !branch){
             console.log("All fields are required");
             return res.status(400).json({
                 success:false,
@@ -91,6 +92,7 @@ const register = async(req,res)=>{
             username,
             email,
             password:hashedPassword,
+            branch,
             platforms:{
                 ...platforms
             }
@@ -116,6 +118,7 @@ const register = async(req,res)=>{
             username: newUser.username,
             email: newUser.email,
             role: newUser.role,
+            branch: newUser.branch,
         },
         });
 
@@ -151,7 +154,8 @@ const getUser = async(req,res)=>{
                 id:user._id,
                 username:user.username,
                 email:user.email,
-                role:user.role
+                role:user.role,
+                branch:user.branch
             }
         });
    }catch(err){

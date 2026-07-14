@@ -28,7 +28,7 @@ export default function Home() {
           <div className="home-actions">
             {token ? (
               <Link to="/leaderboard" className="btn-primary">
-                Go to Leaderboard
+                Leaderboard
               </Link>
             ) : (
               <Link to="/register" className="btn-primary">
@@ -36,8 +36,8 @@ export default function Home() {
               </Link>
             )}
 
-            <Link to="/problems" className="btn-secondary">
-              Go to Problems
+            <Link to="/interviews" className="btn-secondary">
+              Interview Experience
             </Link>
           </div>
           <div className="scroll-hint" onClick={scrollToHow}>

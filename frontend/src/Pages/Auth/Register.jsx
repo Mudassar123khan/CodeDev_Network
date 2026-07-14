@@ -16,6 +16,7 @@ export default function Register() {
     username: "",
     email: "",
     password: "",
+    branch: "",
     platforms: {
       leetcode: "",
       codeforces: "",
@@ -44,7 +45,7 @@ export default function Register() {
   };
 
   const nextStep = () => {
-    if (!data.username || !data.email || !data.password) {
+    if (!data.username || !data.email || !data.password || !data.branch) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -127,6 +128,26 @@ export default function Register() {
               required
               minLength={8}
             />
+
+            <select
+              name="branch"
+              onChange={onChangeHandler}
+              value={data.branch}
+              className="branch-select"
+              required
+            >
+              <option value="" disabled>Select Branch</option>
+              <option value="Computer Engineering">Computer Engineering</option>
+              <option value="Electronics and Communication Engg.">Electronics and Communication Engg.</option>
+              <option value="Electical Engineering">Electical Engineering</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Computer Science & Engineering (Data Sciences)">Computer Science & Engineering (Data Sciences)</option>
+              <option value="Electronics (VLSI Design & Technology)">Electronics (VLSI Design & Technology)</option>
+              <option value="Robotics & Artificial Intelligence">Robotics & Artificial Intelligence</option>
+              <option value="Electrical & Computer Engineering">Electrical & Computer Engineering</option>
+              <option value="Civil Engineering (Construction Technology)">Civil Engineering (Construction Technology)</option>
+            </select>
 
             <button type="submit" className="primary-btn">Next</button>
 

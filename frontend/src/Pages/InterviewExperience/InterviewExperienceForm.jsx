@@ -140,13 +140,37 @@ export default function InterviewExperienceForm() {
       // Clean numerical fields without mutating state
       const cleanedFormData = {
         ...formData,
-        personalInfo: { ...formData.personalInfo }
+        personalInfo: { ...formData.personalInfo },
+        feedback: { ...formData.feedback },
+        rounds: formData.rounds.map(r => ({ ...r }))
       };
+
       if (cleanedFormData.personalInfo.gradYear) {
         cleanedFormData.personalInfo.gradYear = Number(cleanedFormData.personalInfo.gradYear);
       } else {
         delete cleanedFormData.personalInfo.gradYear;
       }
+
+      // Format salaryRange
+      const salary = cleanedFormData.feedback.salaryRange.trim();
+      if (salary && !salary.endsWith(" LPA")) {
+        const numeric = salary.replace(/[^0-9.]/g, "");
+        if (numeric) {
+          cleanedFormData.feedback.salaryRange = numeric + " LPA";
+        }
+      }
+
+      // Format round durations
+      cleanedFormData.rounds = cleanedFormData.rounds.map(round => {
+        const duration = round.duration.trim();
+        if (duration && !duration.endsWith(" mins")) {
+          const numeric = duration.replace(/[^0-9]/g, "");
+          if (numeric) {
+            round.duration = numeric + " mins";
+          }
+        }
+        return round;
+      });
 
       const response = await createInterview(url, cleanedFormData, token);
       if (response.success) {
@@ -387,9 +411,28 @@ export default function InterviewExperienceForm() {
                     <label>Duration / Time Taken (Optional)</label>
                     <input
                       type="text"
-                      placeholder="e.g. 45 mins, 1 hour"
+                      placeholder="e.g. 45 (in mins)"
                       value={round.duration}
-                      onChange={(e) => handleRoundChange(index, "duration", e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const numericVal = val.replace(/[^0-9]/g, "");
+                        handleRoundChange(index, "duration", numericVal);
+                      }}
+                      onBlur={(e) => {
+                        const val = e.target.value.trim();
+                        if (val && !val.endsWith(" mins")) {
+                          const numeric = val.replace(/[^0-9]/g, "");
+                          if (numeric) {
+                            handleRoundChange(index, "duration", numeric + " mins");
+                          }
+                        }
+                      }}
+                      onFocus={(e) => {
+                        const val = e.target.value;
+                        if (val.endsWith(" mins")) {
+                          handleRoundChange(index, "duration", val.replace(" mins", ""));
+                        }
+                      }}
                     />
                   </div>
 
@@ -435,9 +478,30 @@ export default function InterviewExperienceForm() {
                 <label>Salary range (Optional)</label>
                 <input
                   type="text"
-                  placeholder="e.g. 15-18 LPA, $120k/year"
+                  placeholder="e.g. 15 (in LPA)"
                   value={formData.feedback.salaryRange}
-                  onChange={(e) => handleNestedChange("feedback", "salaryRange", e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const numericVal = val.replace(/[^0-9.]/g, "");
+                    const parts = numericVal.split(".");
+                    const formattedVal = parts[0] + (parts.length > 1 ? "." + parts.slice(1).join("") : "");
+                    handleNestedChange("feedback", "salaryRange", formattedVal);
+                  }}
+                  onBlur={(e) => {
+                    const val = e.target.value.trim();
+                    if (val && !val.endsWith(" LPA")) {
+                      const numeric = val.replace(/[^0-9.]/g, "");
+                      if (numeric) {
+                        handleNestedChange("feedback", "salaryRange", numeric + " LPA");
+                      }
+                    }
+                  }}
+                  onFocus={(e) => {
+                    const val = e.target.value;
+                    if (val.endsWith(" LPA")) {
+                      handleNestedChange("feedback", "salaryRange", val.replace(" LPA", ""));
+                    }
+                  }}
                 />
               </div>
             </div>

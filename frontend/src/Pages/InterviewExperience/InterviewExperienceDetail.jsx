@@ -212,6 +212,12 @@ export default function InterviewExperienceDetail() {
               </span>
               <span className="info-item-value">{experience.personalInfo.name}</span>
             </div>
+            {experience.user && experience.user.branch && (
+              <div className="info-item-group">
+                <span className="info-item-label">Branch</span>
+                <span className="info-item-value">{experience.user.branch}</span>
+              </div>
+            )}
             {/* <div className="info-item-group">
               <span className="info-item-label">
                 <MailIcon /> Email Contact

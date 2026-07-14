@@ -277,6 +277,11 @@ export default function InterviewExperienceList() {
                     <div className="card-author">
                       By: <span>{exp.personalInfo.name}</span>
                     </div>
+                    {exp.user && exp.user.branch && (
+                      <div className="card-branch">
+                        {exp.user.branch}
+                      </div>
+                    )}
                     <button
                       className="btn-secondary"
                       onClick={(e) => {

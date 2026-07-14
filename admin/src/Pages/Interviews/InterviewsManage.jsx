@@ -191,7 +191,8 @@ export default function InterviewsManage() {
                     )}
                     {selectedExp.user && (
                       <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px', borderTop: '1px dashed #cbd5e1', paddingTop: '4px' }}>
-                        Registered User Account: {selectedExp.user.username} ({selectedExp.user.email})
+                        <div>Registered User Account: {selectedExp.user.username} ({selectedExp.user.email})</div>
+                        {selectedExp.user.branch && <div style={{ marginTop: '2px' }}>Branch: {selectedExp.user.branch}</div>}
                       </div>
                     )}
                   </div>

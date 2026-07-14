@@ -1,56 +1,72 @@
 import mongoose from "mongoose";
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const UserSchema = new Schema({
-    username:{
-        type:String,
-        required:true,
-        unique:true,
-        trim:true,  //removes the whitespaces
-        maxlength:20,
-        minlength:3
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,  //removes the whitespaces
+        maxlength: 20,
+        minlength: 3
     },
-    email:{
-        type:String,
-        required:true,
-        unique:true,
-        trim:true,
-        lowercase:true,
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
         match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
     },
-    password:{
-        type:String,
-        required:true,
-        select:false,  // it means that when the user is fetched then password will not be fetched in the query
-        minlength:8
+    password: {
+        type: String,
+        required: true,
+        select: false,  // it means that when the user is fetched then password will not be fetched in the query
+        minlength: 8
     },
-    role:{
-        type:String,
+    role: {
+        type: String,
         enum: ["user", "admin"],   //enum is an array which stores allowed values, values which are not in this array will be wrong
-        default:"user"
+        default: "user"
     },
-    rating:{
-        type:Number,
-        default:0
+    rating: {
+        type: Number,
+        default: 0
     },
-    solvedCount:{
-        type:Number,
-        default:0
+    solvedCount: {
+        type: Number,
+        default: 0
     },
     platforms: {
-    codeforces: { type: String, trim: true, default:"" },
-    leetcode: { type: String, trim: true, default:"" },
-    codechef: { type: String, trim: true, default:"" },
-    gfg: { type: String, trim: true, default:"" }
+        codeforces: { type: String, trim: true, default: "" },
+        leetcode: { type: String, trim: true, default: "" },
+        codechef: { type: String, trim: true, default: "" },
+        gfg: { type: String, trim: true, default: "" }
     },
-
+    branch: {
+        type: String,
+        enum: [
+            "Computer Engineering",
+            "ECE",
+            "Electical Engineering",
+            "Mechanical Engineering",
+            "Civil Engineering",
+            "CSDS",
+            "VLSI",
+            "Robotics & AI",
+            "Electrical & Computer",
+            "Construction Technology",
+            ""
+        ],
+        default: ""
     },
+},
 
     {
-        timestamps:true
+        timestamps: true
     }
 );
 
-const User = mongoose.model("User",UserSchema);
+const User = mongoose.model("User", UserSchema);
 
 export default User;

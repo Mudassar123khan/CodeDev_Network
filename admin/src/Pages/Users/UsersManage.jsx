@@ -12,7 +12,7 @@ export default function UsersManage() {
   // Edit/Create Modal State
   const [showModal, setShowModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [formData, setFormData] = useState({ id: '', username: '', email: '', password: '', role: 'user' });
+  const [formData, setFormData] = useState({ id: '', username: '', email: '', password: '', role: 'user', branch: '' });
 
   useEffect(() => {
     fetchUsers();
@@ -47,7 +47,7 @@ export default function UsersManage() {
 
   const openCreateModal = () => {
     setIsEdit(false);
-    setFormData({ id: '', username: '', email: '', password: '', role: 'user' });
+    setFormData({ id: '', username: '', email: '', password: '', role: 'user', branch: '' });
     setShowModal(true);
   };
 
@@ -58,6 +58,7 @@ export default function UsersManage() {
       username: user.username,
       email: user.email,
       role: user.role,
+      branch: user.branch || '',
       password: '' // Keep empty unless being updated
     });
     setShowModal(true);
@@ -127,6 +128,7 @@ export default function UsersManage() {
                 <th>Username</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Branch</th>
                 <th>Registration Date</th>
                 <th>Actions</th>
               </tr>
@@ -141,6 +143,7 @@ export default function UsersManage() {
                       {user.role}
                     </span>
                   </td>
+                  <td>{user.branch || 'None'}</td>
                   <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td>
                     <button className="action-btn edit" onClick={() => openEditModal(user)}>Edit</button>
@@ -151,7 +154,7 @@ export default function UsersManage() {
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center' }}>No users found.</td>
+                  <td colSpan="6" style={{ textAlign: 'center' }}>No users found.</td>
                 </tr>
               )}
             </tbody>
@@ -184,7 +187,23 @@ export default function UsersManage() {
                   <option value="admin">Admin</option>
                 </select>
               </div>
-              
+              <div className="form-group">
+                <label>Branch</label>
+                <select name="branch" value={formData.branch} onChange={handleFormChange}>
+                  <option value="">None / Select Branch</option>
+                  <option value="Computer Engineering">Computer Engineering</option>
+                  <option value="ECE">ECE</option>
+                  <option value="Electical Engineering">Electical Engineering</option>
+                  <option value="Mechanical Engineering">Mechanical Engineering</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="CSDS">CSDS</option>
+                  <option value="VLSI">VLSI</option>
+                  <option value="Robotics & AI">Robotics & AI</option>
+                  <option value="Electrical & Computer">Electrical & Computer</option>
+                  <option value="Construction Technology">Construction Technology</option>
+                </select>
+              </div>
+
               <div className="modal-actions">
                 <button type="button" className="secondary-btn" onClick={() => setShowModal(false)}>Cancel</button>
                 <button type="submit" className="primary-btn">{isEdit ? 'Update' : 'Create'}</button>

@@ -81,7 +81,7 @@ export const getAllInterviewExperiences = async (req, res) => {
     }
 
     const experiences = await InterviewExperience.find(query)
-      .populate("user", "username email")
+      .populate("user", "username email branch")
       .sort({ createdAt: -1 })
       .lean();
 
@@ -112,7 +112,7 @@ export const getInterviewExperienceById = async (req, res) => {
     const { id } = req.params;
 
     const experience = await InterviewExperience.findById(id)
-      .populate("user", "username email")
+      .populate("user", "username email branch")
       .lean();
 
     if (!experience) {
