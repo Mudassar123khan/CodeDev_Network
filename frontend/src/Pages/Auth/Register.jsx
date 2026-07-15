@@ -51,12 +51,12 @@ export default function Register() {
     }
     const emailRegex = /^\S+@\S+\.\S+$/;
     if (!emailRegex.test(data.email)) {
-        toast.error("Please enter a valid email address");
-        return;
+      toast.error("Please enter a valid email address");
+      return;
     }
     if (data.password.length < 8) {
-        toast.error("Password must be at least 8 characters long");
-        return;
+      toast.error("Password must be at least 8 characters long");
+      return;
     }
     setStep(2);
   };
@@ -94,7 +94,7 @@ export default function Register() {
   return (
     <div className="register">
       <form onSubmit={registerHandler} className="register-form">
-        
+
         {step === 1 && (
           <>
             <h2 className="form-title">Create Account</h2>
@@ -138,15 +138,15 @@ export default function Register() {
             >
               <option value="" disabled>Select Branch</option>
               <option value="Computer Engineering">Computer Engineering</option>
-              <option value="Electronics and Communication Engg.">Electronics and Communication Engg.</option>
+              <option value="ECE">ECE</option>
               <option value="Electical Engineering">Electical Engineering</option>
               <option value="Mechanical Engineering">Mechanical Engineering</option>
               <option value="Civil Engineering">Civil Engineering</option>
-              <option value="Computer Science & Engineering (Data Sciences)">Computer Science & Engineering (Data Sciences)</option>
-              <option value="Electronics (VLSI Design & Technology)">Electronics (VLSI Design & Technology)</option>
-              <option value="Robotics & Artificial Intelligence">Robotics & Artificial Intelligence</option>
-              <option value="Electrical & Computer Engineering">Electrical & Computer Engineering</option>
-              <option value="Civil Engineering (Construction Technology)">Civil Engineering (Construction Technology)</option>
+              <option value="CSDS">CSDS</option>
+              <option value="VLSI">VLSI</option>
+              <option value="Robotics & AI">Robotics & AI</option>
+              <option value="Electrical & Computer">Electrical & Computer</option>
+              <option value="Construction Technology">Construction Technology</option>
             </select>
 
             <button type="submit" className="primary-btn">Next</button>
