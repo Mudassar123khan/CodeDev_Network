@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../../context/AuthContext.jsx";
@@ -66,7 +66,7 @@ export default function InterviewExperienceList() {
   const { url, token } = useContext(Context);
   const navigate = useNavigate();
 
-  const loadExperiences = async () => {
+  const loadExperiences = useCallback(async () => {
     try {
       setLoading(true);
       const params = {
@@ -86,7 +86,7 @@ export default function InterviewExperienceList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, filters, url, token]);
 
   useEffect(() => {
     // Immediate fetch, debounce can be done if needed but direct is fine for now
@@ -95,7 +95,7 @@ export default function InterviewExperienceList() {
     }, 300);
 
     return () => clearTimeout(delayDebounce);
-  }, [searchQuery, filters, url, token]);
+  }, [loadExperiences]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -277,11 +277,7 @@ export default function InterviewExperienceList() {
                     <div className="card-author">
                       By: <span>{exp.personalInfo.name}</span>
                     </div>
-                    {exp.user && exp.user.branch && (
-                      <div className="card-branch">
-                        {exp.user.branch}
-                      </div>
-                    )}
+
                     <button
                       className="btn-secondary"
                       onClick={(e) => {

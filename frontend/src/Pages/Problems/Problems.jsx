@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { fetchProblemsAPI } from "../../api/problem.api.js";
 import { Context } from "../../context/AuthContext.jsx";
 import "./Problems.css";
@@ -13,7 +13,7 @@ export default function Problems() {
   /*========================
     Fetching Problems
   ==========================*/
-  const fetchProblems = async () => {
+  const fetchProblems = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetchProblemsAPI(url);
@@ -23,11 +23,11 @@ export default function Problems() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url]);
 
   useEffect(() => {
     fetchProblems();
-  }, []);
+  }, [fetchProblems]);
 
   if (loading) {
     return <Spinner fullPage />;

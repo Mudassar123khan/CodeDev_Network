@@ -4,12 +4,10 @@ import { Context } from "../../context/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import "./ProblemDetails.css";
-import { createSubmission } from "../../api/submission.api";
 import Spinner from "../../components/Spinner/Spinner.jsx";
-import runCode from "../../api/codeRunner.api.js";
 import { getAllSubmissionsOfAProblem } from "../../api/submission.api.js";
 import useSocket from "../../hooks/useSocket.js";
-import { createContestSubmissionAPI, fetchContestSubmissionsAPI } from "../../api/contest.api.js";
+import { fetchContestSubmissionsAPI } from "../../api/contest.api.js";
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
 
@@ -31,6 +29,13 @@ const resultBadgeClass = (status = "") => {
   return "result-status-badge verdict-WA";
 };
 
+/* ── boilerplates ─────────────────────────────────────────────────── */
+const boilerplates = {
+  java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}",
+  cpp: "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n\n}",
+  python: "def solve():\n    pass",
+};
+
 /* ── component ──────────────────────────────────────────────────────────── */
 
 export default function ProblemDetails() {
@@ -41,7 +46,7 @@ export default function ProblemDetails() {
 
   const [problemDetail, setProblemDetail] = useState({});
   const [language, setLanguage] = useState("java");
-  const [code, setCode] = useState("import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}");
+  const [code, setCode] = useState(boilerplates.java);
   const [loading, setLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState("description");
@@ -94,13 +99,6 @@ export default function ProblemDetails() {
     };
   }, []);
 
-  /* ── boilerplates ─────────────────────────────────────────────────── */
-  const boilerplates = {
-    java: "import java.util.*;\nclass Main {\n    public static void main(String[] args) {\n\n    }\n}",
-    cpp: "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n\n}",
-    python: "def solve():\n    pass",
-  };
-
   useEffect(() => { setCode(boilerplates[language]); }, [language]);
 
   /* ── fetch problem ────────────────────────────────────────────────── */
@@ -113,7 +111,7 @@ export default function ProblemDetails() {
       finally { setLoading(false); }
     };
     fetch();
-  }, [slug]);
+  }, [slug, url]);
 
   /* ── fetch past submissions ───────────────────────────────────────── */
   useEffect(() => {
@@ -129,7 +127,7 @@ export default function ProblemDetails() {
       } catch (e) { console.error(e); }
     };
     fetch();
-  }, [slug]);
+  }, [slug, contestSlug, token, url]);
 
   /* ── WebSocket listeners ──────────────────────────────────────────── */
   useEffect(() => {

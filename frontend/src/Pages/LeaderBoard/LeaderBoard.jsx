@@ -1,7 +1,7 @@
 import "./LeaderBoard.css";
 import { leaderboard } from "../../api/leaderboard.api";
 import { syncUser } from "../../api/sync.api";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { Context } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -24,11 +24,7 @@ export default function Leaderboard() {
     startPolling
   } = useContext(Context);
 
-  useEffect(() => {
-    fetchLeaderboardDetails();
-  }, [platform]);
-
-  const fetchLeaderboardDetails = async () => {
+  const fetchLeaderboardDetails = useCallback(async () => {
     try {
       setLoading(true);
       const response = await leaderboard(
@@ -42,7 +38,11 @@ export default function Leaderboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [platform, url, token]);
+
+  useEffect(() => {
+    fetchLeaderboardDetails();
+  }, [fetchLeaderboardDetails]);
 
   const onPlatformChange = (e) => {
     setPlatform(e.target.value);

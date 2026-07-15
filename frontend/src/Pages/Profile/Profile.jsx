@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import "./Profile.css";
 import { Context } from "../../context/AuthContext";
@@ -13,20 +13,20 @@ const Profile = () => {
 
   const [data, setData] = useState(null);
 
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       const profileData = await fetchUserProfile(url, username, token);
       setData(profileData);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [url, username, token]);
 
   useEffect(() => {
     if (username) {
       loadProfile();
     }
-  }, [username, url, token]);
+  }, [username, loadProfile]);
 
   // Handler for the Sync Button
   const handleSync = async () => {

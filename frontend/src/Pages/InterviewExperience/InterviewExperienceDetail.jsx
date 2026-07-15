@@ -74,7 +74,7 @@ export default function InterviewExperienceDetail() {
     };
 
     loadDetail();
-  }, [id, url, token]);
+  }, [id, url, token, navigate]);
 
   if (loading) {
     return <Spinner fullPage />;

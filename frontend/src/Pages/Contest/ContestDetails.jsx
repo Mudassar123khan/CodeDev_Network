@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../../context/AuthContext.jsx";
@@ -16,7 +16,7 @@ export default function ContestDetails() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
-  const fetchContestData = async () => {
+  const fetchContestData = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getContestBySlugAPI(url, slug, token);
@@ -45,11 +45,11 @@ export default function ContestDetails() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url, slug, token, user, navigate]);
 
   useEffect(() => {
     fetchContestData();
-  }, [slug, url, token]);
+  }, [fetchContestData]);
 
   const isUserRegistered = () => {
     return user && contest?.participants.some(
