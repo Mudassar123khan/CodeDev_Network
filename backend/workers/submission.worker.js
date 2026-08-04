@@ -9,10 +9,10 @@ import ContestSubmission from "../models/ContestSubmission.js";
 
 const normalize = (str) => {
     return (str || "").trim().replace(/\s+/g, " ");
-}; 
+};
 
 const submissionWorker = new Worker("submissionQueue", async (job) => {
-    const { problemId, code, language,userId, type } = job.data;
+    const { problemId, code, language, userId, type } = job.data;
     const problem = await Problem.findById(problemId);
     const language_id = languageMap[language];
     if (type === "submission") {
@@ -192,7 +192,7 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
 
         return outputs;
 
-    }else if(type ==="contestSubmission"){
+    } else if (type === "contestSubmission") {
         // Similar to "submission" but with contest-specific logic if needed
         // For now, we can treat it the same as a normal submission
         // You can add contest-specific checks (e.g., time of submission) here
@@ -270,7 +270,7 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
         }
 
         let points = job.data.points
-        if(verdict !== "AC"){
+        if (verdict !== "AC") {
             points = 0; // No points if not accepted
         }
         const newSubmission = await ContestSubmission.create({
@@ -281,7 +281,7 @@ const submissionWorker = new Worker("submissionQueue", async (job) => {
             verdict,
             executionTime,
             contestId: job.data.contestId,
-            score:points,
+            score: points,
         });
 
         return {
@@ -322,7 +322,7 @@ submissionWorker.on("completed", (job, result) => {
                 outputs: result,
             });
         }
-        else if(type === "contestSubmission") {
+        else if (type === "contestSubmission") {
             io.to(`room:${userId}`).emit("contestSubmission:result", {
                 verdict: result.verdict,
                 executionTime: result.executionTime,
@@ -354,7 +354,7 @@ submissionWorker.on("failed", (job, err) => {
                 outputs: [],
                 error: "Error running code"
             });
-        }else if(type === "contestSubmission") {
+        } else if (type === "contestSubmission") {
             io.to(`room:${userId}`).emit("contestSubmission:result", {
                 verdict: "Error",
                 executionTime: 0,
@@ -362,7 +362,7 @@ submissionWorker.on("failed", (job, err) => {
                 outputs: [],
             });
         }
-    }catch (err) {
+    } catch (err) {
         console.warn("[WS] Could not emit error result:", err.message);
     }
 });

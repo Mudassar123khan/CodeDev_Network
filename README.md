@@ -9,8 +9,8 @@ A unified competitive programming platform that aggregates coding profiles acros
 ### 🔗 Profile Aggregation
 - **LeetCode** — via GraphQL API
 - **Codeforces** — via Official REST API
-- **GeeksforGeeks** — via web scraping (Playwright / Puppeteer)
-- **CodeChef** — via web scraping (Cheerio / Playwright)
+- **GeeksforGeeks** — via web scraping (Puppeteer)
+- **CodeChef** — via web scraping (Puppeteer)
 - On-demand sync triggered by the user; runs asynchronously via a **BullMQ background worker queue** backed by **Redis**
 
 ### 🏆 Unified Ranking & Leaderboard
