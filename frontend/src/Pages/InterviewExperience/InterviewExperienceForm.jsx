@@ -40,7 +40,6 @@ export default function InterviewExperienceForm() {
       name: user?.username || "",
       email: user?.email || "",
       currentRole: "",
-      gradYear: "",
       linkedin: "",
       showLinkedin: false,
     },
@@ -145,12 +144,6 @@ export default function InterviewExperienceForm() {
         rounds: formData.rounds.map(r => ({ ...r }))
       };
 
-      if (cleanedFormData.personalInfo.gradYear) {
-        cleanedFormData.personalInfo.gradYear = Number(cleanedFormData.personalInfo.gradYear);
-      } else {
-        delete cleanedFormData.personalInfo.gradYear;
-      }
-
       // Format salaryRange
       const salary = cleanedFormData.feedback.salaryRange.trim();
       if (salary && !salary.endsWith(" LPA")) {
@@ -233,21 +226,11 @@ export default function InterviewExperienceForm() {
                   onChange={(e) => handleNestedChange("personalInfo", "currentRole", e.target.value)}
                 />
               </div>
-              <div className="form-field">
-                <label>Graduation Year (Optional)</label>
-                <input
-                  type="number"
-                  placeholder="e.g. 2026"
-                  value={formData.personalInfo.gradYear || ""}
-                  onChange={(e) => handleNestedChange("personalInfo", "gradYear", e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="form-grid-2">
               <div className="form-field" style={{ marginBottom: "8px" }}>
-                <label>LinkedIn Profile URL (Optional)</label>
+                <label>LinkedIn Profile URL *</label>
                 <input
                   type="url"
+                  required
                   placeholder="e.g. https://linkedin.com/in/username"
                   value={formData.personalInfo.linkedin}
                   onChange={(e) => handleNestedChange("personalInfo", "linkedin", e.target.value)}
@@ -295,9 +278,10 @@ export default function InterviewExperienceForm() {
             </div>
             <div className="form-grid-2">
               <div className="form-field">
-                <label>Location (Optional)</label>
+                <label>Location *</label>
                 <input
                   type="text"
+                  required
                   placeholder="e.g. Bangalore, Remote, Seattle"
                   value={formData.companyDetails.location}
                   onChange={(e) => handleNestedChange("companyDetails", "location", e.target.value)}
@@ -318,9 +302,10 @@ export default function InterviewExperienceForm() {
               </div>
             </div>
             <div className="form-field">
-              <label>Experience Level / Target Group (Optional)</label>
+              <label>Experience Level / Target Group *</label>
               <input
                 type="text"
+                required
                 placeholder="e.g. Fresher, 2+ Years Exp, Campus Hire"
                 value={formData.companyDetails.experienceLevel}
                 onChange={(e) => handleNestedChange("companyDetails", "experienceLevel", e.target.value)}
@@ -408,9 +393,10 @@ export default function InterviewExperienceForm() {
                   </div>
 
                   <div className="form-field">
-                    <label>Duration / Time Taken (Optional)</label>
+                    <label>Duration / Time Taken *</label>
                     <input
                       type="text"
+                      required
                       placeholder="e.g. 45 (in mins)"
                       value={round.duration}
                       onChange={(e) => {
@@ -472,6 +458,7 @@ export default function InterviewExperienceForm() {
                 >
                   <option value="cleared">Cleared</option>
                   <option value="rejected">Rejected</option>
+                  <option value="waiting">Waiting for result / Result not declared</option>
                 </select>
               </div>
               <div className="form-field">

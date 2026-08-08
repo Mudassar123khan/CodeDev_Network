@@ -37,6 +37,7 @@ const RoundSchema = new Schema({
   },
   duration: {
     type: String,
+    required: true,
     trim: true
   },
   summary: {
@@ -69,11 +70,9 @@ const InterviewExperienceSchema = new Schema(
         type: String,
         trim: true
       },
-      gradYear: {
-        type: Number
-      },
       linkedin: {
         type: String,
+        required: true,
         trim: true
       },
       showLinkedin: {
@@ -94,6 +93,7 @@ const InterviewExperienceSchema = new Schema(
       },
       location: {
         type: String,
+        required: true,
         trim: true
       },
       jobType: {
@@ -102,6 +102,7 @@ const InterviewExperienceSchema = new Schema(
       },
       experienceLevel: {
         type: String,
+        required: true,
         trim: true
       }
     },
@@ -109,7 +110,7 @@ const InterviewExperienceSchema = new Schema(
     feedback: {
       outcome: {
         type: String,
-        enum: ["cleared", "rejected"],
+        enum: ["cleared", "rejected", "waiting"],
         required: true
       },
       salaryRange: {

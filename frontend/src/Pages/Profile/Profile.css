@@ -170,3 +170,20 @@
     grid-template-columns: 1fr;
   }
 }
+
+.profile-details-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.profile-branch, .profile-grad-year {
+  background: #3a3a3a;
+  color: #ffa116;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: 1px solid #4a4a4a;
+}

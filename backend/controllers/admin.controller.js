@@ -22,7 +22,7 @@ export const getAllUsers = async (req, res) => {
 // Create a user manually
 export const createUser = async (req, res) => {
     try {
-        const { username, email, password, role, branch, platforms } = req.body;
+        const { username, email, password, role, branch, platforms, graduationYear } = req.body;
 
         if (!username || !email || !password) {
             return res.status(400).json({ success: false, message: "Username, email, and password required" });
@@ -42,6 +42,7 @@ export const createUser = async (req, res) => {
             password: hashedPassword,
             role: role || "user",
             branch: branch || "",
+            graduationYear: graduationYear || "",
             platforms: platforms || {}
         });
 
@@ -60,13 +61,14 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { username, email, role, branch, rating, solvedCount, platforms, password } = req.body;
+        const { username, email, role, branch, rating, solvedCount, platforms, password, graduationYear } = req.body;
 
         const updateData = {};
         if (username) updateData.username = username;
         if (email) updateData.email = email;
         if (role) updateData.role = role;
         if (branch !== undefined) updateData.branch = branch;
+        if (graduationYear !== undefined) updateData.graduationYear = graduationYear;
         if (rating !== undefined) updateData.rating = rating;
         if (solvedCount !== undefined) updateData.solvedCount = solvedCount;
         if (platforms) updateData.platforms = platforms;
@@ -153,7 +155,7 @@ export const syncAllUsers = async (req, res) => {
 export const getAllInterviewsAdmin = async (req, res) => {
     try {
         const experiences = await InterviewExperience.find({})
-            .populate("user", "username email branch")
+            .populate("user", "username email branch graduationYear")
             .sort({ createdAt: -1 })
             .lean();
 

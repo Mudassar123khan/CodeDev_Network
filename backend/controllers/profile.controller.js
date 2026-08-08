@@ -42,7 +42,9 @@ export const getProfile = async (req, res) => {
         basic: {
           username: user.username,
           email: user.email,
-          joinedAt: user.createdAt
+          joinedAt: user.createdAt,
+          branch: user.branch,
+          graduationYear: user.graduationYear
         },
         ranking: {
           totalScore: stats.totalScore,

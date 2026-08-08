@@ -188,6 +188,7 @@ export default function InterviewExperienceList() {
               <option value="">Outcome (All)</option>
               <option value="cleared">Cleared</option>
               <option value="rejected">Rejected</option>
+              <option value="waiting">Waiting for result</option>
             </select>
 
             <select
@@ -254,7 +255,7 @@ export default function InterviewExperienceList() {
                           {exp.companyDetails.companyName} – {exp.companyDetails.role}
                         </h3>
                         <span className={`outcome-badge ${exp.feedback.outcome}`}>
-                          {exp.feedback.outcome === "cleared" ? "Cleared" : "Rejected"}
+                          {exp.feedback.outcome === "cleared" ? "Cleared" : exp.feedback.outcome === "rejected" ? "Rejected" : "Waiting for Result"}
                         </span>
                       </div>
                       <div className="card-meta-row">

@@ -221,6 +221,12 @@
   border: 1px solid rgba(230, 57, 70, 0.3);
 }
 
+.outcome-badge.waiting {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
 .card-meta-row {
   display: flex;
   gap: 16px;

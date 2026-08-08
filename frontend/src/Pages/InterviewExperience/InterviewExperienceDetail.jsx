@@ -116,7 +116,7 @@ export default function InterviewExperienceDetail() {
           </div>
           <div className="header-status-details">
             <span className={`outcome-badge ${experience.feedback.outcome}`}>
-              {experience.feedback.outcome === "cleared" ? "Cleared" : "Rejected"}
+              {experience.feedback.outcome === "cleared" ? "Cleared" : experience.feedback.outcome === "rejected" ? "Rejected" : "Waiting for Result"}
             </span>
           </div>
         </div>
@@ -230,10 +230,10 @@ export default function InterviewExperienceDetail() {
                 <span className="info-item-value">{experience.personalInfo.currentRole}</span>
               </div>
             )}
-            {experience.personalInfo.gradYear && (
+            {experience.user && experience.user.graduationYear && (
               <div className="info-item-group">
                 <span className="info-item-label">Graduation Year</span>
-                <span className="info-item-value">{experience.personalInfo.gradYear}</span>
+                <span className="info-item-value">{experience.user.graduationYear}</span>
               </div>
             )}
             {experience.personalInfo.showLinkedin && experience.personalInfo.linkedin && (

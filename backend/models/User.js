@@ -60,6 +60,20 @@ const UserSchema = new Schema({
         ],
         default: ""
     },
+    graduationYear: {
+        type: String,
+        enum: [
+            "2025",
+            "2026",
+            "2027",
+            "2028",
+            "2029",
+            "2030",
+            "2031",
+            ""
+        ],
+        default: ""
+    },
 },
 
     {

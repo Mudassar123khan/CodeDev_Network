@@ -12,7 +12,19 @@ export default function UsersManage() {
   // Edit/Create Modal State
   const [showModal, setShowModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [formData, setFormData] = useState({ id: '', username: '', email: '', password: '', role: 'user', branch: '' });
+  const [formData, setFormData] = useState({
+    id: '',
+    username: '',
+    email: '',
+    password: '',
+    role: 'user',
+    branch: '',
+    graduationYear: '',
+    leetcode: '',
+    codeforces: '',
+    codechef: '',
+    gfg: ''
+  });
 
   useEffect(() => {
     fetchUsers();
@@ -47,7 +59,19 @@ export default function UsersManage() {
 
   const openCreateModal = () => {
     setIsEdit(false);
-    setFormData({ id: '', username: '', email: '', password: '', role: 'user', branch: '' });
+    setFormData({
+      id: '',
+      username: '',
+      email: '',
+      password: '',
+      role: 'user',
+      branch: '',
+      graduationYear: '',
+      leetcode: '',
+      codeforces: '',
+      codechef: '',
+      gfg: ''
+    });
     setShowModal(true);
   };
 
@@ -59,7 +83,12 @@ export default function UsersManage() {
       email: user.email,
       role: user.role,
       branch: user.branch || '',
-      password: '' // Keep empty unless being updated
+      graduationYear: user.graduationYear || '',
+      password: '', // Keep empty unless being updated
+      leetcode: user.platforms?.leetcode || '',
+      codeforces: user.platforms?.codeforces || '',
+      codechef: user.platforms?.codechef || '',
+      gfg: user.platforms?.gfg || ''
     });
     setShowModal(true);
   };
@@ -90,15 +119,27 @@ export default function UsersManage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (isEdit) {
-        // Prepare data (exclude password if emptied to avoid overwriting with empty string)
-        const submitData = { ...formData };
-        if (!submitData.password) delete submitData.password;
+      const submitData = {
+        username: formData.username,
+        email: formData.email,
+        role: formData.role,
+        branch: formData.branch,
+        graduationYear: formData.graduationYear,
+        platforms: {
+          leetcode: formData.leetcode,
+          codeforces: formData.codeforces,
+          codechef: formData.codechef,
+          gfg: formData.gfg
+        }
+      };
 
+      if (isEdit) {
+        if (formData.password) submitData.password = formData.password;
         const res = await updateUser(url, token, formData.id, submitData);
         if (res.data.success) toast.success("User updated!");
       } else {
-        const res = await createUser(url, token, formData);
+        submitData.password = formData.password;
+        const res = await createUser(url, token, submitData);
         if (res.data.success) toast.success("User created!");
       }
       setShowModal(false);
@@ -129,6 +170,7 @@ export default function UsersManage() {
                 <th>Email</th>
                 <th>Role</th>
                 <th>Branch</th>
+                <th>Graduation Year</th>
                 <th>Registration Date</th>
                 <th>Actions</th>
               </tr>
@@ -136,7 +178,17 @@ export default function UsersManage() {
             <tbody>
               {users.map(user => (
                 <tr key={user._id}>
-                  <td>{user.username}</td>
+                  <td>
+                    <div><strong>{user.username}</strong></div>
+                    {user.platforms && (
+                      <div className="user-platforms-sub">
+                        {user.platforms.leetcode && <span className="platform-tag lc">LC: {user.platforms.leetcode}</span>}
+                        {user.platforms.codeforces && <span className="platform-tag cf">CF: {user.platforms.codeforces}</span>}
+                        {user.platforms.codechef && <span className="platform-tag cc">CC: {user.platforms.codechef}</span>}
+                        {user.platforms.gfg && <span className="platform-tag gfg">GFG: {user.platforms.gfg}</span>}
+                      </div>
+                    )}
+                  </td>
                   <td>{user.email}</td>
                   <td>
                     <span className={`badge ${user.role === 'admin' ? 'admin' : 'user'}`}>
@@ -144,6 +196,7 @@ export default function UsersManage() {
                     </span>
                   </td>
                   <td>{user.branch || 'None'}</td>
+                  <td>{user.graduationYear || 'None'}</td>
                   <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td>
                     <button className="action-btn edit" onClick={() => openEditModal(user)}>Edit</button>
@@ -202,6 +255,44 @@ export default function UsersManage() {
                   <option value="Electrical & Computer">Electrical & Computer</option>
                   <option value="Construction Technology">Construction Technology</option>
                 </select>
+              </div>
+
+              <div className="form-group">
+                <label>Graduation Year</label>
+                <select name="graduationYear" value={formData.graduationYear} onChange={handleFormChange}>
+                  <option value="">None / Select Graduation Year</option>
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                  <option value="2029">2029</option>
+                  <option value="2030">2030</option>
+                  <option value="2031">2031</option>
+                </select>
+              </div>
+
+              <div className="platform-section">
+                <h4>Platform Usernames</h4>
+                <div className="form-group-row">
+                  <div className="form-group">
+                    <label>LeetCode</label>
+                    <input type="text" name="leetcode" value={formData.leetcode} onChange={handleFormChange} placeholder="Username" />
+                  </div>
+                  <div className="form-group">
+                    <label>Codeforces</label>
+                    <input type="text" name="codeforces" value={formData.codeforces} onChange={handleFormChange} placeholder="Username" />
+                  </div>
+                </div>
+                <div className="form-group-row">
+                  <div className="form-group">
+                    <label>CodeChef</label>
+                    <input type="text" name="codechef" value={formData.codechef} onChange={handleFormChange} placeholder="Username" />
+                  </div>
+                  <div className="form-group">
+                    <label>GeeksforGeeks</label>
+                    <input type="text" name="gfg" value={formData.gfg} onChange={handleFormChange} placeholder="Username" />
+                  </div>
+                </div>
               </div>
 
               <div className="modal-actions">

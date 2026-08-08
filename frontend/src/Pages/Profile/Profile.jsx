@@ -63,6 +63,12 @@ const Profile = () => {
         <div className="profile-left">
           <h2>{data.basic?.username || username}</h2>
           <p>Joined: {data.basic?.joinedAt ? new Date(data.basic.joinedAt).toDateString() : "N/A"}</p>
+          {(data.basic?.branch || data.basic?.graduationYear) && (
+            <div className="profile-details-sub">
+              {data.basic.branch && <span className="profile-branch">{data.basic.branch}</span>}
+              {data.basic.graduationYear && <span className="profile-grad-year">Grad: {data.basic.graduationYear}</span>}
+            </div>
+          )}
         </div>
 
         <div className="profile-right">

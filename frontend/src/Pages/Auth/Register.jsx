@@ -17,6 +17,7 @@ export default function Register() {
     email: "",
     password: "",
     branch: "",
+    graduationYear: "",
     platforms: {
       leetcode: "",
       codeforces: "",
@@ -45,7 +46,7 @@ export default function Register() {
   };
 
   const nextStep = () => {
-    if (!data.username || !data.email || !data.password || !data.branch) {
+    if (!data.username || !data.email || !data.password || !data.branch || !data.graduationYear) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -147,6 +148,23 @@ export default function Register() {
               <option value="Robotics & AI">Robotics & AI</option>
               <option value="Electrical & Computer">Electrical & Computer</option>
               <option value="Construction Technology">Construction Technology</option>
+            </select>
+
+            <select
+              name="graduationYear"
+              onChange={onChangeHandler}
+              value={data.graduationYear}
+              className="year-select"
+              required
+            >
+              <option value="" disabled>Select Graduation Year</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+              <option value="2031">2031</option>
             </select>
 
             <button type="submit" className="primary-btn">Next</button>
