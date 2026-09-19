@@ -79,3 +79,7 @@ export const deleteInterview = async (url, token, id) => {
   return await axios.delete(`${url}/admin/interviews/${id}`, getHeaders(token));
 };
 
+export const updateInterviewOutcome = async (url, token, id, data) => {
+  return await axios.patch(`${url}/admin/interviews/${id}/outcome`, data, getHeaders(token));
+};
+

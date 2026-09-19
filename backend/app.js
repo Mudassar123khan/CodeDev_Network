@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import compression from 'compression'
 import authRouter from './routes/auth.routes.js'
 import problemsRouter from './routes/problem.routes.js'
 import submissionRouter from './routes/submission.routes.js'
@@ -19,6 +20,7 @@ collectDefaultMetrics({ register: promClient.register });
 
 
 
+app.use(compression())
 app.use(express.json())
 app.use(cors({
   origin: "*",

@@ -128,6 +128,18 @@ const InterviewExperienceSchema = new Schema(
   }
 );
 
+// Indexes for fast querying, sorting, and filtering
+InterviewExperienceSchema.index({ createdAt: -1 });
+InterviewExperienceSchema.index({ "feedback.outcome": 1, createdAt: -1 });
+InterviewExperienceSchema.index({ "rounds.difficulty": 1 });
+InterviewExperienceSchema.index({ "rounds.roundType": 1 });
+InterviewExperienceSchema.index({ "rounds.mode": 1 });
+InterviewExperienceSchema.index({
+  "companyDetails.companyName": "text",
+  "companyDetails.role": "text",
+  "personalInfo.name": "text",
+});
+
 const InterviewExperience = mongoose.model("InterviewExperience", InterviewExperienceSchema);
 
 export default InterviewExperience;

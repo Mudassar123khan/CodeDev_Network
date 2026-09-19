@@ -182,3 +182,31 @@ export const deleteInterviewAdmin = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
+// Update interview outcome by admin
+export const updateInterviewOutcomeAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { outcome } = req.body;
+
+        if (!outcome || !["cleared", "rejected", "waiting"].includes(outcome)) {
+            return res.status(400).json({ success: false, message: "Invalid outcome value. Must be cleared, rejected, or waiting." });
+        }
+
+        const updatedExperience = await InterviewExperience.findByIdAndUpdate(
+            id,
+            { "feedback.outcome": outcome },
+            { new: true }
+        ).populate("user", "username email branch graduationYear");
+
+        if (!updatedExperience) {
+            return res.status(404).json({ success: false, message: "Interview experience not found" });
+        }
+
+        res.status(200).json({ success: true, message: "Interview outcome updated successfully", data: updatedExperience });
+    } catch (err) {
+        console.error("Error updating interview outcome by admin:", err);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+

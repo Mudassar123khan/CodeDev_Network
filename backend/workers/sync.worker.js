@@ -2,6 +2,7 @@ import { syncQueue } from "./sync.queue.js";
 import scoreCalculator from "../services/leaderboard/scoreCalculator.js";
 import syncUserPlatforms from "../services/platformSync/platformSync.service.js";
 import ExternalStats from "../models/ExternalStats.js";
+import { clearCacheByPrefix } from "../services/cache.service.js";
 
 let isRunning = false;
 
@@ -35,6 +36,9 @@ async function startSyncWorker() {
         { userId: userId },
         { syncStatus: "done", lastSyncedAt: new Date() },
       );
+
+      // Invalidate leaderboard cache
+      await clearCacheByPrefix("leaderboard:");
     } catch (err) {
       //updating the status in db
       await ExternalStats.updateOne(

@@ -9,7 +9,8 @@ import {
   syncSpecificUser, 
   syncAllUsers,
   getAllInterviewsAdmin,
-  deleteInterviewAdmin
+  deleteInterviewAdmin,
+  updateInterviewOutcomeAdmin
 } from '../controllers/admin.controller.js';
 
 const router = express.Router();
@@ -26,6 +27,7 @@ router.delete('/users/:id', deleteUser);
 // Interview Experience Management Routes
 router.get('/interviews', getAllInterviewsAdmin);
 router.delete('/interviews/:id', deleteInterviewAdmin);
+router.patch('/interviews/:id/outcome', updateInterviewOutcomeAdmin);
 
 // Sync Routes
 router.post('/users/sync-all', syncAllUsers);

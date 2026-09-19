@@ -75,4 +75,10 @@ const ExternalStatsSchema = new Schema(
   }
 );
 
+// Indexes for fast platform-specific leaderboard sorting
+ExternalStatsSchema.index({ "platformScores.leetcode": -1 });
+ExternalStatsSchema.index({ "platformScores.codeforces": -1 });
+ExternalStatsSchema.index({ "platformScores.codechef": -1 });
+ExternalStatsSchema.index({ "platformScores.gfg": -1 });
+
 export default mongoose.model("ExternalStats", ExternalStatsSchema);

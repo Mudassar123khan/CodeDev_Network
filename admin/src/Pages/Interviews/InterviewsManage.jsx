@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getAllInterviews, deleteInterview } from '../../api/admin.api';
+import { getAllInterviews, deleteInterview, updateInterviewOutcome } from '../../api/admin.api';
 import { Context } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import '../Manage.css';
@@ -47,6 +47,19 @@ export default function InterviewsManage() {
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to delete interview experience");
+    }
+  };
+
+  const handleOutcomeChange = async (id, newOutcome) => {
+    try {
+      const res = await updateInterviewOutcome(url, token, id, { outcome: newOutcome });
+      if (res.data.success) {
+        toast.success("Outcome updated successfully!");
+        setExperiences(prev => prev.map(exp => exp._id === id ? { ...exp, feedback: { ...exp.feedback, outcome: newOutcome } } : exp));
+        setSelectedExp(prev => prev?._id === id ? { ...prev, feedback: { ...prev.feedback, outcome: newOutcome } } : prev);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to update outcome");
     }
   };
 
@@ -113,9 +126,12 @@ export default function InterviewsManage() {
                     <div style={{ fontSize: '12px', color: '#64748b' }}>{exp.personalInfo?.email}</div>
                   </td>
                   <td>
-                    <span className={`badge ${exp.feedback?.outcome === 'cleared' ? 'admin' : 'user'}`} style={{
-                      backgroundColor: exp.feedback?.outcome === 'cleared' ? '#dcfce7' : '#fee2e2',
-                      color: exp.feedback?.outcome === 'cleared' ? '#15803d' : '#b91c1c'
+                    <span className="badge" style={{
+                      backgroundColor: exp.feedback?.outcome === 'cleared' ? '#dcfce7' : exp.feedback?.outcome === 'rejected' ? '#fee2e2' : '#fef9c3',
+                      color: exp.feedback?.outcome === 'cleared' ? '#15803d' : exp.feedback?.outcome === 'rejected' ? '#b91c1c' : '#a16207',
+                      textTransform: 'uppercase',
+                      padding: '2px 8px',
+                      fontSize: '12px'
                     }}>
                       {exp.feedback?.outcome}
                     </span>
@@ -223,15 +239,25 @@ export default function InterviewsManage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <strong>Outcome:</strong>
-                    <span className="badge" style={{
-                      backgroundColor: selectedExp.feedback?.outcome === 'cleared' ? '#dcfce7' : '#fee2e2',
-                      color: selectedExp.feedback?.outcome === 'cleared' ? '#15803d' : '#b91c1c',
-                      textTransform: 'uppercase',
-                      padding: '2px 8px',
-                      fontSize: '12px'
-                    }}>
-                      {selectedExp.feedback?.outcome}
-                    </span>
+                    <select
+                      value={selectedExp.feedback?.outcome || ''}
+                      onChange={(e) => handleOutcomeChange(selectedExp._id, e.target.value)}
+                      style={{
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        border: '1px solid #cbd5e1',
+                        backgroundColor: '#fff',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        textTransform: 'capitalize',
+                        fontWeight: '500',
+                        color: selectedExp.feedback?.outcome === 'cleared' ? '#16a34a' : selectedExp.feedback?.outcome === 'rejected' ? '#dc2626' : '#d97706'
+                      }}
+                    >
+                      <option value="cleared">Cleared</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="waiting">Waiting</option>
+                    </select>
                   </div>
                   {selectedExp.feedback?.salaryRange && (
                     <div><strong>Salary Offered / Range:</strong> {selectedExp.feedback?.salaryRange}</div>
