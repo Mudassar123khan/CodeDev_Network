@@ -17,12 +17,12 @@ export default function Home() {
         {/* HERO */}
         <section className="home-hero">
           <h1>CodeDev Network</h1>
-          <h2>Competitive Programming for Jamia Students</h2>
+          <h2>Track Your Progress. Know Your Standing. Learn From Every Interview.</h2>
 
           <p>
             A campus-focused platform to track coding progress, compete on
-            leaderboards, and build a strong competitive programming culture at
-            Jamia Millia Islamia.
+            leaderboards, share interview experiences, and build a strong
+            competitive programming culture at Jamia Millia Islamia.
           </p>
 
           <div className="home-actions">
@@ -68,6 +68,13 @@ export default function Home() {
             <p>
               Sync your coding profiles and keep your stats updated
               automatically.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <h3>Interview Experience</h3>
+            <p>
+              Explore real interview experiences, company rounds, and insights shared by Jamia peers and seniors.
             </p>
           </div>
         </section>

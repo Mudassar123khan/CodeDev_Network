@@ -112,3 +112,4 @@ Use the links to inspect the current schemas:
 | 2026-08-21 | Antigravity AI (Initial) | Workspace Root ([`AGENTS.md`](file:///c:/Users/msi/Programming/CodeDev_Network/AGENTS.md)) | Created this architecture reference file to track system schemas, flows, and guidelines. |
 | 2026-09-19 | Antigravity AI | Backend Models & Controllers | Added MongoDB indexes, query projections, lean queries, and pagination for Leaderboard and Interview Experience APIs. |
 | 2026-09-19 | Antigravity AI | Backend Services & App | Added resilient dual-layer caching (Redis with in-memory TTL fallback), cache invalidation, and HTTP response compression. |
+| 2026-09-19 | Antigravity AI | Admin Controller & Workers | Fixed cache invalidation on admin deletion/update and added error event listeners for queue connections. |

@@ -12,11 +12,14 @@ import "./workers/sync.worker.js"
 import "./workers/submission.worker.js"
 import getProfileRouter from './routes/profile.routes.js'
 import interviewRouter from './routes/interview.routes.js'
+import contactRouter from './routes/contact.routes.js'
 const app = express()
 import promClient from 'prom-client'
 
 const collectDefaultMetrics = promClient.collectDefaultMetrics;
-collectDefaultMetrics({ register: promClient.register });
+if (process.env.NODE_ENV !== "test") {
+  collectDefaultMetrics({ register: promClient.register });
+}
 
 
 
@@ -38,6 +41,7 @@ app.use('/api/getProfile',getProfileRouter)//profile route
 app.use('/api/admin',adminRouter)//admin routes
 app.use('/api/contest',contestRouter);//contest routes
 app.use('/api/interviews', interviewRouter);//interview experiences routes
+app.use('/api/contact', contactRouter);//contact & suggestions routes
 
 //health monitoring route
 app.get('/api/health',(req,res)=>{

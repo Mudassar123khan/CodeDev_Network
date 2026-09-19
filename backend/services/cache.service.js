@@ -136,8 +136,23 @@ export async function clearCacheByPrefix(prefix) {
   }
 }
 
+/**
+ * Close Redis connection cleanly (useful for test teardown)
+ */
+export async function closeCache() {
+  if (redisClient) {
+    try {
+      redisClient.disconnect();
+    } catch (err) {
+      // Ignore
+    }
+  }
+}
+
 export default {
   getCache,
   setCache,
   clearCacheByPrefix,
+  closeCache,
 };
+

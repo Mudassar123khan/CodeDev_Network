@@ -13,6 +13,7 @@ const getleaderBoard = async (req, res) => {
         const cacheKey = `leaderboard:${platform || "overall"}:p${page}:l${limit}`;
         const cachedData = await getCache(cacheKey);
         if (cachedData) {
+            res.setHeader("Cache-Control", "no-cache");
             return res.status(200).json(cachedData);
         }
 
@@ -73,6 +74,7 @@ const getleaderBoard = async (req, res) => {
         // Cache for 120 seconds
         await setCache(cacheKey, responsePayload, 120);
 
+        res.setHeader("Cache-Control", "no-cache");
         res.status(200).json(responsePayload);
         
     } catch (err) {

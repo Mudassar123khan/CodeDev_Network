@@ -61,6 +61,7 @@ export const getAllInterviewExperiences = async (req, res) => {
     const cacheKey = `interviews:p${page}:l${limit}:s${search || ""}:d${difficulty || ""}:o${outcome || ""}:m${mode || ""}:r${roundType || ""}`;
     const cachedData = await getCache(cacheKey);
     if (cachedData) {
+      res.setHeader("Cache-Control", "no-cache");
       return res.status(200).json(cachedData);
     }
 
@@ -131,6 +132,7 @@ export const getAllInterviewExperiences = async (req, res) => {
     // Cache for 120 seconds
     await setCache(cacheKey, responsePayload, 120);
 
+    res.setHeader("Cache-Control", "no-cache");
     res.status(200).json(responsePayload);
   } catch (error) {
     console.error("Error fetching interview experiences:", error);

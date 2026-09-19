@@ -83,3 +83,16 @@ export const updateInterviewOutcome = async (url, token, id, data) => {
   return await axios.patch(`${url}/admin/interviews/${id}/outcome`, data, getHeaders(token));
 };
 
+// Contact & Suggestions Admin Logic
+export const getAllContacts = async (url, token) => {
+  return await axios.get(`${url}/contact`, getHeaders(token));
+};
+
+export const updateContactStatus = async (url, token, id, status) => {
+  return await axios.patch(`${url}/contact/${id}/status`, { status }, getHeaders(token));
+};
+
+export const deleteContact = async (url, token, id) => {
+  return await axios.delete(`${url}/contact/${id}`, getHeaders(token));
+};
+

@@ -50,4 +50,8 @@ async function startSyncWorker() {
   }
 }
 
-startSyncWorker();
+if (process.env.NODE_ENV !== "test") {
+  startSyncWorker();
+}
+
+export { startSyncWorker };

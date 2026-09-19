@@ -11,7 +11,10 @@ const normalize = (str) => {
     return (str || "").trim().replace(/\s+/g, " ");
 };
 
-const submissionWorker = new Worker("submissionQueue", async (job) => {
+let submissionWorker = null;
+
+if (process.env.NODE_ENV !== "test") {
+submissionWorker = new Worker("submissionQueue", async (job) => {
     const { problemId, code, language, userId, type } = job.data;
     const problem = await Problem.findById(problemId);
     const language_id = languageMap[language];
@@ -366,4 +369,9 @@ submissionWorker.on("failed", (job, err) => {
     }
 });
 
-export default submissionWorker;
+submissionWorker.on("error", (err) => {
+    // Suppress unhandled EventEmitter crash when Redis is unreachable locally
+});
+}
+
+export default submissionWorker;

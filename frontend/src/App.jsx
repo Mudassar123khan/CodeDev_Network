@@ -17,6 +17,7 @@ import Profile from './Pages/Profile/Profile.jsx';
 import InterviewExperienceList from './Pages/InterviewExperience/InterviewExperienceList.jsx';
 import InterviewExperienceForm from './Pages/InterviewExperience/InterviewExperienceForm.jsx';
 import InterviewExperienceDetail from './Pages/InterviewExperience/InterviewExperienceDetail.jsx';
+import Contact from './Pages/Contact/Contact.jsx';
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
         <Route path='/interviews' element={<InterviewExperienceList />} />
         <Route path='/interviews/new' element={token ? <InterviewExperienceForm /> : <Login />} />
         <Route path='/interviews/:id' element={token ? <InterviewExperienceDetail /> : <Login />} />
+        <Route path='/contact' element={<Contact />} />
       </Routes>
     </div>
   );

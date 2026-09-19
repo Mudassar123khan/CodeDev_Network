@@ -7,6 +7,7 @@ import ExternalStats from "../models/ExternalStats.js";
 import Scoreboard from "../models/Scoreboard.js";
 import InterviewExperience from "../models/InterviewExperience.js";
 import Contest from "../models/Contest.js";
+import { clearCacheByPrefix } from "../services/cache.service.js";
 
 // Get all users
 export const getAllUsers = async (req, res) => {
@@ -111,6 +112,12 @@ export const deleteUser = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
+        // Invalidate associated caches
+        await Promise.all([
+            clearCacheByPrefix("interviews:"),
+            clearCacheByPrefix("leaderboard:")
+        ]);
+
         res.status(200).json({ success: true, message: "User deleted and all associated data cleared" });
     } catch (err) {
         console.error(err);
@@ -176,6 +183,9 @@ export const deleteInterviewAdmin = async (req, res) => {
             return res.status(404).json({ success: false, message: "Interview experience not found" });
         }
 
+        // Invalidate cached interview lists so deleted item disappears immediately
+        await clearCacheByPrefix("interviews:");
+
         res.status(200).json({ success: true, message: "Interview experience deleted successfully" });
     } catch (err) {
         console.error("Error deleting interview experience by admin:", err);
@@ -202,6 +212,9 @@ export const updateInterviewOutcomeAdmin = async (req, res) => {
         if (!updatedExperience) {
             return res.status(404).json({ success: false, message: "Interview experience not found" });
         }
+
+        // Invalidate cached interview lists so updated outcome reflects immediately
+        await clearCacheByPrefix("interviews:");
 
         res.status(200).json({ success: true, message: "Interview outcome updated successfully", data: updatedExperience });
     } catch (err) {

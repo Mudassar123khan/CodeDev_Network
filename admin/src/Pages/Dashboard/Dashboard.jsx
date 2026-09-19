@@ -47,6 +47,12 @@ export default function Dashboard() {
           >
             Manage Interviews
           </NavLink>
+          <NavLink 
+            to="/admin/dashboard/messages" 
+            className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}
+          >
+            Manage Messages
+          </NavLink>
         </nav>
       </aside>
 
