@@ -1,9 +1,10 @@
 import express from 'express';
-import getProfile from '../controllers/profile.controller.js';
+import { getProfile, updatePlatforms } from '../controllers/profile.controller.js';
 import authMiddleware from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.get('/:username',authMiddleware,getProfile);
+router.put('/platforms', authMiddleware, updatePlatforms);
+router.get('/:username', authMiddleware, getProfile);
 
 export default router;

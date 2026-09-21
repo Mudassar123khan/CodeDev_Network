@@ -10,6 +10,7 @@ import adminRouter from './routes/admin.routes.js'
 import contestRouter from './routes/contest.routes.js'
 import "./workers/sync.worker.js"
 import "./workers/submission.worker.js"
+import "./workers/contestStatus.worker.js"
 import getProfileRouter from './routes/profile.routes.js'
 import interviewRouter from './routes/interview.routes.js'
 import contactRouter from './routes/contact.routes.js'
@@ -38,6 +39,7 @@ app.use('/api/submissions',submissionRouter)//submissions route
 app.use('/api/sync',syncRouter)//sync route
 app.use('/api/leaderboard',leaderBoardRouter)//leaderboard route
 app.use('/api/getProfile',getProfileRouter)//profile route
+app.use('/api/profile',getProfileRouter)//profile route alias
 app.use('/api/admin',adminRouter)//admin routes
 app.use('/api/contest',contestRouter);//contest routes
 app.use('/api/interviews', interviewRouter);//interview experiences routes

@@ -5,9 +5,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import "./ProblemDetails.css";
 import Spinner from "../../components/Spinner/Spinner.jsx";
+import runCode from "../../api/codeRunner.api.js";
 import { getAllSubmissionsOfAProblem } from "../../api/submission.api.js";
 import useSocket from "../../hooks/useSocket.js";
-import { fetchContestSubmissionsAPI } from "../../api/contest.api.js";
+import { createContestSubmissionAPI, fetchContestSubmissionsAPI } from "../../api/contest.api.js";
 
 /* ── helpers ────────────────────────────────────────────────────────────── */
 
@@ -178,13 +179,34 @@ export default function ProblemDetails() {
 
   /* ── handlers ─────────────────────────────────────────────────────── */
   const submitHandler = async () => {
-    // Disabled globally
-    return;
+    try {
+      setRunning(true);
+      setResults([]);
+      setVerdict(null);
+
+      if (contestSlug) {
+        await createContestSubmissionAPI(url, contestSlug, { problemId: problemDetail._id, code, language }, token);
+      } else {
+        await createSubmission(url, { problemId: problemDetail._id, code, language }, token);
+      }
+    } catch (e) {
+      setRunning(false);
+      setVerdict("Error");
+      console.error(e);
+    }
   };
 
   const runHandler = async () => {
-    // Disabled globally
-    return;
+    try {
+      setRunning(true);
+      setResults([]);
+      setVerdict(null);
+      await runCode(url, { problemId: problemDetail._id, code, language }, token);
+    } catch (e) {
+      setRunning(false);
+      setVerdict("Error");
+      console.error(e);
+    }
   };
 
   const sampleTestCases = problemDetail?.testCases?.filter(t => t.isSample) || [];
@@ -349,11 +371,11 @@ export default function ProblemDetails() {
                 <option value="python">Python</option>
               </select>
               <div className="run-submit-buttons">
-                <button className="run-btn" disabled={true} onClick={runHandler}>
-                  Run
+                <button className="run-btn" disabled={running} onClick={runHandler}>
+                  {running ? "Running…" : "Run"}
                 </button>
-                <button className="submit-btn" disabled={true} onClick={submitHandler}>
-                  Submit
+                <button className="submit-btn" disabled={running} onClick={submitHandler}>
+                  {running ? "Judging…" : "Submit"}
                 </button>
               </div>
             </div>

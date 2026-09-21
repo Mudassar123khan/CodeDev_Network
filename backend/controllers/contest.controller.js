@@ -4,6 +4,7 @@ import Contest from "../models/Contest.js";
 import ContestSubmission from "../models/ContestSubmission.js";
 import Scoreboard from "../models/Scoreboard.js";
 import submissionQueue from "../services/bullMQ.queue.js";
+import { computeContestStatus, syncContestStatuses } from "../services/contestStatus.service.js";
 
 const createContest = async (req, res) => {
   try {
@@ -69,17 +70,25 @@ const createContest = async (req, res) => {
       });
     }
 
+    const initialStatus = computeContestStatus({ startTime, endTime });
+
     //creating new contest document
     const newContest = await Contest.create({
       title,
       slug,
       problems,
-      status: "upcoming",
+      status: initialStatus,
       startTime,
       endTime,
       participants,
       createdBy: req.user.id,
     });
+
+    // Auto-flag contest problems in Problem collection so they don't leak into practice
+    await Problem.updateMany(
+      { _id: { $in: problemIds } },
+      { $set: { isContestProblem: true, contest: newContest._id } }
+    );
 
     console.log("Contest created");
     res.status(201).json({
@@ -130,9 +139,33 @@ const getContest = async (req, res) => {
       });
     }
 
+    const contestObj = contest.toObject();
+    const now = new Date();
+    const isAdmin = req.user?.role === "admin";
+
+    // Ensure status is up to date dynamically
+    const currentStatus = computeContestStatus(contest, now);
+    contestObj.status = currentStatus;
+    if (contest.status !== currentStatus) {
+      Contest.updateOne({ _id: contest._id }, { status: currentStatus }).catch((e) => {
+        console.error("Failed to sync contest status on getContest:", e.message);
+      });
+    }
+
+    // If contest hasn't started yet and requester is not an admin,
+    // mask problem details so titles and slugs are not leaked ahead of time
+    if (now < contest.startTime && !isAdmin) {
+      contestObj.problems = (contestObj.problems || []).map((p, idx) => ({
+        _id: p._id,
+        order: p.order !== undefined ? p.order : idx + 1,
+        points: p.points,
+        problemId: null,
+      }));
+    }
+
     return res.status(200).json({
       success: true,
-      contest,
+      contest: contestObj,
     });
   } catch (err) {
     console.log(`An error occured while getting contest: ${err.message}`);
@@ -155,6 +188,23 @@ const joinContest = async (req, res) => {
       });
     }
 
+    const contest = await Contest.findOne({ slug });
+    if (!contest) {
+      return res.status(404).json({
+        success: false,
+        message: "Contest not found",
+      });
+    }
+
+    const now = new Date();
+    const currentStatus = computeContestStatus(contest, now);
+    if (now > contest.endTime || currentStatus === "ended") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot join a contest that has already ended",
+      });
+    }
+
     const updatedContest = await Contest.findOneAndUpdate(
       { slug },
       {
@@ -162,13 +212,6 @@ const joinContest = async (req, res) => {
       },
       { new: true },
     );
-
-    if (!updatedContest) {
-      return res.status(404).json({
-        success: false,
-        message: "Contest not found",
-      });
-    }
 
     return res.status(200).json({
       success: true,
@@ -200,8 +243,14 @@ const leaveContest = async (req, res) => {
       return res.status(404).json({ success: false, message: "Contest not found" });
     }
 
+    const now = new Date();
+    const currentStatus = computeContestStatus(contest, now);
+
     // Can only leave upcoming contests
-    if (contest.status !== "upcoming") {
+    if (currentStatus !== "upcoming") {
+      if (contest.status !== currentStatus) {
+        Contest.updateOne({ _id: contest._id }, { status: currentStatus }).catch(() => {});
+      }
       return res.status(400).json({
         success: false,
         message: "You can only unregister from upcoming contests",
@@ -250,8 +299,11 @@ const getContestProblems = async (req, res) => {
       })
     }
 
-    //Checking if user joined
-    if (!contest.participants.includes(userId)) {
+    //Checking if user joined (safe string comparison)
+    const isParticipant = (contest.participants || []).some(
+      (p) => p.toString() === userId.toString()
+    );
+    if (!isParticipant) {
       return res.status(403).json({
         success: false,
         message: "You have not joined this contest",
@@ -259,9 +311,10 @@ const getContestProblems = async (req, res) => {
     }
 
     const now = new Date();
+    const currentStatus = computeContestStatus(contest, now);
 
-    //Contest not started
-    if (now < contest.startTime) {
+    // Contest not started
+    if (currentStatus === "upcoming" || now < contest.startTime) {
       return res.status(403).json({
         success: false,
         message: "Contest has not started yet",
@@ -269,13 +322,13 @@ const getContestProblems = async (req, res) => {
     }
 
     // Storing the only required fields to send
-    const problems = contest.problems.map((p) => ({
-      _id: p.problemId._id,
-      title: p.problemId.title,
-      slug: p.problemId.slug,
-    }));
-
-
+    const problems = (contest.problems || [])
+      .filter((p) => p.problemId)
+      .map((p) => ({
+        _id: p.problemId._id,
+        title: p.problemId.title,
+        slug: p.problemId.slug,
+      }));
 
     return res.status(200).json({
       success: true,
@@ -296,24 +349,23 @@ const getAllContests = async (req, res) => {
   try {
     const now = new Date();
 
-    // Dynamically update status based on current time
-    await Contest.updateMany(
-      { status: "upcoming", startTime: { $lte: now } },
-      { $set: { status: "running" } }
-    );
-    await Contest.updateMany(
-      { status: "running", endTime: { $lte: now } },
-      { $set: { status: "ended" } }
-    );
+    // Dynamically synchronize statuses in DB
+    await syncContestStatuses(now);
 
     const contests = await Contest.find()
       .populate("createdBy", "username")
       .select("-problems") // Exclude problems content for fetching list
       .sort({ startTime: -1 });
 
+    const formattedContests = contests.map((c) => {
+      const obj = c.toObject();
+      obj.status = computeContestStatus(c, now);
+      return obj;
+    });
+
     return res.status(200).json({
       success: true,
-      contests,
+      contests: formattedContests,
     });
   } catch (err) {
     console.log(`An error occured while getting all contests: ${err.message}`);
@@ -334,10 +386,22 @@ const updateContest = async (req, res) => {
       return res.status(404).json({ success: false, message: "Contest not found" });
     }
 
+    const now = new Date();
+    const currentStatus = computeContestStatus(contest, now);
+    if (currentStatus === "running") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot modify problems or schedule while contest is actively running",
+      });
+    }
+
     if (title) contest.title = title;
     if (slug) contest.slug = slug;
     if (startTime) contest.startTime = startTime;
     if (endTime) contest.endTime = endTime;
+
+    // Recalculate status based on schedule
+    contest.status = computeContestStatus(contest, now);
 
     if (problems && Array.isArray(problems)) {
       const isValidProblems = problems.every(
@@ -347,6 +411,13 @@ const updateContest = async (req, res) => {
         return res.status(400).json({ success: false, message: "Invalid problems format" });
       }
       contest.problems = problems;
+
+      // Ensure updated problems are tagged as contest problems
+      const problemIds = problems.map((p) => p.problemId);
+      await Problem.updateMany(
+        { _id: { $in: problemIds } },
+        { $set: { isContestProblem: true, contest: contest._id } }
+      );
     }
 
     await contest.save();
@@ -375,6 +446,10 @@ const deleteContest = async (req, res) => {
       return res.status(404).json({ success: false, message: "Contest not found" });
     }
 
+    // Clean up associated submissions and scoreboards
+    await ContestSubmission.deleteMany({ contestId: id });
+    await Scoreboard.deleteMany({ contestId: id });
+
     return res.status(200).json({ success: true, message: "Contest deleted successfully" });
   } catch (error) {
     console.error("Delete Contest Error:", error);
@@ -398,28 +473,35 @@ const contestSubmission = async (req, res) => {
       return res.status(404).json({ success: false, message: "Contest not found" });
     }
 
-    // Check if user is a participant
-    if (!contest.participants.includes(userId)) {
+    // Check if user is a participant (safe string comparison)
+    const isParticipant = (contest.participants || []).some(
+      (p) => p.toString() === userId.toString()
+    );
+    if (!isParticipant) {
       return res.status(403).json({ success: false, message: "You have not joined this contest" });
     }
 
     // Check if contest is running
     const now = new Date();
-    if (now < contest.startTime) {
+    const currentStatus = computeContestStatus(contest, now);
+    if (currentStatus === "upcoming" || now < contest.startTime) {
       return res.status(403).json({ success: false, message: "Contest has not started yet" });
     }
-    if (now > contest.endTime) {
+    if (currentStatus === "ended" || now > contest.endTime) {
       return res.status(403).json({ success: false, message: "Contest has already ended" });
     }
 
     // Check if problem is part of the contest
-    const contestProblem = contest.problems.find(p => p.problemId._id.toString() === problemId);
+    const contestProblem = contest.problems.find(
+      (p) => p.problemId && p.problemId._id.toString() === problemId.toString()
+    );
     if (!contestProblem) {
       return res.status(400).json({ success: false, message: "Problem is not part of the contest" });
     }
 
-    // Here you would typically add code to evaluate the submission and update its status
-    //adding the submission to the queue for processing
+    const submissionTime = Math.max(0, Math.floor((now.getTime() - new Date(contest.startTime).getTime()) / 1000));
+
+    // Adding the submission to the queue for processing
     const job = await submissionQueue.add('runSubmission', {
       problemId,
       code,
@@ -427,6 +509,7 @@ const contestSubmission = async (req, res) => {
       userId,
       contestId: contest._id,
       points: contestProblem.points,
+      submissionTime,
       type: "contestSubmission"
     });
 
@@ -446,37 +529,66 @@ const getContestLeaderboard = async (req, res) => {
       return res.status(404).json({ success: false, message: "Contest not found" });
     }
 
-    // Fetch all submissions for the contest
+    // 1. Check pre-computed Scoreboard collection first (O(1) indexed lookup per user)
+    const scoreboards = await Scoreboard.find({ contestId: contest._id })
+      .populate("userId", "username")
+      .sort({ totalScore: -1, totalPenalty: 1 })
+      .lean();
+
+    if (scoreboards && scoreboards.length > 0) {
+      const sortedLeaderboard = scoreboards
+        .filter((sc) => sc.userId) // filter deleted users safely
+        .map((sc) => ({
+          username: sc.userId.username || "Anonymous",
+          totalPoints: sc.totalScore || 0,
+          totalPenalty: sc.totalPenalty || 0,
+          problemsSolved: (sc.problems || [])
+            .filter((p) => p.isSolved)
+            .map((p) => (p.problemId ? p.problemId.toString() : "")),
+        }));
+
+      return res.status(200).json({ success: true, leaderboard: sortedLeaderboard });
+    }
+
+    // 2. Backward-compatible fallback for contests with no pre-computed scoreboards
     const submissions = await ContestSubmission.find({ contestId: contest._id })
       .populate("userId", "username")
-      .populate("problemId", "title");
+      .populate("problemId", "title")
+      .lean();
 
-    // Calculate scores and prepare leaderboard data
     const leaderboard = {};
 
-    submissions.forEach(sub => {
-      const userId = sub.userId._id.toString();
+    submissions.forEach((sub) => {
+      if (!sub.userId || !sub.problemId) return; // Skip deleted entities safely
+      const userId = sub.userId._id ? sub.userId._id.toString() : sub.userId.toString();
+      const username = sub.userId.username || "Anonymous";
+      const problemIdStr = sub.problemId._id ? sub.problemId._id.toString() : sub.problemId.toString();
+
       if (!leaderboard[userId]) {
         leaderboard[userId] = {
-          username: sub.userId.username,
+          username,
           totalPoints: 0,
           problemsSolved: new Set(),
         };
       }
       if (sub.verdict === "AC") {
-        const problemPoints = contest.problems.find(p => p.problemId._id.toString() === sub.problemId._id.toString())?.points || 0;
-        if (!leaderboard[userId].problemsSolved.has(sub.problemId._id.toString())) {
+        const problemPoints = contest.problems.find(
+          (p) => p.problemId && (p.problemId._id?.toString() === problemIdStr || p.problemId.toString() === problemIdStr)
+        )?.points || 0;
+        if (!leaderboard[userId].problemsSolved.has(problemIdStr)) {
           leaderboard[userId].totalPoints += problemPoints;
-          leaderboard[userId].problemsSolved.add(sub.problemId._id.toString());
+          leaderboard[userId].problemsSolved.add(problemIdStr);
         }
       }
     });
 
-    // Convert leaderboard object to array and sort by total points
-    const sortedLeaderboard = Object.values(leaderboard).map(user => ({
-      ...user,
-      problemsSolved: Array.from(user.problemsSolved)
-    })).sort((a, b) => b.totalPoints - a.totalPoints);
+    const sortedLeaderboard = Object.values(leaderboard)
+      .map((user) => ({
+        ...user,
+        problemsSolved: Array.from(user.problemsSolved),
+      }))
+      .sort((a, b) => b.totalPoints - a.totalPoints);
+
     return res.status(200).json({ success: true, leaderboard: sortedLeaderboard });
   } catch (error) {
     console.error("Get Contest Leaderboard Error:", error);
@@ -486,7 +598,7 @@ const getContestLeaderboard = async (req, res) => {
 
 const getAllSubmissionsOfAContestProblem = async (req, res) => {
   try {
-    const { slug ,contestSlug} = req.params;
+    const { slug, contestSlug } = req.params;
     const userId = req.user.id;
 
     const contest = await Contest.findOne({ slug: contestSlug });
@@ -494,8 +606,11 @@ const getAllSubmissionsOfAContestProblem = async (req, res) => {
       return res.status(404).json({ success: false, message: "Contest not found" });
     }
 
-    // Check if user is a participant
-    if (!contest.participants.includes(userId)) {
+    // Check if user is a participant (safe string comparison)
+    const isParticipant = (contest.participants || []).some(
+      (p) => p.toString() === userId.toString()
+    );
+    if (!isParticipant) {
       return res.status(403).json({ success: false, message: "You have not joined this contest" });
     }
 

@@ -113,3 +113,6 @@ Use the links to inspect the current schemas:
 | 2026-09-19 | Antigravity AI | Backend Models & Controllers | Added MongoDB indexes, query projections, lean queries, and pagination for Leaderboard and Interview Experience APIs. |
 | 2026-09-19 | Antigravity AI | Backend Services & App | Added resilient dual-layer caching (Redis with in-memory TTL fallback), cache invalidation, and HTTP response compression. |
 | 2026-09-19 | Antigravity AI | Admin Controller & Workers | Fixed cache invalidation on admin deletion/update and added error event listeners for queue connections. |
+| 2026-09-21 | Antigravity AI | Backend & Frontend Profile | Added API endpoint and UI modal to edit coding platform usernames (LeetCode, Codeforces, CodeChef, GFG), display handles with external links, and optionally trigger stats sync. |
+| 2026-09-21 | Antigravity AI | Contest & Problem System | Fixed pre-contest problem leaks, secret testcase exposure, ObjectId participant authorization, pre-computed scoreboard with tie-breaking penalty, and re-enabled contest problem submission. |
+| 2026-09-21 | Antigravity AI | Contest Status Lifecycle | Added real-time dynamic status resolution (`computeContestStatus`), background interval worker (`contestStatus.worker.js`), and eliminated stale status loopholes in `getContest`, `leaveContest`, and `getAllContests`. |

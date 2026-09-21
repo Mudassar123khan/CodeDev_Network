@@ -1,4 +1,19 @@
 import Problem from '../models/Problem.js';
+import jwt from 'jsonwebtoken';
+
+const getRequesterRole = (req) => {
+    try {
+        const authHeader = req.headers?.authorization;
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            const token = authHeader.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            return decoded.role;
+        }
+    } catch {
+        // invalid or expired token
+    }
+    return null;
+};
 
 const createProblem = async (req,res)=>{
     try{
@@ -55,13 +70,26 @@ const createProblem = async (req,res)=>{
 
 const getProblems = async (req,res)=>{
     try{
-        const filter = req.query.admin === 'true' ? {} : { isContestProblem: { $ne: true } };
-        const problems = await Problem.find(filter);
+        const role = getRequesterRole(req);
+        // Only authenticated admins can query all problems including unreleased contest problems
+        const filter = (req.query.admin === 'true' && role === 'admin') 
+            ? {} 
+            : { isContestProblem: { $ne: true } };
+            
+        const problems = await Problem.find(filter).lean();
+
+        // Strip hidden test cases for non-admin callers to prevent test case leakage
+        const sanitizedProblems = role === 'admin' 
+            ? problems 
+            : problems.map(p => ({
+                ...p,
+                testCases: (p.testCases || []).filter(tc => tc.isSample)
+            }));
 
         res.status(200).json({
             success:true,
-            count:problems.length,
-            data:problems,
+            count:sanitizedProblems.length,
+            data:sanitizedProblems,
             message:"All Problems"
         });
     }catch(err){
@@ -83,21 +111,23 @@ const getOneProblem = async (req,res)=>{
                 message:"Slug is required",
             });
         }
-        const problem = await Problem.findOne({slug});
+        const problem = await Problem.findOne({slug}).lean();
 
         if (!problem) {
             console.log("Problem not found");
             return res.status(404).json({
-            success: false,
-            message: "Problem not found",
+                success: false,
+                message: "Problem not found",
             });
         }
         
-        if (problem.isContestProblem) {
+        const role = getRequesterRole(req);
+
+        if (problem.isContestProblem && role !== 'admin') {
             const Contest = (await import('../models/Contest.js')).default;
             const contest = problem.contest 
-              ? await Contest.findById(problem.contest) 
-              : await Contest.findOne({ "problems.problemId": problem._id });
+              ? await Contest.findById(problem.contest).lean() 
+              : await Contest.findOne({ "problems.problemId": problem._id }).lean();
               
             if (contest) {
                 const now = new Date();
@@ -110,11 +140,19 @@ const getOneProblem = async (req,res)=>{
             }
         }
 
+        // Return all test cases for admins (to manage/edit), but only sample test cases for students
+        const responseData = role === 'admin'
+            ? problem
+            : {
+                ...problem,
+                testCases: (problem.testCases || []).filter(tc => tc.isSample)
+            };
+
         console.log("Problem found");
         res.status(200).json({
             success:true,
             message:"Problem found",
-            data:problem
+            data:responseData
         });
 
     }catch(err){

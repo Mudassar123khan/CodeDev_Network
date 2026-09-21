@@ -6,6 +6,7 @@ import Submission from "../models/Submission.js";
 import { languageMap } from "../config/languages.js";
 import { getIO } from "../config/socket.js";
 import ContestSubmission from "../models/ContestSubmission.js";
+import Scoreboard from "../models/Scoreboard.js";
 
 const normalize = (str) => {
     return (str || "").trim().replace(/\s+/g, " ");
@@ -272,10 +273,64 @@ submissionWorker = new Worker("submissionQueue", async (job) => {
             if (verdict !== "AC") break;
         }
 
-        let points = job.data.points
+        let points = job.data.points || 0;
         if (verdict !== "AC") {
             points = 0; // No points if not accepted
         }
+
+        const submissionTime = typeof job.data.submissionTime === "number"
+            ? job.data.submissionTime
+            : 0;
+
+        // Atomically update pre-computed Scoreboard for the user & contest
+        let scoreboard = await Scoreboard.findOne({
+            contestId: job.data.contestId,
+            userId
+        });
+
+        if (!scoreboard) {
+            scoreboard = new Scoreboard({
+                contestId: job.data.contestId,
+                userId,
+                totalScore: 0,
+                totalPenalty: 0,
+                problems: []
+            });
+        }
+
+        let probEntry = scoreboard.problems.find(
+            p => p.problemId && p.problemId.toString() === problemId.toString()
+        );
+
+        if (!probEntry) {
+            probEntry = {
+                problemId,
+                score: 0,
+                attempts: 0,
+                isSolved: false,
+                penalty: 0,
+                lastSubmissionTime: submissionTime
+            };
+            scoreboard.problems.push(probEntry);
+            probEntry = scoreboard.problems[scoreboard.problems.length - 1];
+        }
+
+        probEntry.attempts = (probEntry.attempts || 0) + 1;
+        probEntry.lastSubmissionTime = submissionTime;
+
+        if (verdict === "AC" && !probEntry.isSolved) {
+            probEntry.isSolved = true;
+            probEntry.score = job.data.points || 0;
+            // Penalty: submissionTime in seconds + (previous wrong attempts * 20 minutes)
+            const wrongAttempts = Math.max(0, probEntry.attempts - 1);
+            probEntry.penalty = submissionTime + (wrongAttempts * 1200);
+
+            scoreboard.totalScore = (scoreboard.totalScore || 0) + (job.data.points || 0);
+            scoreboard.totalPenalty = (scoreboard.totalPenalty || 0) + probEntry.penalty;
+        }
+
+        await scoreboard.save();
+
         const newSubmission = await ContestSubmission.create({
             userId,
             problemId,
@@ -285,6 +340,9 @@ submissionWorker = new Worker("submissionQueue", async (job) => {
             executionTime,
             contestId: job.data.contestId,
             score: points,
+            attempt: probEntry.attempts,
+            isBest: probEntry.isSolved && verdict === "AC",
+            submissionTime
         });
 
         return {

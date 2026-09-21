@@ -113,6 +113,49 @@
   color: #1b1b1b;
 }
 
+/* Contribute Card */
+.contribute-card {
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contribute-card:hover {
+  border-color: #444444;
+}
+
+.contribute-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.github-icon {
+  color: #ffa116;
+  flex-shrink: 0;
+}
+
+.contribute-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+}
+
+.contribute-desc {
+  font-size: 13px;
+  color: #999999;
+  line-height: 1.5;
+  margin: 0 0 14px 0;
+}
+
+.contribute-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
 /* Form Area */
 .contact-main {
   background: #242424;
