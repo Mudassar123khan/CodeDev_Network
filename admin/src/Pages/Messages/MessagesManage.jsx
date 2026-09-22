@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { getAllContacts, updateContactStatus, deleteContact } from '../../api/admin.api';
 import { Context } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -16,11 +16,7 @@ export default function MessagesManage() {
   const [selectedMsg, setSelectedMsg] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getAllContacts(url, token);
@@ -33,7 +29,11 @@ export default function MessagesManage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url, token]);
+
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
 
   const handleStatusChange = async (id, newStatus) => {
     try {

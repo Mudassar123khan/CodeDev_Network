@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { getAllProblems, deleteProblem, createProblem, updateProblem } from '../../api/admin.api';
 import { Context } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -16,11 +16,7 @@ export default function ProblemsManage() {
     id: '', title: '', description: '', difficulty: 'easy', tags: '', constraints: '', slug: '', testCasesJson: '[]', isContestProblem: false
   });
 
-  useEffect(() => {
-    fetchProblems();
-  }, []);
-
-  const fetchProblems = async () => {
+  const fetchProblems = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getAllProblems(url);
@@ -32,7 +28,11 @@ export default function ProblemsManage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url]);
+
+  useEffect(() => {
+    fetchProblems();
+  }, [fetchProblems]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this problem?")) return;

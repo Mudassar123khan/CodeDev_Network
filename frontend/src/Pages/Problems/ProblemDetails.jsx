@@ -6,7 +6,7 @@ import CodeEditor from "../../components/CodeEditor/CodeEditor";
 import "./ProblemDetails.css";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 import runCode from "../../api/codeRunner.api.js";
-import { getAllSubmissionsOfAProblem } from "../../api/submission.api.js";
+import { createSubmission, getAllSubmissionsOfAProblem } from "../../api/submission.api.js";
 import useSocket from "../../hooks/useSocket.js";
 import { createContestSubmissionAPI, fetchContestSubmissionsAPI } from "../../api/contest.api.js";
 

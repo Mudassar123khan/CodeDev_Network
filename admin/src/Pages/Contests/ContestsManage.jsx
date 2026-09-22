@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { getAllContests, deleteContest, createContest, updateContest, getAllProblems, getContestBySlug } from '../../api/admin.api';
 import { Context } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -19,12 +19,7 @@ export default function ContestsManage() {
     id: '', title: '', slug: '', startTime: '', endTime: '', problemSlugs: ''
   });
 
-  useEffect(() => {
-    fetchContests();
-    fetchProblems();
-  }, [url, token]);
-
-  const fetchContests = async () => {
+  const fetchContests = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getAllContests(url, token);
@@ -36,16 +31,21 @@ export default function ContestsManage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url, token]);
 
-  const fetchProblems = async () => {
+  const fetchProblems = useCallback(async () => {
     try {
       const res = await getAllProblems(url);
       setAllProblems(res.data.data || []);
     } catch (error) {
       console.error("Failed to fetch problems", error);
     }
-  };
+  }, [url]);
+
+  useEffect(() => {
+    fetchContests();
+    fetchProblems();
+  }, [fetchContests, fetchProblems]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this contest?")) return;

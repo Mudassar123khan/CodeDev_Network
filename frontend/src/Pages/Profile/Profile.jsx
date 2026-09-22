@@ -97,11 +97,11 @@ const Profile = () => {
     setIsEditModalOpen(true);
   };
 
-  const closeEditModal = () => {
+  const closeEditModal = useCallback(() => {
     if (!isSaving) {
       setIsEditModalOpen(false);
     }
-  };
+  }, [isSaving]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -146,7 +146,7 @@ const Profile = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isEditModalOpen, isSaving]);
+  }, [isEditModalOpen, closeEditModal]);
 
   if (!data) return <Spinner fullPage />;
 

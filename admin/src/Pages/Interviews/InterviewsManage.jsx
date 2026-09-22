@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { getAllInterviews, deleteInterview, updateInterviewOutcome } from '../../api/admin.api';
 import { Context } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -14,11 +14,7 @@ export default function InterviewsManage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedExp, setSelectedExp] = useState(null);
 
-  useEffect(() => {
-    fetchExperiences();
-  }, []);
-
-  const fetchExperiences = async () => {
+  const fetchExperiences = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getAllInterviews(url, token);
@@ -31,7 +27,11 @@ export default function InterviewsManage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url, token]);
+
+  useEffect(() => {
+    fetchExperiences();
+  }, [fetchExperiences]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this interview experience? This action cannot be undone.")) return;

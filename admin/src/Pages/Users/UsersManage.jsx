@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { getAllUsers, deleteUser, createUser, updateUser, syncAllUsersApi, syncSingleUser } from '../../api/admin.api';
 import { Context } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -26,11 +26,7 @@ export default function UsersManage() {
     gfg: ''
   });
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getAllUsers(url, token);
@@ -42,7 +38,11 @@ export default function UsersManage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url, token]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;

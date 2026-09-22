@@ -1,6 +1,12 @@
 import nodemailer from "nodemailer";
+import dns from "node:dns";
 import dotenv from "dotenv";
 dotenv.config();
+
+// Prioritize IPv4 DNS lookup to prevent ENETUNREACH on deployment environments without IPv6 routing
+if (typeof dns.setDefaultResultOrder === "function") {
+  dns.setDefaultResultOrder("ipv4first");
+}
 
 let transporter = null;
 
@@ -11,12 +17,25 @@ const getTransporter = () => {
   const pass = process.env.EMAIL_PASS;
 
   if (user && pass) {
+    const host = process.env.SMTP_HOST || "smtp.gmail.com";
+    const port = Number(process.env.SMTP_PORT) || 587;
+    const secure = process.env.SMTP_SECURE === "true" || port === 465;
+
     transporter = nodemailer.createTransport({
-      service: "gmail",
+      host,
+      port,
+      secure,
       auth: {
         user,
         pass,
       },
+      family: 4, // Force IPv4 socket connection to eliminate ENETUNREACH on IPv6
+      tls: {
+        rejectUnauthorized: false,
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
   }
 
@@ -64,6 +83,9 @@ ${message}
     return true;
   } catch (error) {
     console.error("[MailService] Error sending email notification:", error.message);
+    if (error.code === "ENETUNREACH") {
+      console.warn("[MailService] Network unreachable. Please ensure IPv4 is enabled and SMTP_PORT (587 or 465) is permitted by your cloud provider.");
+    }
     return false;
   }
 };
