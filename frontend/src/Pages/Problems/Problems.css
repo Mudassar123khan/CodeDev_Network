@@ -3,30 +3,93 @@
 ========================= */
 .problems-page {
   min-height: 100vh;
-  padding: 80px 20px 40px;
+  padding: 100px 24px 60px;
   display: flex;
   justify-content: center;
+  background-color: #1b1b1b;
   color: #cfcfcf;
 }
 
-/* =========================
-   CONTAINER
-========================= */
 .problems-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1000px;
 }
 
-/* Title */
 .problems-title {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
+  color: #ffffff;
   margin-bottom: 24px;
 }
 
 /* =========================
-   HEADER
+   SIMPLE WIP BOX
 ========================= */
+.problems-wip-simple {
+  background: #2d2d2d;
+  border: 1px solid #3d3d3d;
+  border-radius: 8px;
+  padding: 72px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.wip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 161, 22, 0.08);
+  border: 1px solid rgba(255, 161, 22, 0.28);
+  color: #ffa116;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.wip-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffa116;
+  box-shadow: 0 0 8px #ffa116;
+  animation: wipPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes wipPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+.wip-simple-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.wip-simple-text {
+  font-size: 14.5px;
+  color: #888888;
+  max-width: 500px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ===================================================
+   ORIGINAL PROBLEMS TABLE STYLES (PRESERVED FOR UNMASK)
+=================================================== */
 .problems-header {
   display: grid;
   grid-template-columns: 70px 1fr 140px;
@@ -40,16 +103,12 @@
   margin-bottom: 12px;
 }
 
-/* =========================
-   LIST
-========================= */
 .problems-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* Row */
 .problem-row {
   display: grid;
   grid-template-columns: 70px 1fr 140px;
@@ -64,13 +123,11 @@
   background: #323232;
 }
 
-/* Index */
 .problem-index {
   font-weight: 600;
   opacity: 0.8;
 }
 
-/* Problem link */
 .problem-link {
   color: #cfcfcf;
   text-decoration: none;
@@ -81,16 +138,12 @@
   color: #ffa116;
 }
 
-/* =========================
-   DIFFICULTY
-========================= */
 .problem-difficulty {
   text-align: right;
   font-weight: 600;
   font-size: 14px;
 }
 
-/* Difficulty colors (still subtle) */
 .problem-difficulty.easy {
   color: #9be9a8;
 }
@@ -107,12 +160,28 @@
    RESPONSIVE
 ========================= */
 @media (max-width: 768px) {
-  .problems-header,
-  .problem-row {
-    grid-template-columns: 50px 1fr 100px;
+  .problems-page {
+    padding: 80px 16px 40px;
   }
 
   .problems-title {
-    font-size: 20px;
+    font-size: 22px;
+  }
+
+  .problems-wip-simple {
+    padding: 48px 16px;
+  }
+
+  .wip-simple-title {
+    font-size: 18px;
+  }
+
+  .wip-simple-text {
+    font-size: 13.5px;
+  }
+
+  .problems-header,
+  .problem-row {
+    grid-template-columns: 50px 1fr 100px;
   }
 }

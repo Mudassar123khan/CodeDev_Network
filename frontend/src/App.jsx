@@ -40,7 +40,7 @@ function App() {
         <Route path='/register' element={token ? <Navigate to='/' /> : <Register />} />
         <Route path='/leaderboard' element={token ? <LeaderBoard /> : <Login />} />
         <Route path='/problems' element={<Problems />} />
-        <Route path='/problems/:slug' element={token ? <ProblemDetails /> : <Login />} />
+        <Route path='/problems/:slug' element={<Problems />} />
         <Route path='/contest/:contestSlug/problems/:slug' element={token ? <ProblemDetails /> : <Login />} />
         <Route path='/contest' element={token ? <Contest /> : <Login />} />
         <Route path='/contest/:slug' element={token ? <ContestDetails /> : <Login />} />

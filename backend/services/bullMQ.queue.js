@@ -4,13 +4,9 @@ dotenv.config();
 
 let submissionQueue;
 
-if (process.env.NODE_ENV === "test") {
-  submissionQueue = {
-    add: async () => ({ id: "mock-job-id" }),
-    on: () => {},
-    close: async () => {},
-  };
-} else {
+const isBullMQEnabled = process.env.ENABLE_BULLMQ === "true" && process.env.NODE_ENV !== "test";
+
+if (isBullMQEnabled) {
   submissionQueue = new Queue("submissionQueue", {
     connection: {
       url: process.env.REDIS_URL,
@@ -20,6 +16,15 @@ if (process.env.NODE_ENV === "test") {
   submissionQueue.on("error", (err) => {
     // Suppress unhandled EventEmitter crash when Redis is unreachable locally
   });
+} else {
+  submissionQueue = {
+    add: async (name, data) => {
+      console.warn(`[BullMQ] submissionQueue is stopped (ENABLE_BULLMQ !== 'true'). Job '${name}' was not queued.`);
+      return { id: "mock-job-id" };
+    },
+    on: () => {},
+    close: async () => {},
+  };
 }
 
 export default submissionQueue;

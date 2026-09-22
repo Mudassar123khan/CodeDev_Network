@@ -14,7 +14,9 @@ const normalize = (str) => {
 
 let submissionWorker = null;
 
-if (process.env.NODE_ENV !== "test") {
+const isBullMQEnabled = process.env.ENABLE_BULLMQ === "true" && process.env.NODE_ENV !== "test";
+
+if (isBullMQEnabled) {
 submissionWorker = new Worker("submissionQueue", async (job) => {
     const { problemId, code, language, userId, type } = job.data;
     const problem = await Problem.findById(problemId);
@@ -430,6 +432,8 @@ submissionWorker.on("failed", (job, err) => {
 submissionWorker.on("error", (err) => {
     // Suppress unhandled EventEmitter crash when Redis is unreachable locally
 });
+} else {
+    console.log("ℹ️ BullMQ submission worker is disabled (ENABLE_BULLMQ !== 'true'). Skipping Redis connection.");
 }
 
 export default submissionWorker;

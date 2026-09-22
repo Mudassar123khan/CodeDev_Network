@@ -12,6 +12,13 @@ const normalize = (str) => {
 
 const createSubmission = async (req, res) => {
   try {
+    if (process.env.ENABLE_BULLMQ !== "true" && process.env.NODE_ENV !== "test") {
+      return res.status(503).json({
+        success: false,
+        message: "Code submission is currently paused for maintenance (BullMQ is disabled)."
+      });
+    }
+
     const { problemId, code, language } = req.body;
     const userId = req.user.id;
 

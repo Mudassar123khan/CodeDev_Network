@@ -5,15 +5,19 @@ import "./Problems.css";
 import { Link } from "react-router-dom";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 
+// Toggle flag: set to false to unmask and display the problem list
+const WIP_MASKED = true;
+
 export default function Problems() {
   const [problems, setProblems] = useState([]);
   const { url } = useContext(Context);
-  const [loading, setLoading] = useState(true); // state for loader
+  const [loading, setLoading] = useState(!WIP_MASKED);
 
   /*========================
-    Fetching Problems
+    Fetching Problems (Preserved for when unmasked)
   ==========================*/
   const fetchProblems = useCallback(async () => {
+    if (WIP_MASKED) return;
     try {
       setLoading(true);
       const response = await fetchProblemsAPI(url);
@@ -26,12 +30,39 @@ export default function Problems() {
   }, [url]);
 
   useEffect(() => {
-    fetchProblems();
+    if (!WIP_MASKED) {
+      fetchProblems();
+    }
   }, [fetchProblems]);
 
-  if (loading) {
+  if (loading && !WIP_MASKED) {
     return <Spinner fullPage />;
   }
+
+  // ── MINIMAL WORK IN PROGRESS MASK ─────────────────────────────────
+  if (WIP_MASKED) {
+    return (
+      <div className="problems-page">
+        <div className="problems-container">
+          <h1 className="problems-title">Problems</h1>
+
+          <div className="problems-wip-simple">
+            <div className="wip-pill">
+              <span className="wip-pulse" />
+              <span>Work in Progress</span>
+            </div>
+
+            <h2 className="wip-simple-title">Under Construction</h2>
+            <p className="wip-simple-text">
+              This section is currently under development. Practice problems will be available soon.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── ORIGINAL PROBLEMS LIST (ACTIVE WHEN WIP_MASKED = false) ───────────
   return (
     <div className="problems-page">
       <div className="problems-container">

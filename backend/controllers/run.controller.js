@@ -11,6 +11,13 @@ const normalize = (str) => {
 
 const codeRunner = async (req, res) => {
   try {
+    if (process.env.ENABLE_BULLMQ !== "true" && process.env.NODE_ENV !== "test") {
+      return res.status(503).json({
+        success: false,
+        message: "Code execution is currently paused for maintenance (BullMQ is disabled)."
+      });
+    }
+
     const { problemId, code, language } = req.body;
 
     if (!problemId || !code || !language) {

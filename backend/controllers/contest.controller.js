@@ -459,6 +459,13 @@ const deleteContest = async (req, res) => {
 
 const contestSubmission = async (req, res) => {
   try {
+    if (process.env.ENABLE_BULLMQ !== "true" && process.env.NODE_ENV !== "test") {
+      return res.status(503).json({
+        success: false,
+        message: "Contest code submission is temporarily unavailable (BullMQ is disabled)."
+      });
+    }
+
     const { slug } = req.params;
     const { problemId, code, language } = req.body;
     const userId = req.user.id;
