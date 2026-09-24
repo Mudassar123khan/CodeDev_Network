@@ -16,7 +16,7 @@ A unified competitive programming platform that aggregates coding profiles acros
 ### 🏆 Unified Ranking & Leaderboard
 - Per-platform rankings (LeetCode, Codeforces, GFG, CodeChef)
 - Global aggregate ranking with weighted scoring
-- University-specific leaderboard (Jamia Millia Islamia)
+- University-specific leaderboard (BIET )
 
 ### 🏅 Contest System *(Fully Implemented)*
 - Create & manage contests (admin only)
@@ -218,7 +218,7 @@ Leaderboard service recomputes weighted rankings
 - Aggregated scores generate:
   - Per-platform rankings
   - Global rankings
-  - University-specific leaderboards (Jamia Millia Islamia)
+  - University-specific leaderboards (BIET )
 
 ---
 

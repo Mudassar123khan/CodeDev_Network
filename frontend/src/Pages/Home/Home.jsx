@@ -22,7 +22,7 @@ export default function Home() {
           <p>
             A campus-focused platform to track coding progress, compete on
             leaderboards, share interview experiences, and build a strong
-            competitive programming culture at Jamia Millia Islamia.
+            competitive programming culture at BIET.
           </p>
 
           <div className="home-actions">
@@ -58,7 +58,7 @@ export default function Home() {
           <div className="feature-card">
             <h3>Student-Only Competition</h3>
             <p>
-              Compete only with Jamia students and measure your real standing on
+              Compete only with BIET students and measure your real standing on
               campus.
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function Home() {
           <div className="feature-card">
             <h3>Interview Experience</h3>
             <p>
-              Explore real interview experiences, company rounds, and insights shared by Jamia peers and seniors.
+              Explore real interview experiences, company rounds, and insights shared by BIET peers and seniors.
             </p>
           </div>
         </section>
@@ -88,8 +88,7 @@ export default function Home() {
               <span className="step-number">01</span>
               <h4>Create an Account</h4>
               <p>
-                Register using your details and become part of the Jamia Millia
-                Islamia coding community.
+                Register using your details and become part of the BIET coding community.
               </p>
             </div>
 
@@ -117,7 +116,7 @@ export default function Home() {
         <section className="home-mission">
           <p>
             Built to encourage consistency, collaboration, and healthy
-            competition among Jamia students.
+            competition among BIET students.
           </p>
         </section>
       </div>
