@@ -5,7 +5,7 @@ export const Context = createContext(null);
 
 export const ContextProvider = ({ children }) => {
   //const url = "http://localhost:3000/api";
-  const url = 'https://codedev-network-biet-campus.onrender.com/api';
+  const url = 'https://codedev-network-1.onrender.com/api';
 
   const [token, setToken] = useState(() => localStorage.getItem("token") || null);
   const [user, setUser] = useState(() => {
