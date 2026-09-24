@@ -98,18 +98,18 @@ export default function Contact() {
           <aside className="contact-info">
             <div className="info-block">
               <span className="info-label">Direct Email</span>
-              <a href="mailto:satyamkanaujiya159@gmail.com" className="info-value">
-                satyamkanaujiya159@gmail.com
+              <a href="mailto:12mudassarkhan@gmail.com" className="info-value">
+                12mudassarkhan@gmail.com
               </a>
               <div className="info-actions">
                 <button
                   type="button"
                   className="btn-text"
-                  onClick={() => copyToClipboard("satyamkanaujiya159@gmail.com", "Email")}
+                  onClick={() => copyToClipboard("12mudassarkhan@gmail.com", "Email")}
                 >
                   {copiedField === "Email" ? "Copied" : "Copy"}
                 </button>
-                <a href="mailto:satyamkanaujiya159@gmail.com" className="btn-text highlight">
+                <a href="mailto:12mudassarkhan@gmail.com" className="btn-text highlight">
                   Send Mail
                 </a>
               </div>
