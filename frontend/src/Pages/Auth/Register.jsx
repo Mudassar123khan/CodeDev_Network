@@ -138,16 +138,16 @@ export default function Register() {
               required
             >
               <option value="" disabled>Select Branch</option>
-              <option value="Computer Engineering">Computer Engineering</option>
-              <option value="ECE">ECE</option>
-              <option value="Electical Engineering">Electical Engineering</option>
-              <option value="Mechanical Engineering">Mechanical Engineering</option>
-              <option value="Civil Engineering">Civil Engineering</option>
-              <option value="CSDS">CSDS</option>
-              <option value="VLSI">VLSI</option>
-              <option value="Robotics & AI">Robotics & AI</option>
-              <option value="Electrical & Computer">Electrical & Computer</option>
-              <option value="Construction Technology">Construction Technology</option>
+              <option value="Computer Science and Engineering (CSE)">Computer Science and Engineering (CSE)</option>
+              <option value="Electronics and Communication Engineering (ECE)">Electronics and Communication Engineering (ECE)</option>
+              <option value="Electrical Engineering (EE)">Electrical Engineering (EE)</option>
+              <option value="Mechanical Engineering (ME)">Mechanical Engineering (ME)</option>
+              <option value="Civil Engineering (Civil)">Civil Engineering (Civil)</option>
+              <option value="Chemical Engineering (Chemical)">Chemical Engineering (Chemical)</option>
+              <option value="Biotechnology (Biotech)">Biotechnology (Biotech)</option>
+              <option value="Production and Industrial Engineering (PIE)">Production and Industrial Engineering (PIE)</option>
+              <option value="Engineering and Computational Mechanics">Engineering and Computational Mechanics</option>
+              <option value="Material Science / Materials Engineering">Material Science / Materials Engineering</option>
             </select>
 
             <select
