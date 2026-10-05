@@ -18,71 +18,6 @@
 }
 
 /* =========================
-   SIMPLE WIP BOX
-========================= */
-.contest-wip-simple {
-  background: #2d2d2d;
-  border: 1px solid #3d3d3d;
-  border-radius: 8px;
-  padding: 72px 24px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-.wip-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 161, 22, 0.08);
-  border: 1px solid rgba(255, 161, 22, 0.28);
-  color: #ffa116;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  letter-spacing: 0.02em;
-}
-
-.wip-pulse {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #ffa116;
-  box-shadow: 0 0 8px #ffa116;
-  animation: wipPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes wipPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(0.85);
-  }
-}
-
-.wip-simple-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-}
-
-.wip-simple-text {
-  font-size: 14.5px;
-  color: #888888;
-  max-width: 500px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* =========================
    HEADER & SEARCH
 ========================= */
 .contest-header-row {
@@ -495,18 +430,6 @@
 
   .search-input {
     width: 100%;
-  }
-
-  .contest-wip-simple {
-    padding: 48px 16px;
-  }
-
-  .wip-simple-title {
-    font-size: 18px;
-  }
-
-  .wip-simple-text {
-    font-size: 13.5px;
   }
 }
 

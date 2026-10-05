@@ -42,9 +42,9 @@ function App() {
         <Route path='/problems' element={<Problems />} />
         <Route path='/problems/:slug' element={<Problems />} />
         <Route path='/contest/:contestSlug/problems/:slug' element={token ? <ProblemDetails /> : <Login />} />
-        <Route path='/contest' element={<Contest />} />
-        <Route path='/contest/:slug' element={<Contest />} />
-        <Route path='/contest/:slug/leaderboard' element={<Contest />} />
+        <Route path='/contest' element={token ? <Contest /> : <Login />} />
+        <Route path='/contest/:slug' element={token ? <ContestDetails /> : <Login />} />
+        <Route path='/contest/:slug/leaderboard' element={token ? <ContestLeaderBoard /> : <Login />} />
         <Route path='/profile/:username' element={token ? <Profile /> : <Login />} />
         <Route path='/interviews' element={<InterviewExperienceList />} />
         <Route path='/interviews/new' element={token ? <InterviewExperienceForm /> : <Login />} />
