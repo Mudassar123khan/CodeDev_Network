@@ -116,9 +116,12 @@ const formatDuration = (startTime, endTime) => {
   }
 };
 
+// Toggle flag: set to false to unmask and display the contest list
+const WIP_MASKED = true;
+
 export default function Contest() {
   const [contests, setContests] = useState({ running: [], upcoming: [], ended: [] });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!WIP_MASKED);
   const [actionLoading, setActionLoading] = useState(null); // slug of contest being acted on
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
@@ -126,6 +129,7 @@ export default function Contest() {
   const navigate = useNavigate();
 
   const fetchContests = useCallback(async () => {
+    if (WIP_MASKED) return;
     try {
       setLoading(true);
       const data = await getAllContestsAPI(url, token);
@@ -150,7 +154,9 @@ export default function Contest() {
   }, [url, token]);
 
   useEffect(() => {
-    fetchContests();
+    if (!WIP_MASKED) {
+      fetchContests();
+    }
   }, [fetchContests]);
 
   const isUserRegistered = (contest) =>
@@ -188,7 +194,32 @@ export default function Contest() {
     }
   };
 
-  if (loading) return <Spinner fullPage />;
+  if (loading && !WIP_MASKED) return <Spinner fullPage />;
+
+  // ── MINIMAL WORK IN PROGRESS MASK ─────────────────────────────────
+  if (WIP_MASKED) {
+    return (
+      <div className="contest-page">
+        <div className="contest-container">
+          <div className="contest-header-row">
+            <h1 className="page-title">Contests</h1>
+          </div>
+
+          <div className="contest-wip-simple">
+            <div className="wip-pill">
+              <span className="wip-pulse" />
+              <span>Work in Progress</span>
+            </div>
+
+            <h2 className="wip-simple-title">Under Construction</h2>
+            <p className="wip-simple-text">
+              This section is currently under development. Contests will be available soon.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Calculated Stats
   const allContests = [...contests.running, ...contests.upcoming, ...contests.ended];
