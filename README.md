@@ -334,12 +334,9 @@ docker run -p 5000:5000 --env-file .env.docker codedev-backend
 
 - GitHub: [Mudassar123khan](https://github.com/Mudassar123khan)
 - LinkedIn: [mohdmudassirkhan](https://www.linkedin.com/in/mohdmudassirkhan/)
-- Deploy link: (https://codedev-network-jmi.onrender.com/)
-- Deploy link:  (https://career-guide-t9cd.onrender.com/)
-  
+
 ---
 
 ## ⭐ Show Your Support
-
 
 If you find this project useful, give it a ⭐ on GitHub!

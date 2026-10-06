@@ -46,17 +46,6 @@ const UserSchema = new Schema({
     branch: {
         type: String,
         enum: [
-            "Computer Science and Engineering (CSE)",
-            "Electronics and Communication Engineering (ECE)",
-            "Electrical Engineering (EE)",
-            "Mechanical Engineering (ME)",
-            "Civil Engineering (Civil)",
-            "Chemical Engineering (Chemical)",
-            "Biotechnology (Biotech)",
-            "Production and Industrial Engineering (PIE)",
-            "Engineering and Computational Mechanics",
-            "Material Science / Materials Engineering",
-            // Legacy branches retained for existing records
             "Computer Engineering",
             "ECE",
             "Electical Engineering",
