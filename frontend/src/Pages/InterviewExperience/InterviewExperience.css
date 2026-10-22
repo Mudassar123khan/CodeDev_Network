@@ -38,6 +38,43 @@
   -webkit-text-fill-color: transparent;
 }
 
+.interview-subtitle {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: #8f8f8f;
+  line-height: 1.4;
+}
+
+.interview-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-practice-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 161, 22, 0.08);
+  color: #ffa116;
+  border: 1px solid rgba(255, 161, 22, 0.35);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-practice-ghost:hover {
+  background: rgba(255, 161, 22, 0.16);
+  border-color: #ffa116;
+  color: #ffb84d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(255, 161, 22, 0.2);
+}
+
 .search-container {
   position: relative;
   display: flex;
@@ -133,6 +170,111 @@
 }
 
 .btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   AI Mock Interview Banner (Hiregram)
+   ========================================================================== */
+.mock-interview-banner {
+  position: relative;
+  background: linear-gradient(135deg, rgba(32, 28, 22, 0.95) 0%, rgba(24, 24, 27, 0.95) 100%);
+  border: 1px solid rgba(255, 161, 22, 0.25);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mock-interview-banner:hover {
+  border-color: rgba(255, 161, 22, 0.45);
+  box-shadow: 0 8px 26px rgba(255, 161, 22, 0.12);
+}
+
+.mock-banner-glow {
+  position: absolute;
+  top: -60%;
+  right: -10%;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(255, 161, 22, 0.14) 0%, rgba(255, 161, 22, 0) 70%);
+  pointer-events: none;
+}
+
+.mock-banner-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  z-index: 1;
+}
+
+.mock-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 161, 22, 0.12);
+  color: #ffa116;
+  border: 1px solid rgba(255, 161, 22, 0.28);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  width: fit-content;
+}
+
+.mock-banner-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.mock-banner-description {
+  margin: 0;
+  font-size: 13.5px;
+  color: #b3b3b3;
+  line-height: 1.5;
+  max-width: 650px;
+}
+
+.mock-banner-right {
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.btn-mock-practice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #ffa116 0%, #df8500 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(255, 161, 22, 0.3);
+}
+
+.btn-mock-practice:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 161, 22, 0.45);
+  color: #ffffff;
+}
+
+.btn-mock-practice:active {
   transform: translateY(0);
 }
 
@@ -379,7 +521,13 @@
   gap: 8px;
 }
 
-/* Sidebar Info Card */
+/* Sidebar Container & Cards */
+.detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .sidebar-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid #2d2d2d;
@@ -389,6 +537,67 @@
   flex-direction: column;
   gap: 20px;
   height: fit-content;
+}
+
+/* Detail Page Sidebar Practice Card */
+.practice-cta-card {
+  background: linear-gradient(135deg, rgba(32, 28, 22, 0.95) 0%, rgba(24, 24, 27, 0.95) 100%);
+  border: 1px solid rgba(255, 161, 22, 0.25);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.practice-cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffa116;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.practice-cta-card h4 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.35;
+}
+
+.practice-cta-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #9e9e9e;
+  line-height: 1.45;
+}
+
+.btn-practice-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  background: rgba(255, 161, 22, 0.12);
+  color: #ffa116;
+  border: 1px solid rgba(255, 161, 22, 0.35);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 7px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-practice-cta:hover {
+  background: #ffa116;
+  color: #1b1b1b;
+  border-color: #ffa116;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 161, 22, 0.3);
 }
 
 .info-item-group {
@@ -839,7 +1048,26 @@
     gap: 12px;
   }
 
+  .interview-header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .interview-header-actions .btn-practice-ghost,
   .interview-header-row .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .mock-interview-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 20px;
+    gap: 16px;
+  }
+
+  .btn-mock-practice {
+    width: 100%;
     justify-content: center;
   }
 

@@ -45,6 +45,20 @@ const LinkedInIcon = () => (
   </svg>
 );
 
+const SparklesIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z" />
+  </svg>
+);
+
+const ExternalLinkIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    <polyline points="15 3 21 3 21 9" />
+    <line x1="10" y1="14" x2="21" y2="3" />
+  </svg>
+);
+
 export default function InterviewExperienceDetail() {
   const { id } = useParams();
   const [experience, setExperience] = useState(null);
@@ -204,62 +218,75 @@ export default function InterviewExperienceDetail() {
           </div>
 
           {/* Sidebar Side */}
-          <div className="sidebar-card">
-            <h3 style={{ margin: "0", color: "#ffffff", fontSize: "18px" }}>Author Info</h3>
-            <div className="info-item-group">
-              <span className="info-item-label">
-                <UserIcon /> Candidate Name
-              </span>
-              <span className="info-item-value">{experience.personalInfo.name}</span>
+          <div className="detail-sidebar">
+            <div className="sidebar-card">
+              <h3 style={{ margin: "0", color: "#ffffff", fontSize: "18px" }}>Author Info</h3>
+              <div className="info-item-group">
+                <span className="info-item-label">
+                  <UserIcon /> Candidate Name
+                </span>
+                <span className="info-item-value">{experience.personalInfo.name}</span>
+              </div>
+              {experience.user && experience.user.branch && (
+                <div className="info-item-group">
+                  <span className="info-item-label">Branch</span>
+                  <span className="info-item-value">{experience.user.branch}</span>
+                </div>
+              )}
+              {experience.personalInfo.currentRole && (
+                <div className="info-item-group">
+                  <span className="info-item-label">Current Role</span>
+                  <span className="info-item-value">{experience.personalInfo.currentRole}</span>
+                </div>
+              )}
+              {experience.user && experience.user.graduationYear && (
+                <div className="info-item-group">
+                  <span className="info-item-label">Graduation Year</span>
+                  <span className="info-item-value">{experience.user.graduationYear}</span>
+                </div>
+              )}
+              {experience.personalInfo.showLinkedin && experience.personalInfo.linkedin && (
+                <div className="info-item-group">
+                  <span className="info-item-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <LinkedInIcon /> LinkedIn
+                  </span>
+                  <span className="info-item-value">
+                    <a
+                      href={experience.personalInfo.linkedin.startsWith("http") ? experience.personalInfo.linkedin : `https://${experience.personalInfo.linkedin}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="linkedin-link"
+                    >
+                      Connect
+                    </a>
+                  </span>
+                </div>
+              )}
+              <div className="info-item-group" style={{ borderTop: "1px solid #2d2d2d", paddingTop: "14px" }}>
+                <span className="info-item-label">
+                  <CalendarIcon /> Date Shared
+                </span>
+                <span className="info-item-value" style={{ fontSize: "14px", color: "#888888" }}>
+                  {formatDate(experience.createdAt)}
+                </span>
+              </div>
             </div>
-            {experience.user && experience.user.branch && (
-              <div className="info-item-group">
-                <span className="info-item-label">Branch</span>
-                <span className="info-item-value">{experience.user.branch}</span>
+
+            {/* AI Mock Interview Practice Widget */}
+            <div className="practice-cta-card">
+              <div className="practice-cta-badge">
+                <SparklesIcon />
+                <span>Practice Mock Interviews</span>
               </div>
-            )}
-            {/* <div className="info-item-group">
-              <span className="info-item-label">
-                <MailIcon /> Email Contact
-              </span>
-              <span className="info-item-value">{experience.personalInfo.email}</span>
-            </div> */}
-            {experience.personalInfo.currentRole && (
-              <div className="info-item-group">
-                <span className="info-item-label">Current Role</span>
-                <span className="info-item-value">{experience.personalInfo.currentRole}</span>
-              </div>
-            )}
-            {experience.user && experience.user.graduationYear && (
-              <div className="info-item-group">
-                <span className="info-item-label">Graduation Year</span>
-                <span className="info-item-value">{experience.user.graduationYear}</span>
-              </div>
-            )}
-            {experience.personalInfo.showLinkedin && experience.personalInfo.linkedin && (
-              <div className="info-item-group">
-                <span className="info-item-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <LinkedInIcon /> LinkedIn
-                </span>
-                <span className="info-item-value">
-                  <a
-                    href={experience.personalInfo.linkedin.startsWith("http") ? experience.personalInfo.linkedin : `https://${experience.personalInfo.linkedin}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="linkedin-link"
-                  >
-                    Connect
-                  </a>
-                </span>
-              </div>
-            )}
-            <div className="info-item-group" style={{ borderTop: "1px solid #2d2d2d", paddingTop: "14px" }}>
-              <span className="info-item-label">
-                <CalendarIcon /> Date Shared
-              </span>
-              <span className="info-item-value" style={{ fontSize: "14px", color: "#888888" }}>
-                {formatDate(experience.createdAt)}
-              </span>
+              <a
+                href="https://hiregram.ai/interviews"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-practice-cta"
+              >
+                <span>Practice on Hiregram</span>
+                <ExternalLinkIcon />
+              </a>
             </div>
           </div>
         </div>

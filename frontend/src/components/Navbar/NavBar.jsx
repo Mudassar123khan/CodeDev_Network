@@ -5,17 +5,17 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { Context } from "../../context/AuthContext.jsx";
 
 export default function NavBar() {
-  const { token, setToken, user } = useContext(Context);
+  const { token, user, logout } = useContext(Context);
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
+  const handleLogout = () => {
+    logout();
     setMenuOpen(false);
     setDropdownOpen(false);
   };
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -57,11 +57,11 @@ export default function NavBar() {
             />
             {dropdownOpen && (
               <div className="desktop-dropdown-menu">
-                <Link to={`/profile/${user.username}`} onClick={() => setDropdownOpen(false)}>
+                <Link to={`/profile/${user?.username}`} onClick={() => setDropdownOpen(false)}>
                   Profile
                 </Link>
                 <div className="dropdown-divider" />
-                <div className="desktop-logout" onClick={logout}>
+                <div className="desktop-logout" onClick={handleLogout}>
                   Logout
                 </div>
               </div>
@@ -85,7 +85,7 @@ export default function NavBar() {
       <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
         {/* PROFILE (TOP) */}
         {token && (
-          <Link to={`/profile/${user.username}`}>
+          <Link to={`/profile/${user?.username}`}>
             <div className="menu-profile-top">
               <img src={assets.profile_icon} alt="profile" />
               <span>Profile</span>
@@ -114,7 +114,7 @@ export default function NavBar() {
 
         {/* AUTH */}
         {token ? (
-          <button className="logout-btn" onClick={logout}>
+          <button className="logout-btn" onClick={handleLogout}>
             Logout
           </button>
         ) : (

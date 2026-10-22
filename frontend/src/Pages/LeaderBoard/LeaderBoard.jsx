@@ -32,9 +32,12 @@ export default function Leaderboard() {
         url,
         token,
       );
-      setData(response.data);
+      setData(response?.data || []);
     } catch (error) {
-      console.error(error);
+      console.error("Leaderboard fetch error:", error);
+      if (error.response?.status !== 401) {
+        toast.error("Failed to load leaderboard data.");
+      }
     } finally {
       setLoading(false);
     }
@@ -121,44 +124,52 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      <div className="podium">
-        {podium.map((u) => (
-          <div
-            key={u._id}
-            className={`podium-card rank-${u.rank} ${u.userId.username === user.username ? "current-user" : ""
-              }`}
-          >
-            <div className="podium-rank">#{u.rank}</div>
-            <Link to={`/profile/${u.userId.username}`} className="podium-user profile-link">
-              {u.userId.username}
-            </Link>
-            <div className="podium-score">{getScoreByPlatform(u)}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="leaderboard-list">
-        <div className="leaderboard-row headline">
-          <div className="rank">Rank</div>
-          <div className="user">User</div>
-          <div className="score">Score</div>
+      {data.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--text-secondary, #94a3b8)" }}>
+          <p>No leaderboard entries found.</p>
         </div>
-        {rest.map((u) => (
-          <div
-            className={`leaderboard-row ${u.userId.username === user.username ? "current-user" : ""
-              }`}
-            key={u._id}
-          >
-            <div className="rank">{u.rank}</div>
-            <div className="user">
-              <Link to={`/profile/${u.userId.username}`} className="profile-link">
-                {u.userId.username}
-              </Link>
-            </div>
-            <div className="score">{getScoreByPlatform(u)}</div>
+      ) : (
+        <>
+          <div className="podium">
+            {podium.map((u) => (
+              <div
+                key={u._id}
+                className={`podium-card rank-${u.rank} ${u.userId?.username === user?.username ? "current-user" : ""
+                  }`}
+              >
+                <div className="podium-rank">#{u.rank}</div>
+                <Link to={`/profile/${u.userId?.username}`} className="podium-user profile-link">
+                  {u.userId?.username}
+                </Link>
+                <div className="podium-score">{getScoreByPlatform(u)}</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+
+          <div className="leaderboard-list">
+            <div className="leaderboard-row headline">
+              <div className="rank">Rank</div>
+              <div className="user">User</div>
+              <div className="score">Score</div>
+            </div>
+            {rest.map((u) => (
+              <div
+                className={`leaderboard-row ${u.userId?.username === user?.username ? "current-user" : ""
+                  }`}
+                key={u._id}
+              >
+                <div className="rank">{u.rank}</div>
+                <div className="user">
+                  <Link to={`/profile/${u.userId?.username}`} className="profile-link">
+                    {u.userId?.username}
+                  </Link>
+                </div>
+                <div className="score">{getScoreByPlatform(u)}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

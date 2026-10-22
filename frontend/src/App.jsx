@@ -19,8 +19,15 @@ import InterviewExperienceForm from './Pages/InterviewExperience/InterviewExperi
 import InterviewExperienceDetail from './Pages/InterviewExperience/InterviewExperienceDetail.jsx';
 import Contact from './Pages/Contact/Contact.jsx';
 
-function App() {
+function ProtectedRoute({ children }) {
+  const { token } = useContext(Context);
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
 
+function App() {
   const { token } = useContext(Context);
   return (
     <div className="app" id='app'>
@@ -36,19 +43,19 @@ function App() {
       />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/login' element={token ? <Navigate to='/' /> : <Login />} />
-        <Route path='/register' element={token ? <Navigate to='/' /> : <Register />} />
-        <Route path='/leaderboard' element={token ? <LeaderBoard /> : <Login />} />
+        <Route path='/login' element={token ? <Navigate to='/' replace /> : <Login />} />
+        <Route path='/register' element={token ? <Navigate to='/' replace /> : <Register />} />
+        <Route path='/leaderboard' element={<ProtectedRoute><LeaderBoard /></ProtectedRoute>} />
         <Route path='/problems' element={<Problems />} />
         <Route path='/problems/:slug' element={<Problems />} />
-        <Route path='/contest/:contestSlug/problems/:slug' element={token ? <ProblemDetails /> : <Login />} />
-        <Route path='/contest' element={token ? <Contest /> : <Login />} />
-        <Route path='/contest/:slug' element={token ? <ContestDetails /> : <Login />} />
-        <Route path='/contest/:slug/leaderboard' element={token ? <ContestLeaderBoard /> : <Login />} />
-        <Route path='/profile/:username' element={token ? <Profile /> : <Login />} />
+        <Route path='/contest/:contestSlug/problems/:slug' element={<ProtectedRoute><ProblemDetails /></ProtectedRoute>} />
+        <Route path='/contest' element={<ProtectedRoute><Contest /></ProtectedRoute>} />
+        <Route path='/contest/:slug' element={<ProtectedRoute><ContestDetails /></ProtectedRoute>} />
+        <Route path='/contest/:slug/leaderboard' element={<ProtectedRoute><ContestLeaderBoard /></ProtectedRoute>} />
+        <Route path='/profile/:username' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path='/interviews' element={<InterviewExperienceList />} />
-        <Route path='/interviews/new' element={token ? <InterviewExperienceForm /> : <Login />} />
-        <Route path='/interviews/:id' element={token ? <InterviewExperienceDetail /> : <Login />} />
+        <Route path='/interviews/new' element={<ProtectedRoute><InterviewExperienceForm /></ProtectedRoute>} />
+        <Route path='/interviews/:id' element={<ProtectedRoute><InterviewExperienceDetail /></ProtectedRoute>} />
         <Route path='/contact' element={<Contact />} />
       </Routes>
     </div>
