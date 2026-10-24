@@ -45,6 +45,24 @@ const LinkedInIcon = () => (
   </svg>
 );
 
+const isValidLinkedInUrl = (url) => {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+  try {
+    const withProto = trimmed.startsWith("http://") || trimmed.startsWith("https://") ? trimmed : `https://${trimmed}`;
+    const parsed = new URL(withProto);
+    const host = parsed.hostname.toLowerCase();
+    const isLinkedInHost =
+      host === "linkedin.com" ||
+      host === "www.linkedin.com" ||
+      host.endsWith(".linkedin.com");
+    return isLinkedInHost && parsed.pathname.length > 2;
+  } catch {
+    return false;
+  }
+};
+
 const SparklesIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z" />
@@ -245,7 +263,7 @@ export default function InterviewExperienceDetail() {
                   <span className="info-item-value">{experience.user.graduationYear}</span>
                 </div>
               )}
-              {experience.personalInfo.showLinkedin && experience.personalInfo.linkedin && (
+              {isValidLinkedInUrl(experience.personalInfo?.linkedin) && (
                 <div className="info-item-group">
                   <span className="info-item-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <LinkedInIcon /> LinkedIn

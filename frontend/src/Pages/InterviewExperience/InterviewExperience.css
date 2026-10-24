@@ -52,6 +52,27 @@
   flex-wrap: wrap;
 }
 
+.btn-placement-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #2d2d2d;
+  color: #cfcfcf;
+  border: 1px solid #3d3d3d;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-placement-small:hover {
+  background: #343434;
+  border-color: #555555;
+  color: #ffffff;
+}
+
 .btn-practice-ghost {
   display: inline-flex;
   align-items: center;

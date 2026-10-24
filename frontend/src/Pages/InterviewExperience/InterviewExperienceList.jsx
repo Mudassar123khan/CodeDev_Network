@@ -161,6 +161,14 @@ export default function InterviewExperienceList() {
         <div className="interview-header-row">
           <h1 className="page-title">Interview Experiences</h1>
           <div className="interview-header-actions">
+            <Link
+              to="/placements"
+              className="btn-placement-small"
+              title="View B.Tech Campus Placement Statistics"
+            >
+              <BarChartIcon />
+              <span>Placement Stats</span>
+            </Link>
             <a
               href="https://hiregram.ai/interviews"
               target="_blank"

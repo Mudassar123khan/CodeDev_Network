@@ -22,6 +22,24 @@ const TrashIcon = () => (
   </svg>
 );
 
+export const isValidLinkedInUrl = (url) => {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+  try {
+    const withProto = trimmed.startsWith("http://") || trimmed.startsWith("https://") ? trimmed : `https://${trimmed}`;
+    const parsed = new URL(withProto);
+    const host = parsed.hostname.toLowerCase();
+    const isLinkedInHost =
+      host === "linkedin.com" ||
+      host === "www.linkedin.com" ||
+      host.endsWith(".linkedin.com");
+    return isLinkedInHost && parsed.pathname.length > 2;
+  } catch {
+    return false;
+  }
+};
+
 export default function InterviewExperienceForm() {
   const { url, token, user } = useContext(Context);
   const navigate = useNavigate();
@@ -41,7 +59,6 @@ export default function InterviewExperienceForm() {
       email: user?.email || "",
       currentRole: "",
       linkedin: "",
-      showLinkedin: false,
     },
     companyDetails: {
       companyName: "",
@@ -153,6 +170,21 @@ export default function InterviewExperienceForm() {
         }
       }
 
+      // Validate LinkedIn URL if provided
+      const rawLinkedin = cleanedFormData.personalInfo.linkedin?.trim() || "";
+      if (rawLinkedin) {
+        if (!isValidLinkedInUrl(rawLinkedin)) {
+          toast.error("Please enter a valid LinkedIn URL (e.g. https://linkedin.com/in/username) or leave it empty.");
+          setSubmitting(false);
+          return;
+        }
+        cleanedFormData.personalInfo.linkedin = rawLinkedin;
+        cleanedFormData.personalInfo.showLinkedin = true;
+      } else {
+        cleanedFormData.personalInfo.linkedin = "";
+        cleanedFormData.personalInfo.showLinkedin = false;
+      }
+
       // Format round durations
       cleanedFormData.rounds = cleanedFormData.rounds.map(round => {
         const duration = round.duration.trim();
@@ -226,27 +258,14 @@ export default function InterviewExperienceForm() {
                   onChange={(e) => handleNestedChange("personalInfo", "currentRole", e.target.value)}
                 />
               </div>
-              <div className="form-field" style={{ marginBottom: "8px" }}>
-                <label>LinkedIn Profile URL *</label>
+              <div className="form-field">
+                <label>LinkedIn Profile URL (Optional)</label>
                 <input
-                  type="url"
-                  required
+                  type="text"
                   placeholder="e.g. https://linkedin.com/in/username"
                   value={formData.personalInfo.linkedin}
                   onChange={(e) => handleNestedChange("personalInfo", "linkedin", e.target.value)}
                 />
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
-                  <input
-                    type="checkbox"
-                    id="showLinkedin"
-                    checked={formData.personalInfo.showLinkedin}
-                    onChange={(e) => handleNestedChange("personalInfo", "showLinkedin", e.target.checked)}
-                    style={{ width: "14px", height: "14px", cursor: "pointer", accentColor: "#ffa116" }}
-                  />
-                  <label htmlFor="showLinkedin" style={{ fontSize: "12px", color: "#888888", cursor: "pointer", userSelect: "none", margin: 0 }}>
-                    Show LinkedIn on the platform
-                  </label>
-                </div>
               </div>
             </div>
           </div>

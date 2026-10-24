@@ -1,0 +1,303 @@
+/* ==========================================================================
+   Placements Page - CodeDev Network Standard Theme
+   ========================================================================== */
+
+.placements-page {
+  min-height: 100vh;
+  padding: 100px 24px 60px;
+  background-color: var(--bg-page, #1b1b1b);
+  color: var(--text-body, #cfcfcf);
+  display: flex;
+  justify-content: center;
+}
+
+.placements-container {
+  width: 100%;
+  max-width: 1050px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ==========================================================================
+   Nav & Header
+   ========================================================================== */
+
+.placements-nav-row {
+  display: flex;
+  align-items: center;
+}
+
+.placements-back-link {
+  color: #888888;
+  text-decoration: none;
+  font-size: 13.5px;
+  transition: color 0.15s ease;
+}
+
+.placements-back-link:hover {
+  color: #ffa116;
+}
+
+.placements-header {
+  margin-bottom: 4px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+}
+
+.placements-subtitle {
+  font-size: 14px;
+  color: #8f8f8f;
+  margin: 0 0 14px 0;
+  line-height: 1.5;
+}
+
+.companies-covered-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  padding: 10px 14px;
+  background: var(--bg-surface, #2d2d2d);
+  border: 1px solid var(--border-color, #3d3d3d);
+  border-radius: var(--radius-md, 8px);
+}
+
+.companies-label {
+  color: #888888;
+  font-weight: 600;
+}
+
+.companies-list {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.companies-currency {
+  color: #888888;
+  font-size: 12px;
+}
+
+/* ==========================================================================
+   Metrics Grid (Stat Cards)
+   ========================================================================== */
+
+.placements-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.metric-card {
+  background: var(--bg-surface, #2d2d2d);
+  border: 1px solid var(--border-color, #3d3d3d);
+  border-radius: var(--radius-md, 8px);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s ease;
+}
+
+.metric-card:hover {
+  border-color: #555555;
+}
+
+.metric-card.highlight {
+  border-color: rgba(255, 161, 22, 0.4);
+}
+
+.metric-label {
+  font-size: 12.5px;
+  color: #888888;
+  margin-bottom: 6px;
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.metric-card.highlight .metric-value {
+  color: #ffa116;
+}
+
+.metric-sub {
+  font-size: 11.5px;
+  color: #777777;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   Table Card
+   ========================================================================== */
+
+.placements-card {
+  background: var(--bg-surface, #2d2d2d);
+  border: 1px solid var(--border-color, #3d3d3d);
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+}
+
+.placements-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #3d3d3d);
+}
+
+.placements-card-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.placements-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.placements-table th {
+  background: #242424;
+  color: #999999;
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #3d3d3d);
+  white-space: nowrap;
+}
+
+.placements-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #363636;
+  color: #cfcfcf;
+  white-space: nowrap;
+}
+
+.placements-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.branch-name-cell {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.center-cell {
+  text-align: center;
+}
+
+.placements-table th:not(:first-child) {
+  text-align: center;
+}
+
+.overall-row {
+  background: #242424 !important;
+  font-weight: 600;
+  border-top: 2px solid var(--border-color, #3d3d3d);
+}
+
+.overall-row td {
+  color: #ffffff;
+  padding: 14px 16px;
+}
+
+/* ==========================================================================
+   Notes Card
+   ========================================================================== */
+
+.placements-notes-card {
+  background: var(--bg-surface, #2d2d2d);
+  border: 1px solid var(--border-color, #3d3d3d);
+  border-radius: var(--radius-md, 8px);
+  padding: 18px 20px;
+}
+
+.placements-notes-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+}
+
+.notes-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 12.5px;
+  color: #888888;
+  line-height: 1.6;
+}
+
+.notes-list li {
+  margin-bottom: 4px;
+}
+
+.notes-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Loading & Error States
+   ========================================================================== */
+
+.placements-loading,
+.placements-error {
+  background: var(--bg-surface, #2d2d2d);
+  border: 1px solid var(--border-color, #3d3d3d);
+  border-radius: var(--radius-md, 8px);
+  padding: 60px 24px;
+  text-align: center;
+  color: #888888;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-retry {
+  background: var(--bg-surface-hover, #343434);
+  color: #ffffff;
+  border: 1px solid var(--border-color, #3d3d3d);
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.btn-retry:hover {
+  background: #3d3d3d;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .placements-page {
+    padding: 80px 16px 40px;
+  }
+
+  .placements-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .placements-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}

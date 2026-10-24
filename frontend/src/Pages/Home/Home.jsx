@@ -39,6 +39,10 @@ export default function Home() {
             <Link to="/interviews" className="btn-secondary">
               Interview Experience
             </Link>
+
+            <Link to="/placements" className="btn-secondary">
+              Placement Data
+            </Link>
           </div>
           <div className="scroll-hint" onClick={scrollToHow}>
             Learn how it works ↓

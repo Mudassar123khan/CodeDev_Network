@@ -18,6 +18,7 @@ import InterviewExperienceList from './Pages/InterviewExperience/InterviewExperi
 import InterviewExperienceForm from './Pages/InterviewExperience/InterviewExperienceForm.jsx';
 import InterviewExperienceDetail from './Pages/InterviewExperience/InterviewExperienceDetail.jsx';
 import Contact from './Pages/Contact/Contact.jsx';
+import Placements from './Pages/Placements/Placements.jsx';
 
 function ProtectedRoute({ children }) {
   const { token } = useContext(Context);
@@ -56,6 +57,8 @@ function App() {
         <Route path='/interviews' element={<InterviewExperienceList />} />
         <Route path='/interviews/new' element={<ProtectedRoute><InterviewExperienceForm /></ProtectedRoute>} />
         <Route path='/interviews/:id' element={<ProtectedRoute><InterviewExperienceDetail /></ProtectedRoute>} />
+        <Route path='/placements' element={<Placements />} />
+        <Route path='/btech-placements' element={<Navigate to='/placements' replace />} />
         <Route path='/contact' element={<Contact />} />
       </Routes>
     </div>

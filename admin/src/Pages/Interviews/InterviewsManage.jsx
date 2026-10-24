@@ -202,7 +202,6 @@ export default function InterviewsManage() {
                         >
                           {selectedExp.personalInfo.linkedin}
                         </a>
-                        {" "}({selectedExp.personalInfo.showLinkedin ? "Public" : "Private"})
                       </div>
                     )}
                     {selectedExp.user && (

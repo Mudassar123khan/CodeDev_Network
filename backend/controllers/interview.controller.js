@@ -112,12 +112,7 @@ export const getAllInterviewExperiences = async (req, res) => {
       queryBuilder.exec()
     ]);
 
-    const cleanedExperiences = experiences.map((exp) => {
-      if (exp.personalInfo && !exp.personalInfo.showLinkedin) {
-        delete exp.personalInfo.linkedin;
-      }
-      return exp;
-    });
+    const cleanedExperiences = experiences;
 
     const responsePayload = {
       success: true,
@@ -158,10 +153,6 @@ export const getInterviewExperienceById = async (req, res) => {
         success: false,
         message: "Interview experience not found.",
       });
-    }
-
-    if (experience.personalInfo && !experience.personalInfo.showLinkedin) {
-      delete experience.personalInfo.linkedin;
     }
 
     res.status(200).json({

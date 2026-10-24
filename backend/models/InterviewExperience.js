@@ -72,12 +72,12 @@ const InterviewExperienceSchema = new Schema(
       },
       linkedin: {
         type: String,
-        required: true,
-        trim: true
+        trim: true,
+        default: ""
       },
       showLinkedin: {
         type: Boolean,
-        default: false
+        default: true
       }
     },
     companyDetails: {

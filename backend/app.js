@@ -14,6 +14,7 @@ import "./workers/contestStatus.worker.js"
 import getProfileRouter from './routes/profile.routes.js'
 import interviewRouter from './routes/interview.routes.js'
 import contactRouter from './routes/contact.routes.js'
+import placementRouter from './routes/placement.routes.js'
 const app = express()
 import promClient from 'prom-client'
 
@@ -44,6 +45,7 @@ app.use('/api/admin',adminRouter)//admin routes
 app.use('/api/contest',contestRouter);//contest routes
 app.use('/api/interviews', interviewRouter);//interview experiences routes
 app.use('/api/contact', contactRouter);//contact & suggestions routes
+app.use('/api/placements', placementRouter);//placement statistics routes
 
 //health monitoring route
 app.get('/api/health',(req,res)=>{
