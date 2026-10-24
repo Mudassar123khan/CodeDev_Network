@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../../context/AuthContext.jsx";
 import { fetchInterviewById } from "../../api/interview.api.js";
+import { isValidLinkedInUrl } from "../../utils/validators.js";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 import "./InterviewExperience.css";
 
@@ -44,24 +45,6 @@ const LinkedInIcon = () => (
     <circle cx="4" cy="4" r="2" />
   </svg>
 );
-
-const isValidLinkedInUrl = (url) => {
-  if (!url || typeof url !== "string") return false;
-  const trimmed = url.trim();
-  if (!trimmed) return false;
-  try {
-    const withProto = trimmed.startsWith("http://") || trimmed.startsWith("https://") ? trimmed : `https://${trimmed}`;
-    const parsed = new URL(withProto);
-    const host = parsed.hostname.toLowerCase();
-    const isLinkedInHost =
-      host === "linkedin.com" ||
-      host === "www.linkedin.com" ||
-      host.endsWith(".linkedin.com");
-    return isLinkedInHost && parsed.pathname.length > 2;
-  } catch {
-    return false;
-  }
-};
 
 const SparklesIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

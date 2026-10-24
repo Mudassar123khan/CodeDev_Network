@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../../context/AuthContext.jsx";
 import { createInterview } from "../../api/interview.api.js";
+import { isValidLinkedInUrl } from "../../utils/validators.js";
 import "./InterviewExperience.css";
 
 // SVG Icons
@@ -21,24 +22,6 @@ const TrashIcon = () => (
     <line x1="14" y1="11" x2="14" y2="17" />
   </svg>
 );
-
-export const isValidLinkedInUrl = (url) => {
-  if (!url || typeof url !== "string") return false;
-  const trimmed = url.trim();
-  if (!trimmed) return false;
-  try {
-    const withProto = trimmed.startsWith("http://") || trimmed.startsWith("https://") ? trimmed : `https://${trimmed}`;
-    const parsed = new URL(withProto);
-    const host = parsed.hostname.toLowerCase();
-    const isLinkedInHost =
-      host === "linkedin.com" ||
-      host === "www.linkedin.com" ||
-      host.endsWith(".linkedin.com");
-    return isLinkedInHost && parsed.pathname.length > 2;
-  } catch {
-    return false;
-  }
-};
 
 export default function InterviewExperienceForm() {
   const { url, token, user } = useContext(Context);

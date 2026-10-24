@@ -112,16 +112,14 @@ export const getAllInterviewExperiences = async (req, res) => {
       queryBuilder.exec()
     ]);
 
-    const cleanedExperiences = experiences;
-
     const responsePayload = {
       success: true,
-      count: cleanedExperiences.length,
+      count: experiences.length,
       totalCount,
       totalPages: limit > 0 ? Math.ceil(totalCount / limit) : 1,
       currentPage: page,
       limit: limit || totalCount,
-      data: cleanedExperiences,
+      data: experiences,
     };
 
     // Cache for 120 seconds
