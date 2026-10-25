@@ -79,7 +79,7 @@ export const updateUser = async (req, res) => {
             updateData.password = await bcrypt.hash(password, salt);
         }
 
-        const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select("-password");
+        const updatedUser = await User.findByIdAndUpdate(id, updateData, { returnDocument: 'after', runValidators: true }).select("-password");
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
@@ -206,7 +206,7 @@ export const updateInterviewOutcomeAdmin = async (req, res) => {
         const updatedExperience = await InterviewExperience.findByIdAndUpdate(
             id,
             { "feedback.outcome": outcome },
-            { new: true }
+            { returnDocument: 'after' }
         ).populate("user", "username email branch graduationYear");
 
         if (!updatedExperience) {

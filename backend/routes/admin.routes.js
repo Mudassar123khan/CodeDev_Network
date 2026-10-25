@@ -12,6 +12,14 @@ import {
   deleteInterviewAdmin,
   updateInterviewOutcomeAdmin
 } from '../controllers/admin.controller.js';
+import {
+  getAllPlacementStatsAdmin,
+  createPlacementStat,
+  updatePlacementStat,
+  deletePlacementStat,
+  updatePlacementMeta,
+  recalculateOverallStats
+} from '../controllers/placement.controller.js';
 
 const router = express.Router();
 
@@ -28,6 +36,14 @@ router.delete('/users/:id', deleteUser);
 router.get('/interviews', getAllInterviewsAdmin);
 router.delete('/interviews/:id', deleteInterviewAdmin);
 router.patch('/interviews/:id/outcome', updateInterviewOutcomeAdmin);
+
+// Placement Data Management Routes
+router.get('/placements', getAllPlacementStatsAdmin);
+router.post('/placements', createPlacementStat);
+router.put('/placements/meta', updatePlacementMeta);
+router.post('/placements/recalculate', recalculateOverallStats);
+router.put('/placements/:id', updatePlacementStat);
+router.delete('/placements/:id', deletePlacementStat);
 
 // Sync Routes
 router.post('/users/sync-all', syncAllUsers);

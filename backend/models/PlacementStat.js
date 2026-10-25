@@ -14,7 +14,6 @@ const PlacementStatSchema = new Schema(
     },
     totalStudents: {
       type: Number,
-      default: null, // Explicitly null for Electrical Engineering where data is missing
     },
     studentsPlaced: {
       type: Number,

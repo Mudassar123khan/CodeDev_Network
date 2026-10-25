@@ -210,7 +210,7 @@ const joinContest = async (req, res) => {
       {
         $addToSet: { participants: userId }, // prevents duplicates
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
 
     return res.status(200).json({
@@ -260,7 +260,7 @@ const leaveContest = async (req, res) => {
     await Contest.findOneAndUpdate(
       { slug },
       { $pull: { participants: userId } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     return res.status(200).json({

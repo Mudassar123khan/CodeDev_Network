@@ -96,3 +96,29 @@ export const deleteContact = async (url, token, id) => {
   return await axios.delete(`${url}/contact/${id}`, getHeaders(token));
 };
 
+// Placement Statistics Admin Logic
+export const getAllPlacements = async (url, token) => {
+  return await axios.get(`${url}/admin/placements`, getHeaders(token));
+};
+
+export const createPlacement = async (url, token, data) => {
+  return await axios.post(`${url}/admin/placements`, data, getHeaders(token));
+};
+
+export const updatePlacement = async (url, token, id, data) => {
+  return await axios.put(`${url}/admin/placements/${id}`, data, getHeaders(token));
+};
+
+export const deletePlacement = async (url, token, id) => {
+  return await axios.delete(`${url}/admin/placements/${id}`, getHeaders(token));
+};
+
+export const updatePlacementMeta = async (url, token, data) => {
+  return await axios.put(`${url}/admin/placements/meta`, data, getHeaders(token));
+};
+
+export const recalculatePlacement = async (url, token, program = "B.Tech") => {
+  return await axios.post(`${url}/admin/placements/recalculate`, { program }, getHeaders(token));
+};
+
+

@@ -53,6 +53,12 @@ export default function Dashboard() {
           >
             Manage Messages
           </NavLink>
+          <NavLink 
+            to="/admin/dashboard/placements" 
+            className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}
+          >
+            Manage Placements
+          </NavLink>
         </nav>
       </aside>
 

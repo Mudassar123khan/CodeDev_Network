@@ -94,7 +94,7 @@ export const updateContactStatus = async (req, res) => {
     const updated = await Contact.findByIdAndUpdate(
       id,
       { status },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!updated) {

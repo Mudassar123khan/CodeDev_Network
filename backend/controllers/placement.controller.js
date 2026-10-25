@@ -1,120 +1,39 @@
 import PlacementStat from "../models/PlacementStat.js";
-
-// Initial seed data from official JMI B.Tech placement document
-const defaultBranchStats = [
-  {
-    branch: "Computer Engineering",
-    shortName: "Computer",
-    totalStudents: 88,
-    studentsPlaced: 45,
-    totalOffers: 58,
-    minPackage: 3.60,
-    maxPackage: 35.00,
-    medianPackage: 8.50,
-    averagePackage: 10.35,
-    order: 1,
-    isOverall: false,
-    program: "B.Tech",
-  },
-  {
-    branch: "Electronics and Communication Engineering",
-    shortName: "ECE",
-    totalStudents: 78,
-    studentsPlaced: 20,
-    totalOffers: 22,
-    minPackage: 4.50,
-    maxPackage: 12.00,
-    medianPackage: 7.79,
-    averagePackage: 8.13,
-    order: 2,
-    isOverall: false,
-    program: "B.Tech",
-  },
-  {
-    branch: "Electrical Engineering",
-    shortName: "Electrical",
-    // Explicit requirement: "For electrical the total number of students is missing so keep that place empty."
-    totalStudents: null,
-    studentsPlaced: 10,
-    totalOffers: 10,
-    minPackage: 4.50,
-    maxPackage: 12.00,
-    medianPackage: 5.50,
-    averagePackage: 7.70,
-    order: 3,
-    isOverall: false,
-    program: "B.Tech",
-  },
-  {
-    branch: "Mechanical Engineering",
-    shortName: "Mechanical",
-    totalStudents: 75,
-    studentsPlaced: 3,
-    totalOffers: 3,
-    minPackage: 4.50,
-    maxPackage: 7.08,
-    medianPackage: 4.50,
-    averagePackage: 5.36,
-    order: 4,
-    isOverall: false,
-    program: "B.Tech",
-  },
-  {
-    branch: "Civil Engineering",
-    shortName: "Civil",
-    totalStudents: 56,
-    studentsPlaced: 0,
-    totalOffers: 0,
-    minPackage: null,
-    maxPackage: null,
-    medianPackage: null,
-    averagePackage: null,
-    order: 5,
-    isOverall: false,
-    program: "B.Tech",
-  },
-  {
-    branch: "All B.Tech branches",
-    shortName: "All Branches",
-    totalStudents: null, // Overall total not available due to missing Electrical count
-    studentsPlaced: 78,
-    totalOffers: 93,
-    minPackage: 3.60,
-    maxPackage: 35.00,
-    medianPackage: 8.50,
-    averagePackage: 9.38,
-    order: 6,
-    isOverall: true,
-    program: "B.Tech",
-  },
-];
-
-const officialNotes = [
-  "This data is not official and has been collected from various sources",
-  "We are not responsible for any misinterpretation of this data"
-];
-
-const companiesCovered = [
-  "Accenture",
-  "TCS",
-  "EPAM",
-  "IDFC First Bank",
-  "Juspay",
-  "Visa",
-];
+import PlacementMeta from "../models/PlacementMeta.js";
 
 /**
- * Get all B.Tech branch placement statistics from DB
+ * Helper to ensure a PlacementMeta document exists in DB with baseline values
+ */
+const getOrCreatePlacementMeta = async (program = "B.Tech") => {
+  let meta = await PlacementMeta.findOne({ program });
+  if (!meta) {
+    meta = await PlacementMeta.create({
+      program,
+      companiesCovered: [
+        "Accenture",
+        "TCS",
+        "EPAM",
+        "IDFC First Bank",
+        "Juspay",
+        "Visa",
+      ],
+      notes: [
+        "This data is not official and has been collected from various sources",
+        "We are not responsible for any misinterpretation of this data",
+      ],
+    });
+  }
+  return meta;
+};
+
+/**
+ * Public: Get all B.Tech placement statistics from DB
  */
 export const getPlacementStats = async (req, res) => {
   try {
-    let stats = await PlacementStat.find({ program: "B.Tech" }).sort({ order: 1 });
-
-    // Auto-seed collection if empty
-    if (!stats || stats.length === 0) {
-      await PlacementStat.insertMany(defaultBranchStats);
-      stats = await PlacementStat.find({ program: "B.Tech" }).sort({ order: 1 });
-    }
+    const program = req.query.program || "B.Tech";
+    const stats = await PlacementStat.find({ program }).sort({ order: 1 });
+    const meta = await getOrCreatePlacementMeta(program);
 
     const branches = stats.filter((s) => !s.isOverall);
     const overall = stats.find((s) => s.isOverall) || null;
@@ -124,8 +43,8 @@ export const getPlacementStats = async (req, res) => {
       data: {
         branches,
         overall,
-        companiesCovered,
-        notes: officialNotes,
+        companiesCovered: meta?.companiesCovered || [],
+        notes: meta?.notes || [],
       },
     });
   } catch (error) {
@@ -139,24 +58,303 @@ export const getPlacementStats = async (req, res) => {
 };
 
 /**
- * Seed or reset placement stats (utility)
+ * Admin: Get all placement statistics and metadata for admin dashboard
  */
-export const seedPlacementStats = async (req, res) => {
+export const getAllPlacementStatsAdmin = async (req, res) => {
   try {
-    await PlacementStat.deleteMany({ program: "B.Tech" });
-    await PlacementStat.insertMany(defaultBranchStats);
-    const stats = await PlacementStat.find({ program: "B.Tech" }).sort({ order: 1 });
+    const stats = await PlacementStat.find({}).sort({ program: 1, order: 1 });
+    const meta = await getOrCreatePlacementMeta("B.Tech");
 
     res.status(200).json({
       success: true,
-      message: "Placement statistics successfully seeded in database",
-      data: stats,
+      data: {
+        stats,
+        meta,
+      },
     });
   } catch (error) {
-    console.error("Error seeding placement stats:", error);
+    console.error("Error fetching admin placement stats:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to seed placement statistics",
+      message: "Failed to fetch placement statistics for admin",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Create a new placement record
+ */
+export const createPlacementStat = async (req, res) => {
+  try {
+    const {
+      branch,
+      shortName,
+      totalStudents,
+      studentsPlaced,
+      totalOffers,
+      minPackage,
+      maxPackage,
+      medianPackage,
+      averagePackage,
+      order,
+      isOverall,
+      program,
+    } = req.body;
+
+    if (!branch || !branch.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Branch name is required",
+      });
+    }
+
+    const parseNum = (val) => (val === "" || val === null || val === undefined || isNaN(val) ? null : Number(val));
+
+    const newStat = await PlacementStat.create({
+      branch: branch.trim(),
+      shortName: shortName?.trim() || "",
+      totalStudents: parseNum(totalStudents),
+      studentsPlaced: parseNum(studentsPlaced) ?? 0,
+      totalOffers: parseNum(totalOffers) ?? 0,
+      minPackage: parseNum(minPackage),
+      maxPackage: parseNum(maxPackage),
+      medianPackage: parseNum(medianPackage),
+      averagePackage: parseNum(averagePackage),
+      order: parseNum(order) ?? 0,
+      isOverall: Boolean(isOverall),
+      program: program?.trim() || "B.Tech",
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Placement record created successfully",
+      data: newStat,
+    });
+  } catch (error) {
+    console.error("Error creating placement stat:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create placement record",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Update an existing placement record
+ */
+export const updatePlacementStat = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      branch,
+      shortName,
+      totalStudents,
+      studentsPlaced,
+      totalOffers,
+      minPackage,
+      maxPackage,
+      medianPackage,
+      averagePackage,
+      order,
+      isOverall,
+      program,
+    } = req.body;
+
+    const parseNum = (val) => (val === "" || val === null || val === undefined || isNaN(val) ? null : Number(val));
+
+    const updateData = {};
+    if (branch !== undefined) updateData.branch = branch.trim();
+    if (shortName !== undefined) updateData.shortName = shortName.trim();
+    if (totalStudents !== undefined) updateData.totalStudents = parseNum(totalStudents);
+    if (studentsPlaced !== undefined) updateData.studentsPlaced = parseNum(studentsPlaced) ?? 0;
+    if (totalOffers !== undefined) updateData.totalOffers = parseNum(totalOffers) ?? 0;
+    if (minPackage !== undefined) updateData.minPackage = parseNum(minPackage);
+    if (maxPackage !== undefined) updateData.maxPackage = parseNum(maxPackage);
+    if (medianPackage !== undefined) updateData.medianPackage = parseNum(medianPackage);
+    if (averagePackage !== undefined) updateData.averagePackage = parseNum(averagePackage);
+    if (order !== undefined) updateData.order = parseNum(order) ?? 0;
+    if (isOverall !== undefined) updateData.isOverall = Boolean(isOverall);
+    if (program !== undefined) updateData.program = program.trim() || "B.Tech";
+
+    const updatedStat = await PlacementStat.findByIdAndUpdate(id, updateData, {
+      returnDocument: 'after',
+      runValidators: true,
+    });
+
+    if (!updatedStat) {
+      return res.status(404).json({
+        success: false,
+        message: "Placement record not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Placement record updated successfully",
+      data: updatedStat,
+    });
+  } catch (error) {
+    console.error("Error updating placement stat:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update placement record",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Delete a placement record
+ */
+export const deletePlacementStat = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await PlacementStat.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Placement record not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Placement record deleted successfully",
+      data: deleted,
+    });
+  } catch (error) {
+    console.error("Error deleting placement stat:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete placement record",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Update placement metadata (companies covered, notes)
+ */
+export const updatePlacementMeta = async (req, res) => {
+  try {
+    const { program = "B.Tech", companiesCovered, notes } = req.body;
+
+    const updateFields = {};
+    if (Array.isArray(companiesCovered)) {
+      updateFields.companiesCovered = companiesCovered.map((c) => String(c).trim()).filter(Boolean);
+    }
+    if (Array.isArray(notes)) {
+      updateFields.notes = notes.map((n) => String(n).trim()).filter(Boolean);
+    }
+
+    const updatedMeta = await PlacementMeta.findOneAndUpdate(
+      { program },
+      { $set: updateFields },
+      { returnDocument: 'after', upsert: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Placement metadata updated successfully",
+      data: updatedMeta,
+    });
+  } catch (error) {
+    console.error("Error updating placement meta:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update placement metadata",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Admin: Auto-calculate and update Overall row from branches
+ */
+export const recalculateOverallStats = async (req, res) => {
+  try {
+    const program = req.body.program || "B.Tech";
+    const branches = await PlacementStat.find({ program, isOverall: false });
+
+    if (!branches || branches.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No branch records found to calculate overall summary",
+      });
+    }
+
+    let totalStudentsSum = 0;
+    let hasKnownStudents = false;
+    let studentsPlacedSum = 0;
+    let totalOffersSum = 0;
+    let minPkg = null;
+    let maxPkg = null;
+    let totalWeightedPkg = 0;
+    let totalWeight = 0;
+
+    branches.forEach((b) => {
+      if (b.totalStudents !== null && b.totalStudents !== undefined) {
+        totalStudentsSum += Number(b.totalStudents);
+        hasKnownStudents = true;
+      }
+      studentsPlacedSum += Number(b.studentsPlaced || 0);
+      totalOffersSum += Number(b.totalOffers || 0);
+
+      if (b.minPackage !== null && b.minPackage !== undefined) {
+        minPkg = minPkg === null ? b.minPackage : Math.min(minPkg, b.minPackage);
+      }
+      if (b.maxPackage !== null && b.maxPackage !== undefined) {
+        maxPkg = maxPkg === null ? b.maxPackage : Math.max(maxPkg, b.maxPackage);
+      }
+      if (b.averagePackage !== null && b.averagePackage !== undefined) {
+        const weight = b.studentsPlaced > 0 ? b.studentsPlaced : (b.totalOffers || 1);
+        totalWeightedPkg += b.averagePackage * weight;
+        totalWeight += weight;
+      }
+    });
+
+    const averagePackage = totalWeight > 0 ? Number((totalWeightedPkg / totalWeight).toFixed(2)) : null;
+
+    // Determine or keep median package
+    const overallTitle = `All ${program} branches`;
+    let overallRecord = await PlacementStat.findOne({ program, isOverall: true });
+
+    const medianPackage = overallRecord?.medianPackage ?? 8.5;
+
+    const overallData = {
+      branch: overallTitle,
+      shortName: "All Branches",
+      totalStudents: hasKnownStudents ? totalStudentsSum : null,
+      studentsPlaced: studentsPlacedSum,
+      totalOffers: totalOffersSum,
+      minPackage: minPkg,
+      maxPackage: maxPkg,
+      medianPackage: medianPackage,
+      averagePackage: averagePackage,
+      isOverall: true,
+      program,
+      order: 999,
+    };
+
+    if (overallRecord) {
+      overallRecord = await PlacementStat.findByIdAndUpdate(overallRecord._id, overallData, { returnDocument: 'after' });
+    } else {
+      overallRecord = await PlacementStat.create(overallData);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Overall placement statistics recalculated successfully",
+      data: overallRecord,
+    });
+  } catch (error) {
+    console.error("Error recalculating overall stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to recalculate overall stats",
       error: error.message,
     });
   }
