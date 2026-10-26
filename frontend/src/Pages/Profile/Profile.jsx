@@ -284,8 +284,10 @@ const Profile = () => {
               </>
             )}
           </div>
-          <div className="profile-rank">#{data.ranking?.collegeRank || "N/A"}</div>
-          <p>Out of {data.ranking?.totalStudents || 0} students</p>
+          <div className="profile-rank-info">
+            <div className="profile-rank">#{data.ranking?.collegeRank || "N/A"}</div>
+            <p>Out of {data.ranking?.totalStudents || 0} students</p>
+          </div>
         </div>
       </div>
 

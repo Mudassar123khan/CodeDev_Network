@@ -120,7 +120,11 @@
 }
 
 .profile-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   text-align: right;
+  gap: 12px;
 }
 
 .profile-header-actions {
@@ -128,7 +132,6 @@
   gap: 10px;
   align-items: center;
   justify-content: flex-end;
-  margin-bottom: 12px;
 }
 
 .edit-handles-btn {
@@ -161,6 +164,9 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   transition: all 0.2s ease;
 }
 
@@ -173,6 +179,12 @@
   cursor: not-allowed;
 }
 
+.profile-rank-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .profile-rank {
   font-size: 38px;
   font-weight: 700;
@@ -180,7 +192,7 @@
   line-height: 1;
 }
 
-.profile-right p {
+.profile-rank-info p {
   font-size: 14px;
   color: #9a9a9a;
   margin-top: 6px;
@@ -308,13 +320,25 @@
 }
 
 @keyframes profileFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes profileScaleUp {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .profile-modal-header {
@@ -547,16 +571,36 @@
 
   .profile-right {
     text-align: left;
+    align-items: stretch;
+    width: 100%;
+    gap: 16px;
+  }
+
+  .profile-rank-info {
+    order: 1;
+    align-items: flex-start;
   }
 
   .profile-header-actions {
+    order: 2;
     justify-content: flex-start;
   }
 }
 
 @media (max-width: 600px) {
-  .profile-left {
+  .profile-page {
+    padding: 30px 14px 40px;
+  }
+
+  .profile-header {
+    padding: 18px 16px;
     gap: 16px;
+  }
+
+  .profile-left {
+    gap: 14px;
+    align-items: center;
+    width: 100%;
   }
 
   .profile-avatar-wrapper {
@@ -564,12 +608,75 @@
     height: 76px;
   }
 
-  .platform-grid {
-    grid-template-columns: 1fr;
+  .profile-user-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .profile-user-info h2 {
+    font-size: 20px;
+    margin-bottom: 4px;
+    word-break: break-word;
+  }
+
+  .profile-user-info p {
+    font-size: 13px;
+  }
+
+  .profile-details-sub {
+    margin-top: 8px;
+    gap: 6px;
+  }
+
+  .profile-branch,
+  .profile-grad-year {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .profile-right {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    width: 100%;
+    gap: 16px;
+  }
+
+  .profile-rank-info {
+    order: 1;
+    align-items: flex-start;
+  }
+
+  .profile-rank {
+    font-size: 34px;
+  }
+
+  .profile-rank-info p {
+    font-size: 13px;
+    margin-top: 4px;
   }
 
   .profile-header-actions {
-    flex-wrap: wrap;
+    order: 2;
+    display: flex;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .edit-handles-btn,
+  .sync-btn {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 12px;
+    font-size: 13px;
+    min-height: 40px;
+    box-sizing: border-box;
+  }
+
+  .platform-grid {
+    grid-template-columns: 1fr;
   }
 
   .profile-modal {
@@ -586,6 +693,46 @@
   }
 }
 
+@media (max-width: 420px) {
+  .profile-page {
+    padding: 20px 10px 36px;
+  }
+
+  .profile-header {
+    padding: 16px 12px;
+    gap: 14px;
+  }
+
+  .profile-left {
+    gap: 12px;
+  }
+
+  .profile-avatar-wrapper {
+    width: 68px;
+    height: 68px;
+  }
+
+  .profile-user-info h2 {
+    font-size: 18px;
+  }
+
+  .profile-branch,
+  .profile-grad-year {
+    font-size: 11px;
+    padding: 2.5px 6px;
+  }
+
+  .profile-rank {
+    font-size: 28px;
+  }
+
+  .edit-handles-btn,
+  .sync-btn {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+}
+
 .profile-details-sub {
   display: flex;
   flex-wrap: wrap;
@@ -593,7 +740,8 @@
   margin-top: 10px;
 }
 
-.profile-branch, .profile-grad-year {
+.profile-branch,
+.profile-grad-year {
   background: #3a3a3a;
   color: #ffa116;
   font-size: 13px;
