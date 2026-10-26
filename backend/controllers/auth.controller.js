@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendPasswordResetEmail } from '../services/mail.service.js';
+import { uploadToCloudinary } from '../config/cloudinary.js';
 
 //login controller
 const login = async(req,res)=>{
@@ -54,7 +55,8 @@ const login = async(req,res)=>{
                 email:user.email,
                 role:user.role,
                 branch:user.branch,
-                graduationYear:user.graduationYear
+                graduationYear:user.graduationYear,
+                profileImage:user.profileImage || ""
             }
         });
     }catch(err){
@@ -86,6 +88,31 @@ const register = async(req,res)=>{
             return res.status(409).json({success:false, message:"User already registered"});
         }
 
+        // Parse platforms if passed as string via FormData
+        let parsedPlatforms = {};
+        if (typeof platforms === "string") {
+            try {
+                parsedPlatforms = JSON.parse(platforms);
+            } catch {
+                parsedPlatforms = {};
+            }
+        } else if (typeof platforms === "object" && platforms !== null) {
+            parsedPlatforms = platforms;
+        }
+
+        // Optional profile image upload to Cloudinary
+        let profileImageUrl = "";
+        if (req.file && req.file.buffer) {
+            try {
+                const uploadRes = await uploadToCloudinary(req.file.buffer, "codedev/profiles");
+                if (uploadRes?.secure_url) {
+                    profileImageUrl = uploadRes.secure_url;
+                }
+            } catch (uploadErr) {
+                console.error("Cloudinary upload error during register:", uploadErr.message);
+            }
+        }
+
         //hashing the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
@@ -97,8 +124,9 @@ const register = async(req,res)=>{
             password:hashedPassword,
             branch,
             graduationYear,
+            profileImage: profileImageUrl,
             platforms:{
-                ...platforms
+                ...parsedPlatforms
             }
         });
 
@@ -108,23 +136,23 @@ const register = async(req,res)=>{
             process.env.JWT_SECRET,
             {expiresIn:"7d"}
         );
-        
 
         console.log("User saved");
 
         //sending response
         res.status(201).json({
             success:true,
-            message:"User registered",
+            message:"User registered successfully",
             token,
             user: {
-            id: newUser._id,
-            username: newUser.username,
-            email: newUser.email,
-            role: newUser.role,
-            branch: newUser.branch,
-            graduationYear: newUser.graduationYear
-        },
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role,
+                branch: newUser.branch,
+                graduationYear: newUser.graduationYear,
+                profileImage: newUser.profileImage || ""
+            },
         });
 
     }catch(err){
@@ -161,7 +189,8 @@ const getUser = async(req,res)=>{
                 email:user.email,
                 role:user.role,
                 branch:user.branch,
-                graduationYear:user.graduationYear
+                graduationYear:user.graduationYear,
+                profileImage:user.profileImage || ""
             }
         });
    }catch(err){
@@ -171,7 +200,7 @@ const getUser = async(req,res)=>{
         message:"Internal server error",
     });
    }
-}
+};
 
 const adminLogin = async(req,res)=>{
     try{

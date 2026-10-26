@@ -25,4 +25,22 @@ export const updateUserPlatforms = async (url, platforms, token) => {
   );
 
   return response.data;
+};
+
+export const uploadProfileImage = async (url, file, token) => {
+  const formData = new FormData();
+  formData.append("profileImage", file);
+
+  const response = await axios.put(
+    `${url}/getProfile/profile-image`,
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return response.data;
 };

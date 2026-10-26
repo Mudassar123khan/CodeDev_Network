@@ -142,12 +142,21 @@ export const ContextProvider = ({ children }) => {
     }, 3000);
   };
 
+  const updateUser = useCallback((updatedFields) => {
+    setUser((prev) => {
+      const updated = { ...(prev || {}), ...updatedFields };
+      localStorage.setItem("user", JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   const contextValue = {
     url,
     token,
     setToken,
     setUser,
     user,
+    updateUser,
     logout,
     syncing,
     setSyncing,

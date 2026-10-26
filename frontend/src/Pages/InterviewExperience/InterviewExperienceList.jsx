@@ -2,11 +2,26 @@ import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../../context/AuthContext.jsx";
-import { fetchInterviews } from "../../api/interview.api.js";
+import { fetchInterviews, toggleLikeInterview } from "../../api/interview.api.js";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 import "./InterviewExperience.css";
 
 // SVG Icons
+const HeartIcon = ({ filled = false }) => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill={filled ? "#ef4444" : "none"}
+    stroke={filled ? "#ef4444" : "currentColor"}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`heart-icon ${filled ? "filled" : ""}`}
+  >
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </svg>
+);
 const SearchIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" />
@@ -77,7 +92,7 @@ export default function InterviewExperienceList() {
     roundType: "",
   });
 
-  const { url, token } = useContext(Context);
+  const { url, token, user } = useContext(Context);
   const navigate = useNavigate();
 
   const loadExperiences = useCallback(async () => {
@@ -131,6 +146,55 @@ export default function InterviewExperienceList() {
       navigate("/login");
     } else {
       navigate(`/interviews/${id}`);
+    }
+  };
+
+  const handleLikeClick = async (e, expId) => {
+    e.stopPropagation();
+    if (!token) {
+      toast.info("Please login to like this interview experience.");
+      navigate("/login");
+      return;
+    }
+
+    const currentUserId = user?.id || user?._id;
+    if (!currentUserId) return;
+
+    // Optimistic UI update
+    setExperiences((prev) =>
+      prev.map((exp) => {
+        if (exp._id !== expId) return exp;
+        const likes = Array.isArray(exp.likes) ? exp.likes : [];
+        const hasLiked = likes.some((uid) => String(uid) === String(currentUserId));
+        const updatedLikes = hasLiked
+          ? likes.filter((uid) => String(uid) !== String(currentUserId))
+          : [...likes, currentUserId];
+        return {
+          ...exp,
+          likes: updatedLikes,
+          likeCount: updatedLikes.length,
+        };
+      })
+    );
+
+    try {
+      const res = await toggleLikeInterview(url, expId, token);
+      if (res?.success) {
+        setExperiences((prev) =>
+          prev.map((exp) => {
+            if (exp._id !== expId) return exp;
+            return {
+              ...exp,
+              likes: res.likes,
+              likeCount: res.likeCount,
+            };
+          })
+        );
+      }
+    } catch (err) {
+      console.error("Failed to toggle like:", err);
+      toast.error(err.response?.data?.message || "Failed to update like. Please try again.");
+      loadExperiences();
     }
   };
 
@@ -274,6 +338,15 @@ export default function InterviewExperienceList() {
           <div className="experience-list">
             {experiences.map((exp) => {
               const diffSummary = getDifficultySummary(exp.rounds);
+              const currentUserId = user?.id || user?._id;
+              const isLiked = Boolean(
+                currentUserId &&
+                exp.likes &&
+                Array.isArray(exp.likes) &&
+                exp.likes.some((uid) => String(uid) === String(currentUserId))
+              );
+              const likesCount = exp.likeCount ?? (Array.isArray(exp.likes) ? exp.likes.length : 0);
+
               return (
                 <div
                   className="experience-card"
@@ -314,15 +387,28 @@ export default function InterviewExperienceList() {
                       By: <span>{exp.personalInfo.name}</span>
                     </div>
 
-                    <button
-                      className="btn-secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCardClick(exp._id);
-                      }}
-                    >
-                      {token ? "View Details" : "Login to View"}
-                    </button>
+                    <div className="card-actions-row">
+                      <button
+                        type="button"
+                        className={`card-like-btn ${isLiked ? "liked" : ""}`}
+                        onClick={(e) => handleLikeClick(e, exp._id)}
+                        title={isLiked ? "Unlike experience" : "Like experience"}
+                        aria-label="Like interview experience"
+                      >
+                        <HeartIcon filled={isLiked} />
+                        <span className="like-count">{likesCount}</span>
+                      </button>
+
+                      <button
+                        className="btn-secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCardClick(exp._id);
+                        }}
+                      >
+                        {token ? "View Details" : "Login to View"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               );

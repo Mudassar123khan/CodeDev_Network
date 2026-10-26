@@ -4,6 +4,7 @@ import {
   createInterviewExperience,
   getAllInterviewExperiences,
   getInterviewExperienceById,
+  toggleLikeInterviewExperience,
 } from "../controllers/interview.controller.js";
 
 const router = express.Router();
@@ -14,5 +15,8 @@ router.get("/", getAllInterviewExperiences);
 // Protected routes to post or view full details of a specific experience
 router.post("/", authMiddleware, createInterviewExperience);
 router.get("/:id", authMiddleware, getInterviewExperienceById);
+
+// Protected route to like / unlike an interview experience
+router.post("/:id/like", authMiddleware, toggleLikeInterviewExperience);
 
 export default router;

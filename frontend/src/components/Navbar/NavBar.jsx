@@ -50,7 +50,7 @@ export default function NavBar() {
         {token ? (
           <div className="desktop-profile" ref={dropdownRef}>
             <img
-              src={assets.profile_icon}
+              src={user?.profileImage || assets.profile_icon}
               className="profile-image"
               alt="profile"
               onClick={() => setDropdownOpen((prev) => !prev)}
@@ -87,7 +87,7 @@ export default function NavBar() {
         {token && (
           <Link to={`/profile/${user?.username}`}>
             <div className="menu-profile-top">
-              <img src={assets.profile_icon} alt="profile" />
+              <img src={user?.profileImage || assets.profile_icon} alt="profile" />
               <span>Profile</span>
             </div>
           </Link>

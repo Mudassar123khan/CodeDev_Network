@@ -111,6 +111,7 @@ export default function InterviewsManage() {
                 <th>Role</th>
                 <th>Candidate</th>
                 <th>Outcome</th>
+                <th>Likes</th>
                 <th>Rounds</th>
                 <th>Posted Date</th>
                 <th>Actions</th>
@@ -134,6 +135,11 @@ export default function InterviewsManage() {
                       fontSize: '12px'
                     }}>
                       {exp.feedback?.outcome}
+                    </span>
+                  </td>
+                  <td>
+                    <span style={{ fontWeight: 600, color: '#e11d48' }}>
+                      ❤️ {exp.likeCount ?? (Array.isArray(exp.likes) ? exp.likes.length : 0)}
                     </span>
                   </td>
                   <td>{exp.rounds?.length || 0} rounds</td>

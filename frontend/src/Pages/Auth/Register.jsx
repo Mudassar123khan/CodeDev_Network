@@ -11,6 +11,11 @@ export default function Register() {
 
   const [step, setStep] = useState(1);
   const [showHelp, setShowHelp] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Profile image upload state
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [data, setData] = useState({
     username: "",
@@ -45,6 +50,33 @@ export default function Register() {
     }
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file (JPG, PNG, WebP)");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5MB");
+      return;
+    }
+
+    setProfileImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveImage = (e) => {
+    e.stopPropagation();
+    setProfileImageFile(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+    }
+  };
+
   const nextStep = () => {
     if (!data.username || !data.email || !data.password || !data.branch || !data.graduationYear) {
       toast.error("Please fill all required fields");
@@ -74,14 +106,30 @@ export default function Register() {
       return;
     }
 
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
-      const response = await register(data, url);
+      // Build FormData to support optional profile image upload
+      const formData = new FormData();
+      formData.append("username", data.username.trim());
+      formData.append("email", data.email.trim());
+      formData.append("password", data.password);
+      formData.append("branch", data.branch);
+      formData.append("graduationYear", data.graduationYear);
+      formData.append("platforms", JSON.stringify(data.platforms));
+
+      if (profileImageFile) {
+        formData.append("profileImage", profileImageFile);
+      }
+
+      const response = await register(formData, url);
 
       if (response.data.success) {
-        toast.success("Account created successfully");
+        toast.success("Account created successfully!");
         navigate("/login");
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message || "Registration failed");
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -89,6 +137,8 @@ export default function Register() {
       } else {
         toast.error("Something went wrong");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -99,6 +149,43 @@ export default function Register() {
         {step === 1 && (
           <>
             <h2 className="form-title">Create Account</h2>
+
+            {/* Optional Profile Picture Upload */}
+            <div className="signup-avatar-section">
+              <label htmlFor="signup-avatar-input" className="signup-avatar-picker" title="Upload profile picture (optional)">
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Preview" className="signup-avatar-img" />
+                ) : (
+                  <div className="signup-avatar-placeholder">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                      <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                  </div>
+                )}
+                <div className="signup-avatar-badge" title="Choose photo">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 5v14M5 12h14"></path>
+                  </svg>
+                </div>
+              </label>
+              <input
+                id="signup-avatar-input"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: "none" }}
+              />
+              <div className="signup-avatar-meta">
+                <span className="signup-avatar-label">Profile Photo</span>
+                {imagePreview && (
+                  <button type="button" onClick={handleRemoveImage} className="signup-avatar-remove">
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+
             <input
               type="text"
               name="username"
@@ -245,8 +332,10 @@ export default function Register() {
             )}
 
             <div className="button-group">
-              <button type="button" className="secondary-btn" onClick={prevStep}>Back</button>
-              <button type="submit" className="primary-btn">Create Account</button>
+              <button type="button" className="secondary-btn" onClick={prevStep} disabled={isSubmitting}>Back</button>
+              <button type="submit" className="primary-btn" disabled={isSubmitting}>
+                {isSubmitting ? "Creating Account..." : "Create Account"}
+              </button>
             </div>
           </>
         )}

@@ -2,12 +2,27 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../../context/AuthContext.jsx";
-import { fetchInterviewById } from "../../api/interview.api.js";
+import { fetchInterviewById, toggleLikeInterview } from "../../api/interview.api.js";
 import { isValidLinkedInUrl } from "../../utils/validators.js";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 import "./InterviewExperience.css";
 
 // SVG Icons
+const HeartIcon = ({ filled = false }) => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill={filled ? "#ef4444" : "none"}
+    stroke={filled ? "#ef4444" : "currentColor"}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`heart-icon ${filled ? "filled" : ""}`}
+  >
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </svg>
+);
 const CalendarIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -65,7 +80,7 @@ export default function InterviewExperienceDetail() {
   const [experience, setExperience] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const { url, token } = useContext(Context);
+  const { url, token, user } = useContext(Context);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,6 +106,50 @@ export default function InterviewExperienceDetail() {
     loadDetail();
   }, [id, url, token, navigate]);
 
+  const handleToggleLike = async () => {
+    if (!token) {
+      toast.info("Please login to like this interview experience.");
+      navigate("/login");
+      return;
+    }
+
+    const currentUserId = user?.id || user?._id;
+    if (!currentUserId || !experience) return;
+
+    const likes = Array.isArray(experience.likes) ? experience.likes : [];
+    const hasLiked = likes.some((uid) => String(uid) === String(currentUserId));
+    const optimisticLikes = hasLiked
+      ? likes.filter((uid) => String(uid) !== String(currentUserId))
+      : [...likes, currentUserId];
+
+    // Optimistic UI update
+    setExperience((prev) => ({
+      ...prev,
+      likes: optimisticLikes,
+      likeCount: optimisticLikes.length,
+    }));
+
+    try {
+      const res = await toggleLikeInterview(url, experience._id, token);
+      if (res?.success) {
+        setExperience((prev) => ({
+          ...prev,
+          likes: res.likes,
+          likeCount: res.likeCount,
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to toggle like:", err);
+      toast.error(err.response?.data?.message || "Failed to update like status.");
+      // Revert state
+      setExperience((prev) => ({
+        ...prev,
+        likes,
+        likeCount: likes.length,
+      }));
+    }
+  };
+
   if (loading) {
     return <Spinner fullPage />;
   }
@@ -115,6 +174,15 @@ export default function InterviewExperienceDetail() {
     return new Date(dateStr).toLocaleDateString(undefined, options);
   };
 
+  const currentUserId = user?.id || user?._id;
+  const isLiked = Boolean(
+    currentUserId &&
+    experience?.likes &&
+    Array.isArray(experience.likes) &&
+    experience.likes.some((uid) => String(uid) === String(currentUserId))
+  );
+  const likeCount = experience?.likeCount ?? (Array.isArray(experience?.likes) ? experience.likes.length : 0);
+
   return (
     <div className="interview-page">
       <div className="interview-container">
@@ -130,6 +198,16 @@ export default function InterviewExperienceDetail() {
             <p>{experience.companyDetails.role}</p>
           </div>
           <div className="header-status-details">
+            <button
+              type="button"
+              className={`detail-like-btn ${isLiked ? "liked" : ""}`}
+              onClick={handleToggleLike}
+              title={isLiked ? "Unlike this experience" : "Like this experience"}
+              aria-label="Like interview experience"
+            >
+              <HeartIcon filled={isLiked} />
+              <span className="like-count">{likeCount}</span>
+            </button>
             <span className={`outcome-badge ${experience.feedback.outcome}`}>
               {experience.feedback.outcome === "cleared" ? "Cleared" : experience.feedback.outcome === "rejected" ? "Rejected" : "Waiting for Result"}
             </span>

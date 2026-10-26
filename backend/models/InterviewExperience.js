@@ -121,6 +121,17 @@ const InterviewExperienceSchema = new Schema(
         type: String,
         trim: true
       }
+    },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      }
+    ],
+    likeCount: {
+      type: Number,
+      default: 0,
+      min: 0,
     }
   },
   {
@@ -130,6 +141,7 @@ const InterviewExperienceSchema = new Schema(
 
 // Indexes for fast querying, sorting, and filtering
 InterviewExperienceSchema.index({ createdAt: -1 });
+InterviewExperienceSchema.index({ likeCount: -1 });
 InterviewExperienceSchema.index({ "feedback.outcome": 1, createdAt: -1 });
 InterviewExperienceSchema.index({ "rounds.difficulty": 1 });
 InterviewExperienceSchema.index({ "rounds.roundType": 1 });

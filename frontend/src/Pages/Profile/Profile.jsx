@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, { useContext, useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import "./Profile.css";
 import { Context } from "../../context/AuthContext";
-import { fetchUserProfile, updateUserPlatforms } from "../../api/profile.api.js";
+import { fetchUserProfile, updateUserPlatforms, uploadProfileImage } from "../../api/profile.api.js";
 import { syncUser } from "../../api/sync.api";
+import { assets } from "../../assets/assets.js";
 import Spinner from "../../components/Spinner/Spinner.jsx";
 import { toast } from "react-toastify";
 
@@ -30,9 +31,13 @@ const PLATFORM_KEYS = ["leetcode", "codeforces", "codechef", "gfg"];
 
 const Profile = () => {
   const { username } = useParams();
-  const { url, token, user, syncing, setSyncing, syncStatus, setSyncStatus, startPolling } = useContext(Context);
+  const { url, token, user, updateUser, syncing, setSyncing, syncStatus, setSyncStatus, startPolling } = useContext(Context);
 
   const [data, setData] = useState(null);
+
+  // Profile image upload state
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef(null);
 
   // Edit Modal States
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -45,6 +50,49 @@ const Profile = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [autoSync, setAutoSync] = useState(true);
   const [showHelp, setShowHelp] = useState(false);
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file (JPG, PNG, WebP)");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size must be less than 5MB");
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      const res = await uploadProfileImage(url, file, token);
+      if (res?.success) {
+        toast.success("Profile photo updated successfully!");
+        setData((prev) => ({
+          ...prev,
+          basic: {
+            ...prev.basic,
+            profileImage: res.profileImage,
+          },
+        }));
+        if (updateUser) {
+          updateUser({ profileImage: res.profileImage });
+        }
+      } else {
+        toast.error(res?.message || "Failed to upload image");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to upload profile photo");
+    } finally {
+      setIsUploadingAvatar(false);
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = "";
+      }
+    }
+  };
 
   const loadProfile = useCallback(async () => {
     try {
@@ -156,14 +204,56 @@ const Profile = () => {
     <div className="profile-page">
       <div className="profile-header">
         <div className="profile-left">
-          <h2>{data.basic?.username || username}</h2>
-          <p>Joined: {data.basic?.joinedAt ? new Date(data.basic.joinedAt).toDateString() : "N/A"}</p>
-          {(data.basic?.branch || data.basic?.graduationYear) && (
-            <div className="profile-details-sub">
-              {data.basic.branch && <span className="profile-branch">{data.basic.branch}</span>}
-              {data.basic.graduationYear && <span className="profile-grad-year">Grad: {data.basic.graduationYear}</span>}
+          <div className="profile-avatar-container">
+            <div className="profile-avatar-wrapper">
+              <img
+                src={data.basic?.profileImage || assets.profile_icon}
+                alt={data.basic?.username || username}
+                className="profile-avatar-img"
+              />
+              {isOwnProfile && (
+                <button
+                  type="button"
+                  className="profile-avatar-overlay-btn"
+                  onClick={() => avatarInputRef.current?.click()}
+                  disabled={isUploadingAvatar}
+                  title="Change profile picture"
+                >
+                  {isUploadingAvatar ? (
+                    <div className="avatar-upload-spinner" />
+                  ) : (
+                    <>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                      </svg>
+                      <span className="avatar-overlay-text">Change</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
-          )}
+            {isOwnProfile && (
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                style={{ display: "none" }}
+              />
+            )}
+          </div>
+
+          <div className="profile-user-info">
+            <h2>{data.basic?.username || username}</h2>
+            <p>Joined: {data.basic?.joinedAt ? new Date(data.basic.joinedAt).toDateString() : "N/A"}</p>
+            {(data.basic?.branch || data.basic?.graduationYear) && (
+              <div className="profile-details-sub">
+                {data.basic.branch && <span className="profile-branch">{data.basic.branch}</span>}
+                {data.basic.graduationYear && <span className="profile-grad-year">Grad: {data.basic.graduationYear}</span>}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="profile-right">

@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import ExternalStats from "../models/ExternalStats.js";
+import { uploadToCloudinary } from "../config/cloudinary.js";
 
 export const getProfile = async (req, res) => {
   try {
@@ -31,7 +32,8 @@ export const getProfile = async (req, res) => {
             email: user.email,
             joinedAt: user.createdAt,
             branch: user.branch,
-            graduationYear: user.graduationYear
+            graduationYear: user.graduationYear,
+            profileImage: user.profileImage || ""
           },
           ranking: {
             totalScore: 0,
@@ -78,7 +80,8 @@ export const getProfile = async (req, res) => {
           email: user.email,
           joinedAt: user.createdAt,
           branch: user.branch,
-          graduationYear: user.graduationYear
+          graduationYear: user.graduationYear,
+          profileImage: user.profileImage || ""
         },
         ranking: {
           totalScore: stats.totalScore,
@@ -152,6 +155,66 @@ export const updatePlatforms = async (req, res) => {
   } catch (error) {
     console.error("Error updating platforms:", error);
     return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// Upload / Update user profile image to Cloudinary
+export const updateProfileImage = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({
+        success: false,
+        message: "No image file provided. Please choose an image to upload.",
+      });
+    }
+
+    // Upload to Cloudinary
+    const uploadResult = await uploadToCloudinary(req.file.buffer, "codedev/profiles");
+    if (!uploadResult?.secure_url) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to upload image to Cloudinary.",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profileImage: uploadResult.secure_url },
+      { returnDocument: 'after' }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile image updated successfully!",
+      profileImage: updatedUser.profileImage,
+      user: {
+        id: updatedUser._id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        branch: updatedUser.branch,
+        graduationYear: updatedUser.graduationYear,
+        profileImage: updatedUser.profileImage,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update profile image.",
+    });
   }
 };
 

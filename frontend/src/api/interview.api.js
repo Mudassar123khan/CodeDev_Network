@@ -30,3 +30,17 @@ export const createInterview = async (url, experienceData, token) => {
   });
   return response.data;
 };
+
+// Toggle like on an interview experience
+export const toggleLikeInterview = async (url, id, token) => {
+  const response = await axios.post(
+    `${url}/interviews/${id}/like`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};

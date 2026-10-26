@@ -98,7 +98,7 @@ export const getAllInterviewExperiences = async (req, res) => {
     }
 
     let queryBuilder = InterviewExperience.find(query)
-      .select("companyDetails.companyName companyDetails.role companyDetails.location feedback.outcome rounds.difficulty personalInfo.name createdAt user")
+      .select("companyDetails.companyName companyDetails.role companyDetails.location feedback.outcome rounds.difficulty personalInfo.name createdAt user likes likeCount")
       .populate("user", "username")
       .sort({ createdAt: -1 })
       .lean();
@@ -169,6 +169,62 @@ export const getInterviewExperienceById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || "Failed to retrieve interview experience details.",
+    });
+  }
+};
+
+// Toggle like on an interview experience
+export const toggleLikeInterviewExperience = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const experience = await InterviewExperience.findById(id);
+    if (!experience) {
+      return res.status(404).json({
+        success: false,
+        message: "Interview experience not found.",
+      });
+    }
+
+    if (!Array.isArray(experience.likes)) {
+      experience.likes = [];
+    }
+
+    const alreadyLiked = experience.likes.some((uid) => uid.toString() === userId.toString());
+
+    if (alreadyLiked) {
+      // Remove like
+      experience.likes = experience.likes.filter((uid) => uid.toString() !== userId.toString());
+    } else {
+      // Add like
+      experience.likes.push(userId);
+    }
+
+    experience.likeCount = experience.likes.length;
+    await experience.save({ validateBeforeSave: false });
+
+    // Invalidate cached interview lists
+    await clearCacheByPrefix("interviews:");
+
+    res.status(200).json({
+      success: true,
+      message: alreadyLiked ? "Unliked experience" : "Liked experience",
+      isLiked: !alreadyLiked,
+      likeCount: experience.likeCount,
+      likes: experience.likes,
+    });
+  } catch (error) {
+    console.error("Error toggling like on interview experience:", error);
+    if (error.kind === "ObjectId") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid experience ID format.",
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update like status.",
     });
   }
 };

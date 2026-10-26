@@ -62,7 +62,11 @@
 }
 
 .profile-image {
-  height: 28px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #ffa116;
   cursor: pointer;
 }
 
@@ -105,7 +109,11 @@
 }
 
 .menu-profile-top img {
-  height: 26px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #ffa116;
 }
 
 .mobile-menu a {

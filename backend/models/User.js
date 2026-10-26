@@ -82,6 +82,11 @@ const UserSchema = new Schema({
         ],
         default: ""
     },
+    profileImage: {
+        type: String,
+        default: "",
+        trim: true
+    },
 },
 
     {
