@@ -74,9 +74,12 @@ ${message}
 /**
  * Sends email via Resend HTTP REST API (Port 443 - Works 100% on Render Free & Paid)
  */
-const sendViaResend = async ({ name, email, adminEmail, formattedSubject, text, html }) => {
+const sendViaResend = async ({ name, email, toEmail, adminEmail, replyTo, formattedSubject, text, html }) => {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return false;
+
+  const recipient = toEmail || adminEmail;
+  const replyAddress = replyTo || email;
 
   try {
     const from = process.env.EMAIL_FROM || "CodeDev Network <onboarding@resend.dev>";
@@ -88,8 +91,8 @@ const sendViaResend = async ({ name, email, adminEmail, formattedSubject, text, 
       },
       body: JSON.stringify({
         from,
-        to: [adminEmail],
-        reply_to: email,
+        to: [recipient],
+        reply_to: replyAddress,
         subject: formattedSubject,
         html,
         text,
@@ -99,6 +102,11 @@ const sendViaResend = async ({ name, email, adminEmail, formattedSubject, text, 
     const data = await res.json();
     if (!res.ok) {
       console.error("[MailService:Resend] API Error:", data);
+      if (data.message?.includes("can only send testing emails to your own email address")) {
+        console.warn(
+          "[MailService:Resend] ⚠️ Notice: Resend's free test domain (onboarding@resend.dev) can only deliver emails to your own account email. To deliver password reset emails to arbitrary user inboxes, verify your custom domain in Resend Dashboard -> Domains (https://resend.com/domains)."
+        );
+      }
       return false;
     }
 
@@ -113,9 +121,12 @@ const sendViaResend = async ({ name, email, adminEmail, formattedSubject, text, 
 /**
  * Sends email via Brevo HTTP REST API (Port 443 - Works 100% on Render Free & Paid)
  */
-const sendViaBrevo = async ({ name, email, adminEmail, formattedSubject, text, html }) => {
+const sendViaBrevo = async ({ name, email, toEmail, adminEmail, replyTo, formattedSubject, text, html }) => {
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) return false;
+
+  const recipient = toEmail || adminEmail;
+  const replyAddress = replyTo || email;
 
   try {
     const senderEmail = process.env.EMAIL_USER || "noreply@codedev.network";
@@ -127,8 +138,8 @@ const sendViaBrevo = async ({ name, email, adminEmail, formattedSubject, text, h
       },
       body: JSON.stringify({
         sender: { name: "CodeDev Network", email: senderEmail },
-        to: [{ email: adminEmail }],
-        replyTo: { email, name },
+        to: [{ email: recipient }],
+        replyTo: { email: replyAddress, name },
         subject: formattedSubject,
         htmlContent: html,
         textContent: text,
@@ -152,14 +163,16 @@ const sendViaBrevo = async ({ name, email, adminEmail, formattedSubject, text, h
 /**
  * Sends email via Nodemailer SMTP (Works locally or on paid hosting plans where SMTP ports are not blocked)
  */
-const sendViaSmtp = async ({ email, adminEmail, formattedSubject, text, html }) => {
+const sendViaSmtp = async ({ email, toEmail, adminEmail, formattedSubject, text, html }) => {
   const transporter = getSmtpTransporter();
   if (!transporter) return false;
+
+  const recipient = toEmail || adminEmail;
 
   try {
     const mailOptions = {
       from: `"CodeDev Network" <${process.env.EMAIL_USER}>`,
-      to: adminEmail,
+      to: recipient,
       replyTo: email,
       subject: formattedSubject,
       text,
@@ -194,35 +207,221 @@ const sendViaSmtp = async ({ email, adminEmail, formattedSubject, text, html }) 
 };
 
 /**
+ * Sends password reset email via dedicated Vercel Mail Service (Port 443 HTTPS)
+ * Method: POST
+ * URL: https://mail-service-nine-alpha.vercel.app/api/mail/send-reset-password
+ */
+const sendViaMicroserviceResetPassword = async ({
+  to,
+  recipientName,
+  resetLink,
+  expiresIn = "15 minutes",
+  appName = "CodeDev-Network",
+}) => {
+  const baseUrl = process.env.MAIL_SERVICE_URL || "https://mail-service-nine-alpha.vercel.app";
+  const url = `${baseUrl.replace(/\/$/, "")}/api/mail/send-reset-password`;
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to,
+        recipientName: recipientName || "Developer",
+        resetLink,
+        expiresIn,
+        appName,
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.success === false) {
+      console.error("[MailService:Microservice] Reset password API error:", data);
+      return false;
+    }
+
+    console.log(`[MailService:Microservice] Password reset email sent successfully to ${to} (MessageId: ${data.data?.messageId || "ok"})`);
+    return true;
+  } catch (error) {
+    console.error("[MailService:Microservice] Reset password request failed:", error.message);
+    return false;
+  }
+};
+
+/**
+ * Sends email via dedicated Vercel Mail Service (Port 443 HTTPS)
+ * Method: POST
+ * URL: https://mail-service-nine-alpha.vercel.app/api/mail/send-email
+ */
+const sendViaMicroserviceEmail = async ({ to, subject, text, html, replyTo }) => {
+  const baseUrl = process.env.MAIL_SERVICE_URL || "https://mail-service-nine-alpha.vercel.app";
+  const url = `${baseUrl.replace(/\/$/, "")}/api/mail/send-email`;
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to,
+        subject,
+        text,
+        html,
+        ...(replyTo ? { replyTo } : {}),
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.success === false) {
+      console.error("[MailService:Microservice] Send email API error:", data);
+      return false;
+    }
+
+    console.log(`[MailService:Microservice] Email sent successfully to ${to} (MessageId: ${data.data?.messageId || "ok"})`);
+    return true;
+  } catch (error) {
+    console.error("[MailService:Microservice] Send email request failed:", error.message);
+    return false;
+  }
+};
+
+/**
  * Primary dispatch function:
- * 1. Checks HTTP providers (Resend, Brevo) first since they bypass Render's SMTP port firewall.
- * 2. Falls back to Nodemailer SMTP (for local dev or unblocked servers).
+ * 1. Checks dedicated Vercel Microservice first (works 100% on Render Port 443 without firewall restrictions).
+ * 2. Falls back to Resend & Brevo HTTP REST APIs.
+ * 3. Falls back to Nodemailer SMTP (for local dev or unblocked servers).
  */
 export const sendContactNotificationEmail = async ({ name, email, type, subject, message }) => {
   const adminEmail = process.env.ADMIN_EMAIL || "12mudassarkhan@gmail.com";
   const { formattedSubject, text, html } = buildEmailPayload({ name, email, type, subject, message });
 
-  // 1. Try Resend HTTP API (Port 443)
+  // 1. Primary: Dedicated Vercel Mail Service (Port 443)
+  const sentViaMicroservice = await sendViaMicroserviceEmail({
+    to: adminEmail,
+    subject: formattedSubject,
+    text,
+    html,
+    replyTo: email,
+  });
+  if (sentViaMicroservice) return true;
+
+  console.warn("[MailService] Microservice failed for contact notification, trying fallbacks...");
+
+  // 2. Try Resend HTTP API (Port 443)
   if (process.env.RESEND_API_KEY) {
     const sent = await sendViaResend({ name, email, adminEmail, formattedSubject, text, html });
     if (sent) return true;
   }
 
-  // 2. Try Brevo HTTP API (Port 443)
+  // 3. Try Brevo HTTP API (Port 443)
   if (process.env.BREVO_API_KEY) {
     const sent = await sendViaBrevo({ name, email, adminEmail, formattedSubject, text, html });
     if (sent) return true;
   }
 
-  // 3. Fallback to Nodemailer SMTP (Port 587/465)
+  // 4. Fallback to Nodemailer SMTP (Port 587/465)
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     const sent = await sendViaSmtp({ email, adminEmail, formattedSubject, text, html });
     if (sent) return true;
   } else {
     console.log(
-      "[MailService] No email provider configured. Please set RESEND_API_KEY (for Render) or EMAIL_USER/EMAIL_PASS (for SMTP) in environment variables."
+      "[MailService] No backup email provider configured. Please set RESEND_API_KEY or EMAIL_USER/EMAIL_PASS in environment variables."
     );
   }
 
   return false;
 };
+
+/**
+ * Sends password reset email to a user with secure token link
+ * Primary: Uses dedicated Vercel Mail Service (https://mail-service-nine-alpha.vercel.app/api/mail/send-reset-password)
+ * Fallback: Uses Resend / Brevo / SMTP with custom template
+ */
+export const sendPasswordResetEmail = async ({
+  to,
+  resetUrl,
+  resetLink,
+  username,
+  recipientName,
+  expiresIn = "15 minutes",
+  appName = "CodeDev-Network",
+}) => {
+  const finalLink = resetLink || resetUrl;
+  const finalName = recipientName || username || "Developer";
+
+  // 1. Primary: Dedicated Vercel Mail Microservice
+  const sentViaMicroservice = await sendViaMicroserviceResetPassword({
+    to,
+    recipientName: finalName,
+    resetLink: finalLink,
+    expiresIn,
+    appName,
+  });
+  if (sentViaMicroservice) return true;
+
+  console.warn("[MailService] Microservice failed for reset password, trying backup providers...");
+
+  const formattedSubject = `Reset Your ${appName} Password`;
+  const text = `Hello ${finalName},\n\nYou requested to reset your password on ${appName}.\nPlease use the link below to reset your password (valid for ${expiresIn}):\n\n${finalLink}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n\n---\n${appName} Team`;
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; padding: 28px 24px; border: 1px solid #e5e7eb; border-radius: 10px; color: #1f2937; background: #ffffff;">
+      <div style="margin-bottom: 24px; text-align: center;">
+        <h1 style="color: #ffa116; margin: 0; font-size: 24px; font-weight: 700;">${appName}</h1>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 4px;">Password Reset Request</p>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <p style="font-size: 15px; line-height: 1.5; color: #374151;">Hello <strong>${finalName}</strong>,</p>
+        <p style="font-size: 15px; line-height: 1.5; color: #374151;">
+          We received a request to reset your password for your ${appName} account. Click the button below to create a new password:
+        </p>
+      </div>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${finalLink}" style="background-color: #ffa116; color: #1b1b1b; padding: 12px 28px; border-radius: 6px; font-size: 15px; font-weight: 600; text-decoration: none; display: inline-block;">
+          Reset Password
+        </a>
+      </div>
+
+      <div style="background: #f9fafb; border-radius: 6px; padding: 14px 16px; margin: 24px 0; border: 1px solid #f3f4f6;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0 0 6px 0;">Or copy and paste this link into your browser:</p>
+        <a href="${finalLink}" style="font-size: 12.5px; color: #2563eb; word-break: break-all;">${finalLink}</a>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+
+      <p style="font-size: 12px; color: #9ca3af; line-height: 1.5; margin: 0;">
+        ⏱ This password reset link is valid for <strong>${expiresIn}</strong>.<br />
+        If you did not request this password reset, you can safely ignore this email. Your account remains secure.
+      </p>
+    </div>
+  `;
+
+  // 2. Fallback to Resend HTTP API (Port 443)
+  if (process.env.RESEND_API_KEY) {
+    const sent = await sendViaResend({ name: finalName, toEmail: to, email: to, formattedSubject, text, html });
+    if (sent) return true;
+  }
+
+  // 3. Fallback to Brevo HTTP API (Port 443)
+  if (process.env.BREVO_API_KEY) {
+    const sent = await sendViaBrevo({ name: finalName, toEmail: to, email: to, formattedSubject, text, html });
+    if (sent) return true;
+  }
+
+  // 4. Fallback to Nodemailer SMTP
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    const sent = await sendViaSmtp({ toEmail: to, email: to, formattedSubject, text, html });
+    if (sent) return true;
+  }
+
+  console.error("[MailService] Failed to send password reset email: No working provider available.");
+  return false;
+};
+

@@ -19,6 +19,8 @@ import InterviewExperienceForm from './Pages/InterviewExperience/InterviewExperi
 import InterviewExperienceDetail from './Pages/InterviewExperience/InterviewExperienceDetail.jsx';
 import Contact from './Pages/Contact/Contact.jsx';
 import Placements from './Pages/Placements/Placements.jsx';
+import ForgotPassword from './Pages/Auth/ForgotPassword.jsx';
+import ResetPassword from './Pages/Auth/ResetPassword.jsx';
 
 function ProtectedRoute({ children }) {
   const { token } = useContext(Context);
@@ -46,6 +48,9 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={token ? <Navigate to='/' replace /> : <Login />} />
         <Route path='/register' element={token ? <Navigate to='/' replace /> : <Register />} />
+        <Route path='/forgot-password' element={token ? <Navigate to='/' replace /> : <ForgotPassword />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path='/reset-password/:token' element={<ResetPassword />} />
         <Route path='/leaderboard' element={<ProtectedRoute><LeaderBoard /></ProtectedRoute>} />
         <Route path='/problems' element={<Problems />} />
         <Route path='/problems/:slug' element={<Problems />} />

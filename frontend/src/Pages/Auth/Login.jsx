@@ -45,6 +45,11 @@ export default function Login() {
   return (
     <div className="login">
       <form className="login-form" onSubmit={loginHandler}>
+        <div className="auth-card-header">
+          <h2 className="auth-card-title">Welcome Back</h2>
+          <p className="auth-card-desc">Sign in to your CodeDev Network account</p>
+        </div>
+
         <input
           type="text"
           name="email"
@@ -61,6 +66,10 @@ export default function Login() {
           placeholder="password"
           required
         />
+
+        <div className="forgot-password-link">
+          <Link to="/forgot-password">Forgot password?</Link>
+        </div>
 
         <button>Login</button>
         <p className="login-link">

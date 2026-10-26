@@ -24,6 +24,14 @@ const UserSchema = new Schema({
         select: false,  // it means that when the user is fetched then password will not be fetched in the query
         minlength: 8
     },
+    resetPasswordToken: {
+        type: String,
+        select: false
+    },
+    resetPasswordExpire: {
+        type: Date,
+        select: false
+    },
     role: {
         type: String,
         enum: ["user", "admin"],   //enum is an array which stores allowed values, values which are not in this array will be wrong
