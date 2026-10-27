@@ -2,7 +2,7 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { sendPasswordResetEmail } from '../services/mail.service.js';
+import { sendPasswordResetEmail, sendWelcomeEmail } from '../services/mail.service.js';
 import { uploadToCloudinary } from '../config/cloudinary.js';
 
 //login controller
@@ -138,6 +138,14 @@ const register = async(req,res)=>{
         );
 
         console.log("User saved");
+
+        // Send a warm welcome email in the background
+        sendWelcomeEmail({
+            to: newUser.email,
+            username: newUser.username,
+        }).catch((err) => {
+            console.error("[Auth:Register] Error sending welcome email:", err?.message || err);
+        });
 
         //sending response
         res.status(201).json({
@@ -293,6 +301,14 @@ const adminRegister = async(req,res)=>{
             process.env.JWT_SECRET,
             {expiresIn:"7d"}
         );
+
+        // Send welcome email in the background
+        sendWelcomeEmail({
+            to: newUser.email,
+            username: newUser.username,
+        }).catch((err) => {
+            console.error("[Auth:AdminRegister] Error sending welcome email:", err?.message || err);
+        });
 
         res.status(201).json({
             success:true,

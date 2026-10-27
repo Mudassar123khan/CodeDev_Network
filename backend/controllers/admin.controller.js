@@ -8,6 +8,7 @@ import Scoreboard from "../models/Scoreboard.js";
 import InterviewExperience from "../models/InterviewExperience.js";
 import Contest from "../models/Contest.js";
 import { clearCacheByPrefix } from "../services/cache.service.js";
+import { sendWelcomeEmail } from "../services/mail.service.js";
 
 // Get all users
 export const getAllUsers = async (req, res) => {
@@ -45,6 +46,14 @@ export const createUser = async (req, res) => {
             branch: branch || "",
             graduationYear: graduationYear || "",
             platforms: platforms || {}
+        });
+
+        // Send welcome email in background
+        sendWelcomeEmail({
+            to: newUser.email,
+            username: newUser.username,
+        }).catch((err) => {
+            console.error("[Admin:CreateUser] Error sending welcome email:", err?.message || err);
         });
 
         // Don't send back the password

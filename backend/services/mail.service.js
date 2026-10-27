@@ -163,7 +163,7 @@ const sendViaBrevo = async ({ name, email, toEmail, adminEmail, replyTo, formatt
 /**
  * Sends email via Nodemailer SMTP (Works locally or on paid hosting plans where SMTP ports are not blocked)
  */
-const sendViaSmtp = async ({ email, toEmail, adminEmail, formattedSubject, text, html }) => {
+const sendViaSmtp = async ({ email, toEmail, adminEmail, replyTo, formattedSubject, text, html }) => {
   const transporter = getSmtpTransporter();
   if (!transporter) return false;
 
@@ -173,7 +173,7 @@ const sendViaSmtp = async ({ email, toEmail, adminEmail, formattedSubject, text,
     const mailOptions = {
       from: `"CodeDev Network" <${process.env.EMAIL_USER}>`,
       to: recipient,
-      replyTo: email,
+      replyTo: replyTo || email,
       subject: formattedSubject,
       text,
       html,
@@ -403,19 +403,7 @@ export const sendPasswordResetEmail = async ({
     </div>
   `;
 
-  // 2. Fallback to Resend HTTP API (Port 443)
-  if (process.env.RESEND_API_KEY) {
-    const sent = await sendViaResend({ name: finalName, toEmail: to, email: to, formattedSubject, text, html });
-    if (sent) return true;
-  }
-
-  // 3. Fallback to Brevo HTTP API (Port 443)
-  if (process.env.BREVO_API_KEY) {
-    const sent = await sendViaBrevo({ name: finalName, toEmail: to, email: to, formattedSubject, text, html });
-    if (sent) return true;
-  }
-
-  // 4. Fallback to Nodemailer SMTP
+  // 2. Fallback to Nodemailer SMTP
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     const sent = await sendViaSmtp({ toEmail: to, email: to, formattedSubject, text, html });
     if (sent) return true;
@@ -424,4 +412,112 @@ export const sendPasswordResetEmail = async ({
   console.error("[MailService] Failed to send password reset email: No working provider available.");
   return false;
 };
+
+/**
+ * Sends a warm, simple welcome email to a new user after registration
+ * Dispatches via dedicated Vercel Microservice, with fallbacks to Resend, Brevo, and Nodemailer SMTP.
+ */
+export const sendWelcomeEmail = async ({
+  to,
+  username,
+  appName = "CodeDev Network",
+}) => {
+  if (!to) {
+    console.warn("[MailService] No recipient email provided for welcome email.");
+    return false;
+  }
+
+  try {
+    const finalName = username || "Developer";
+    const clientUrl = (process.env.CLIENT_URL || "https://codedev-network-jmi.onrender.com").replace(/\/$/, "");
+    const supportEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER || "12mudassarkhan@gmail.com";
+    const formattedSubject = `Welcome to ${appName}, ${finalName}! 👋`;
+
+    const text = `Hi ${finalName},\n\nWelcome to ${appName}! We're thrilled to have you join our developer community.\n\nCodeDev Network helps you track your competitive programming stats across platforms (LeetCode, Codeforces, CodeChef, and GeeksforGeeks), participate in contests, practice coding challenges, and prepare for interviews.\n\nVisit your dashboard to get started: ${clientUrl}\n\nIf you ever have any questions or feedback, feel free to reply directly to this email.\n\nHappy coding!\n\nWarm regards,\nThe ${appName} Team`;
+
+    const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 24px 16px; background-color: #f9fafb; color: #1f2937;">
+        <div style="background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);">
+          
+          <div style="background-color: #111827; padding: 28px 24px; text-align: center;">
+            <h1 style="color: #ffa116; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.3px;">
+              ${appName}
+            </h1>
+            <p style="color: #9ca3af; font-size: 13px; margin: 6px 0 0 0;">
+              Welcome to the Developer Community
+            </p>
+          </div>
+
+          <div style="padding: 28px 24px; line-height: 1.6;">
+            <p style="font-size: 16px; margin: 0 0 16px 0; color: #111827;">
+              Hi <strong>${finalName}</strong>, 👋
+            </p>
+
+            <p style="font-size: 14.5px; margin: 0 0 16px 0; color: #374151;">
+              Welcome to <strong>${appName}</strong>! We're truly glad to have you join our community.
+            </p>
+
+            <p style="font-size: 14.5px; margin: 0 0 20px 0; color: #374151;">
+              CodeDev Network is built to help you track your coding progress across platforms like LeetCode, Codeforces, CodeChef, and GeeksforGeeks, take part in contests, and prepare for technical interviews.
+            </p>
+
+            <div style="text-align: center; margin: 28px 0;">
+              <a href="${clientUrl}" style="background-color: #ffa116; color: #111827; padding: 12px 28px; border-radius: 6px; font-size: 14.5px; font-weight: 600; text-decoration: none; display: inline-block;">
+                Go to CodeDev Network
+              </a>
+            </div>
+
+            <p style="font-size: 13.5px; margin: 0 0 12px 0; color: #6b7280;">
+              If you ever have any questions, feedback, or need assistance, simply reply directly to this email. We'd love to hear from you.
+            </p>
+
+            <p style="font-size: 14px; margin: 24px 0 0 0; color: #374151;">
+              Happy coding!<br />
+              <strong>The ${appName} Team</strong>
+            </p>
+          </div>
+
+          <div style="background-color: #f9fafb; border-top: 1px solid #f3f4f6; padding: 14px 24px; text-align: center;">
+            <p style="font-size: 12px; color: #9ca3af; margin: 0; line-height: 1.5;">
+              You received this email because you created an account on <a href="${clientUrl}" style="color: #6b7280; text-decoration: underline;">${appName}</a>.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    // 1. Primary: Dedicated Vercel Mail Service (Port 443 HTTPS - delivers to any inbox)
+    const sentViaMicroservice = await sendViaMicroserviceEmail({
+      to,
+      subject: formattedSubject,
+      text,
+      html,
+      replyTo: supportEmail,
+    });
+    if (sentViaMicroservice) return true;
+
+    console.warn("[MailService] Microservice failed for welcome email, falling back to Nodemailer SMTP...");
+
+    // 2. Fallback: Nodemailer SMTP
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      const sent = await sendViaSmtp({
+        toEmail: to,
+        email: supportEmail,
+        replyTo: supportEmail,
+        formattedSubject,
+        text,
+        html,
+      });
+      if (sent) return true;
+    }
+
+    console.error(`[MailService] Failed to send welcome email to ${to}: No working provider available.`);
+    return false;
+  } catch (error) {
+    console.error("[MailService] Unexpected error sending welcome email:", error.message);
+    return false;
+  }
+};
+
 
